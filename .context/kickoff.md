@@ -52,7 +52,7 @@ Generation rules for the bootstrapping agent:
 - **Project repo privacy:** Private
 - **Default branch:** master
 - **Live application:** N/A
-- **Git identity:** TisoneK `baleaddison8@gmail.com`
+- **Git identity:** Tisone Kironget `tisonkironget@gmail.com`
 - **Protocol:** vendored at `.context/core/` (version: see `.context/core/VERSION`)
 - **Package upstream (core updates + flaw back-ports):** https://github.com/TisoneK/.context.git
 - **Edition routing:** local agents → `.context/core/rules/ai-engineering-protocol-local.md`; cloud/sandbox agents → `.context/core/rules/ai-engineering-protocol.md`
@@ -88,7 +88,7 @@ once, or record `unknown`.
   # you'll push, which you will) and no PAT arrived in chat, ask NOW.
   git clone <PROJECT_REPO_URL_WITH_TOKEN_IF_PRIVATE> proxigrid && cd proxigrid
   git remote set-url origin https://github.com/TisoneK/proxigrid.git
-  git config user.name "TisoneK" && git config user.email "baleaddison8@gmail.com"
+  git config user.name "Tisone Kironget" && git config user.email "tisonkironget@gmail.com"
   ```
 
 There is **no package repo to find, clone, or authenticate against** —
