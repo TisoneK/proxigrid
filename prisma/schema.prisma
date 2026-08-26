@@ -1,0 +1,131 @@
+// Proxigrid — Market Intelligence & Automation Platform
+// Prisma schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Domain Models
+// ============================================================================
+
+/// A connected exchange or market data source (Binance, Coinbase, Forex, etc.)
+model Exchange {
+  id          String   @id @default(cuid())
+  code        String   @unique // "binance", "coinbase", etc.
+  name        String
+  kind        String   @default("crypto") // "crypto" | "forex" | "stock" | "commodity"
+  status      String   @default("active") // "active" | "disabled" | "maintenance"
+  apiKey      String?
+  apiSecret   String?
+  isPaper     Boolean  @default(true) // sandbox/testnet mode
+  metadata    String   @default("{}") // JSON string
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  symbols     Symbol[]
+  holdings    Holding[]
+}
+
+/// A tradable symbol on an exchange (e.g. BTCUSDT on Binance)
+model Symbol {
+  id          String   @id @default(cuid())
+  exchangeId  String
+  exchange    Exchange @relation(fields: [exchangeId], references: [id], onDelete: Cascade)
+  symbol      String   // "BTCUSDT"
+  base        String   // "BTC"
+  quote       String   // "USDT"
+  isActive    Boolean  @default(true)
+  metadata    String   @default("{}")
+  createdAt   DateTime @default(now())
+
+  @@unique([exchangeId, symbol])
+  @@index([symbol])
+}
+
+/// A portfolio holding (cached snapshot)
+model Holding {
+  id          String   @id @default(cuid())
+  exchangeId  String
+  exchange    Exchange @relation(fields: [exchangeId], references: [id], onDelete: Cascade)
+  symbol      String
+  asset       String   // base asset, e.g. "BTC"
+  quantity    Float
+  avgPrice    Float    @default(0)
+  updatedAt   DateTime @updatedAt
+
+  @@unique([exchangeId, symbol])
+  @@index([asset])
+}
+
+/// A signal emitted by the IntelligenceService
+model Signal {
+  id          String   @id @default(cuid())
+  exchangeCode String  // "binance"
+  symbol      String  // "BTCUSDT"
+  timeframe   String  // "1m" | "5m" | "1h" | "4h" | "1d"
+  indicator   String  // "RSI" | "MACD" | "EMA_CROSS" | "BOLLINGER"
+  direction   String  // "long" | "short" | "neutral"
+  strength    Float   // 0..1 confidence
+  price       Float
+  note        String?
+  metadata    String   @default("{}") // indicator values
+  createdAt   DateTime @default(now())
+
+  @@index([exchangeCode, symbol, createdAt])
+  @@index([indicator, direction])
+}
+
+/// An automation rule — condition triggers an action
+model AutomationRule {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  enabled     Boolean  @default(true)
+
+  // Trigger definition (JSON)
+  // {
+  //   "exchange": "binance",
+  //   "symbol": "BTCUSDT",
+  //   "timeframe": "1h",
+  //   "conditions": [
+  //     { "type": "indicator", "indicator": "RSI", "operator": "<", "value": 30 },
+  //     { "type": "price", "operator": ">", "value": 50000 }
+  //   ],
+  //   "matchMode": "all" | "any"
+  // }
+  trigger     String
+
+  // Action definition (JSON)
+  // { "type": "notify", "channel": "log" }
+  // { "type": "notify", "channel": "webhook", "url": "..." }
+  // { "type": "place_order", "side": "buy", "amount": 0.01 } // future
+  action      String
+
+  cooldownSec Int      @default(300) // min seconds between fires
+  lastFiredAt DateTime?
+
+  executions  RuleExecution[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([enabled])
+}
+
+/// Audit log of a rule firing
+model RuleExecution {
+  id          String   @id @default(cuid())
+  ruleId      String
+  rule        AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  triggerSnapshot String // JSON of trigger context at fire time
+  actionResult   String // JSON of action execution result
+  status      String   // "success" | "error"
+  firedAt     DateTime @default(now())
+
+  @@index([ruleId, firedAt])
+}
