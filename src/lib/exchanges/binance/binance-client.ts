@@ -52,6 +52,11 @@ export class BinanceClient {
   // ---- Endpoint URLs ----
 
   get restBase(): string {
+    // Optional override, e.g. Binance's public, openly-accessible market-data
+    // endpoint https://data-api.binance.vision for read-only data from
+    // regions where api.binance.com / testnet are geo-restricted (HTTP 451).
+    const override = process.env.BINANCE_REST_URL?.trim();
+    if (override) return override.replace(/\/+$/, "");
     return this.isPaper
       ? "https://testnet.binance.vision"
       : "https://api.binance.com";
