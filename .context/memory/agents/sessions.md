@@ -24,3 +24,14 @@ past entries — append corrections instead.
 - **Open items:** none. First working session should run `context-sync verify`/`status` and Phase 1 discovery per the local edition.
 - **Notes:** none
 - **Report:** none (bootstrap, no review produced)
+
+---
+## 2026-08-26 — Session 2
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Consolidate branches onto `main`, install dependencies, and patch security advisories (Dependabot high).
+- **Commits:** 4 (633fe3d default-branch→main; 6af2c52 deps+security; plus 1ca0c98 identity fix and the branch consolidation this session).
+- **Outcome:** done — remote reduced to a single `main` branch (default switched on GitHub by the user; stray `master` removed). `npm install` (837 pkgs, routed around a root-owned `~/.npm` cache) + `npm audit fix --force` cleared 6 of 9 advisories. `next build` verified green.
+- **Open items:** `tasks/backlog.md` — remaining prisma-chain deepmerge-ts advisory (no stable fix yet); pre-existing setState-in-effect lint errors.
+- **Notes:** none
+- **Report:** none
+- **Correction:** git identity from Session 1 was fixed to `Tisone Kironget <tisonkironget@gmail.com>` (commit 1ca0c98); the Session 1 bootstrap commit 3c099ce remains authored under the old placeholder identity (not rewritten — pushed history).

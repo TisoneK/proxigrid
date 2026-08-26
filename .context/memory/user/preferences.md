@@ -46,6 +46,8 @@ Format: - <preference> — <how to apply it> (provenance, YYYY-MM-DD)
 
 ## Workflow
 
+- Always follow the `.context` protocol for all work on this repo — including product-code tasks handed over directly in chat, not just kickoff-launched sessions. That means: read memory at start, set `tasks/current.md`, use the right commit prefix per surface (`chore(context):` for `.context/`, normal Conventional Commits for product code, `docs(review):` for reports), log the session in `agents/sessions.md`, update the relevant memory, and push. (stated, 2026-08-26)
+
 ## Communication
 
 ## Code style
