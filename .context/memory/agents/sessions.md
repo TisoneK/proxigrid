@@ -46,3 +46,13 @@ past entries — append corrections instead.
 - **Notes:** none
 - **New override:** recorded in `overrides/rules.md` + `user/preferences.md` — fix found errors in-session (incl. pre-existing), flag only genuinely architectural changes.
 - **Report:** none
+
+---
+## 2026-08-27 — Session 4
+- **Agent:** Kiro | **Model:** claude-sonnet-4.5 | **Platform:** Windows workstation (win32) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Pull latest changes from remote (Session 3 lint fixes), install npm dependencies, document deprecated packages in backlog.
+- **Commits:** 1 (this chore(context) commit)
+- **Outcome:** done — pulled 8 files including Session 3 lint fixes, installed 793 npm packages successfully. Identified 2 deprecated packages (recharts@2.15.4, eslint@9.39.5) and confirmed 3 high-severity deepmerge-ts vulnerabilities already documented in backlog by Session 2. Added deprecated packages entry to `tasks/backlog.md`.
+- **Open items:** `tasks/backlog.md` — deepmerge-ts vulnerability (already tracked), deprecated packages (new entry).
+- **Notes:** none
+- **Report:** none
