@@ -50,7 +50,7 @@ Generation rules for the bootstrapping agent:
 - **Project name:** Proxigrid
 - **Project repository URL:** https://github.com/TisoneK/proxigrid.git
 - **Project repo privacy:** Private
-- **Default branch:** master
+- **Default branch:** main
 - **Live application:** N/A
 - **Git identity:** Tisone Kironget `tisonkironget@gmail.com`
 - **Protocol:** vendored at `.context/core/` (version: see `.context/core/VERSION`)

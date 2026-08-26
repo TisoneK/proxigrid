@@ -36,7 +36,7 @@ user changes the rules; note the change in your session entry.
 - **Target:** general sweep (a target in the user's chat message overrides this)
 - **Focus areas:** all — security, performance, UX, architecture, testing, docs
 - **Findings handling:** fix safe issues, flag architectural ones for approval
-- **Push policy:** push to `master` after each commit
+- **Push policy:** push to `main` after each commit
 - **Commit style:** Conventional Commits with scope; `chore(context):` for `.context/` changes, `docs(review):` for reports
 - **Commit granularity:** one logical change per commit
 - **Deliverable:** report in `.context/memory/reviews/` + chat summary
