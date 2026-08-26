@@ -10,22 +10,32 @@ import { cn } from "@/lib/utils";
  * Layout: [logo gradient + wordmark] ---- [LIVE pulse] [UTC clock] [testnet chip]
  * The clock ticks every second; the LIVE dot pulses on a 1.8s cycle.
  */
-export function Header() {
-  const [time, setTime] = React.useState<string>("--:--:--");
+const TIME_PLACEHOLDER = "--:--:--";
 
-  React.useEffect(() => {
-    const fmt = () =>
-      new Date().toLocaleTimeString("en-GB", {
-        hour12: false,
-        timeZone: "UTC",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-    setTime(fmt());
-    const id = setInterval(() => setTime(fmt()), 1000);
-    return () => clearInterval(id);
-  }, []);
+function formatUtcTime() {
+  return new Date().toLocaleTimeString("en-GB", {
+    hour12: false,
+    timeZone: "UTC",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
+function subscribeToSecond(onTick: () => void) {
+  const id = setInterval(onTick, 1000);
+  return () => clearInterval(id);
+}
+
+export function Header() {
+  // The clock is an external, ticking source — read it via a store so there
+  // is no setState-in-effect. Server render (and hydration) uses the
+  // placeholder, then reconciles to the live UTC time on the client.
+  const time = React.useSyncExternalStore(
+    subscribeToSecond,
+    formatUtcTime,
+    () => TIME_PLACEHOLDER,
+  );
 
   return (
     <header className="flex-none border-b border-border/60 bg-background">

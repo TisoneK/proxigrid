@@ -39,7 +39,9 @@ export function CountUp({
   const ref = React.useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10px" });
   const motionValue = useMotionValue(0);
-  const [display, setDisplay] = React.useState("0");
+  // Holds the in-flight animated string; null when not animating, in which
+  // case the display is derived directly from `value` during render.
+  const [animated, setAnimated] = React.useState<string | null>(null);
 
   const render = React.useCallback(
     (n: number) => {
@@ -54,22 +56,21 @@ export function CountUp({
   );
 
   React.useEffect(() => {
-    if (disabled || !inView) {
-      setDisplay(render(value));
-      return;
-    }
+    // Only animate when in view and enabled; setState happens solely in the
+    // onUpdate callback, never synchronously in the effect body.
+    if (disabled || !inView) return;
     const controls = animate(motionValue, value, {
       duration: duration / 1000,
       ease: [0.16, 1, 0.3, 1],
-      onUpdate: (v) => setDisplay(render(v)),
+      onUpdate: (v) => setAnimated(render(v)),
     });
     return () => controls.stop();
   }, [value, inView, disabled, duration, motionValue, render]);
 
-  // Render final value immediately if not yet in view (so SSR/no-JS gets real value).
-  React.useEffect(() => {
-    if (!inView) setDisplay(render(value));
-  }, [value, inView, render]);
+  // Static value derived during render (SSR/no-JS and out-of-view both get the
+  // real value); the animated string takes over once the count-up is running.
+  const display =
+    disabled || !inView ? render(value) : animated ?? render(value);
 
   return (
     <span
