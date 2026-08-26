@@ -35,5 +35,9 @@ block (and its "last verified" date) every time you run on it again.
 - **OS:** macOS 15.7.7 (build 24G720)
 - **Runtimes:** node v24.17.0. `package.json` scripts (`start`) invoke `bun` — presence not yet verified on this machine.
 - **Package manager:** npm (lockfile-driven); `bun` used for the standalone server start per `package.json`
-- **Verified commands:** none run yet on product code (bootstrap session only). `git` operations work after the fixes below.
-- **Quirks:** Repo was initially checked out entirely as `root:staff`, blocking all writes and commits; fixed with `sudo chown -R bao:staff /Users/bao/Code/proxigrid`. Git then reported "dubious ownership"; added `git config --global --add safe.directory /Users/bao/Code/proxigrid`. Git user identity was unset — configured repo-locally as `Tisone Kironget <tisonkironget@gmail.com>`.
+- **Verified commands (from repo root):**
+  - Install: `npm install --cache <writable-dir>` — the default `~/.npm` cache has root-owned objects from the original checkout; use a fresh cache dir to avoid EACCES (Session 2).
+  - Lint: `npm run lint` (clean on eslint 9). Typecheck: `npx tsc --noEmit` (has pre-existing errors — see backlog). Build: `npx next build` (green; skips type validation).
+  - DB: create `.env` with `DATABASE_URL="file:./dev.db"`, then `npm run db:push` (creates `prisma/dev.db`, gitignored). No seed script — DB starts empty.
+  - Run app: `npm run dev` → http://localhost:3000 (Next 16, Turbopack). Preferred via `.claude/launch.json` (server name `proxigrid-dev`). `.claude/` is gitignored, so the launch.json is local-only.
+- **Quirks:** Repo was initially checked out entirely as `root:staff`, blocking all writes and commits; fixed with `sudo chown -R bao:staff /Users/bao/Code/proxigrid`. Git then reported "dubious ownership"; added `git config --global --add safe.directory /Users/bao/Code/proxigrid`. Git user identity was unset — configured repo-locally as `Tisone Kironget <tisonkironget@gmail.com>`. **Binance is geo-restricted here:** `api.binance.com` and `testnet.binance.vision` return HTTP 451, 500-ing the market endpoints; set `BINANCE_REST_URL="https://data-api.binance.vision"` in `.env` (public data endpoint, reachable) to get live market data — supported via the override added in Session 6.

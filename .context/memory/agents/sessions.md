@@ -66,3 +66,14 @@ past entries — append corrections instead.
 - **Open items:** `tasks/backlog.md` — eslint 10 blocked by Next lint stack; prisma-chain deepmerge-ts advisory (unchanged).
 - **Notes:** Pre-existing `tsc --noEmit` errors unrelated to this task remain and were NOT introduced here: `src/lib/exchanges/binance/binance-adapter.ts` (Candle openTime/closeTime typed as kline tuples, ~6 errors) and `mini-services/realtime-service/index.ts` (missing `socket.io` types — separate service with its own deps). The app build skips type validation, so these never surfaced. Surfaced to the user; not yet backlogged pending their call on scope.
 - **Report:** none
+
+---
+## 2026-08-26 — Session 6
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Live session — run the Proxigrid app locally and exercise the dashboard/API in the browser.
+- **Commits:** 2 (61f06a3 feat(binance) REST override + gitignore *.db; + this chore(context) memory commit).
+- **Outcome:** done — app runs on :3000 and all core flows verified live: dashboard shell, **live Markets grid** (real Binance data), Portfolio graceful unconfigured state, **Scan BTC** signal generation (real EMA/Bollinger/MACD/RSI indicators, 4 signals persisted), **automation rule create** (RSI<30 on BTCUSDT), and **rule Evaluate now** (correctly did NOT fire: live RSI 51.9 not < 30, with a clear toast). Set up `.env` (DATABASE_URL) + `npm run db:push` + `.claude/launch.json`.
+- **Findings:** (1) Binance geo-block (451) 500s the market endpoints → added `BINANCE_REST_URL` override to reach `data-api.binance.vision` (commit 61f06a3). (2) Markets grid shows infinite skeletons with no error state on data-fetch failure → backlogged. (3) `prisma/dev.db` was not gitignored → added `*.db` to `.gitignore` (commit 61f06a3).
+- **Open items:** `tasks/backlog.md` — market-grid error state; eslint-10 blocked; prisma-chain advisory; (unbacklogged) pre-existing tsc errors in binance-adapter / mini-services.
+- **Notes:** Browser pane `scroll` action timed out repeatedly ("pane hidden"); worked around by resizing the viewport taller. Screenshots/clicks/refs were fine.
+- **Report:** none
