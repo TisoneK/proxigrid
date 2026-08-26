@@ -56,3 +56,13 @@ past entries — append corrections instead.
 - **Open items:** `tasks/backlog.md` — deepmerge-ts vulnerability (already tracked), deprecated packages (new entry).
 - **Notes:** none
 - **Report:** none
+
+---
+## 2026-08-26 — Session 5
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Upgrade the deprecated packages flagged by Session 4 (recharts v2→v3, eslint v9→v10).
+- **Commits:** 2 (d6986e6 fix(deps) recharts v3; + this chore(context) memory commit).
+- **Outcome:** partial — **recharts 2.15.4 → 3.10.1** done: ported the (unused) `chart.tsx` tooltip/legend wrappers to recharts v3 types, added `react-is ^19`; `tsc --noEmit` clean on chart.tsx, lint clean, `next build` green. **eslint NOT upgraded** — the whole 9.x line is deprecated but eslint 10 crashes `npm run lint` (eslint-config-next@16's bundled eslint-plugin-react caps at eslint ^9.7). Kept eslint ^9 so lint works; tracked as a new backlog item.
+- **Open items:** `tasks/backlog.md` — eslint 10 blocked by Next lint stack; prisma-chain deepmerge-ts advisory (unchanged).
+- **Notes:** Pre-existing `tsc --noEmit` errors unrelated to this task remain and were NOT introduced here: `src/lib/exchanges/binance/binance-adapter.ts` (Candle openTime/closeTime typed as kline tuples, ~6 errors) and `mini-services/realtime-service/index.ts` (missing `socket.io` types — separate service with its own deps). The app build skips type validation, so these never surfaced. Surfaced to the user; not yet backlogged pending their call on scope.
+- **Report:** none
