@@ -54,4 +54,6 @@ Format: - <preference> — <how to apply it> (provenance, YYYY-MM-DD)
 
 ## Review depth
 
+- Fix errors found in the codebase — including pre-existing ones surfaced while doing other work — in the same session; don't just document or backlog them. Architectural changes are still flagged for approval. Recorded as a standing override in [`overrides/rules.md`](../overrides/rules.md). (stated, 2026-08-26)
+
 ## Risk & approvals

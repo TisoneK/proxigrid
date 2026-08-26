@@ -36,4 +36,4 @@ Examples:
   user, 2026-07-14)
 -->
 
-*(none yet)*
+- **[project-local]** "Fix safe issues; flag/backlog everything else" → **fix errors found in the codebase, including pre-existing ones surfaced while doing other work** (lint errors, bugs, broken tests/build), rather than only documenting or backlogging them. Genuinely *architectural* changes (new abstractions, module decomposition, provider/config consolidation) are still flagged for approval, not implemented unasked. — the user expects found errors resolved in-session, not deferred (set by user, 2026-08-26)

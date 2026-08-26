@@ -35,3 +35,14 @@ past entries — append corrections instead.
 - **Notes:** none
 - **Report:** none
 - **Correction:** git identity from Session 1 was fixed to `Tisone Kironget <tisonkironget@gmail.com>` (commit 1ca0c98); the Session 1 bootstrap commit 3c099ce remains authored under the old placeholder identity (not rewritten — pushed history).
+
+---
+## 2026-08-26 — Session 3
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Fix the 5 pre-existing `react-hooks/set-state-in-effect` lint errors, per the user's standing preference to fix found errors rather than backlog them.
+- **Commits:** 2 (cdd4576 fix(ui) lint errors; + this chore(context) memory commit).
+- **Outcome:** done — all 5 errors resolved via `useSyncExternalStore` (media query, UTC clock, Embla carousel) and derived render state (count-up). `npm run lint` clean; `next build` green. Baseline lint is now 0 errors.
+- **Open items:** `tasks/backlog.md` — remaining prisma-chain deepmerge-ts advisory (no stable fix yet).
+- **Notes:** none
+- **New override:** recorded in `overrides/rules.md` + `user/preferences.md` — fix found errors in-session (incl. pre-existing), flag only genuinely architectural changes.
+- **Report:** none
