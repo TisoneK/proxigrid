@@ -99,3 +99,12 @@ past entries — append corrections instead.
 - **New env vars:** `BINANCE_API_KEY`, `BINANCE_API_SECRET` (HMAC) or `BINANCE_PRIVATE_KEY` (Ed25519 PEM, escaped newlines ok), `BINANCE_PAPER` (default testnet), `BINANCE_REST_URL` (Session 6), `ENABLE_LIVE_TRADING`.
 - **Open items:** `tasks/backlog.md` — User Data Streams + listenKey lifecycle, and FIX protocol (both from the manual, deliberately not implemented).
 - **Report:** none
+
+---
+## 2026-08-26 — Session 9
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** "Pick up next thing" — chose to add the project's first test suite, guarding the financial-critical logic touched in Sessions 5–8.
+- **Commits:** 2 (fe53b6a test suite; + this chore(context) commit).
+- **Outcome:** done — introduced **Vitest** (`npm test` / `npm run test:watch`, added as devDependency; no config file needed — the tested modules use relative imports). **24 tests, all green**, covering: indicators (SMA/EMA seeding, RSI bounds + extremes, MACD histogram = macd−signal, Bollinger ordering + zero-variance), `binance-filters` (tick/step/notional/minQty rejection, market + unknown-filter cases), `binance-signer` (HMAC reference digest + tamper check, Ed25519 88-char sign/verify, buildSignedQuery recvWindow cap + URL-encoding). tsc/lint/build all unaffected.
+- **Open items:** `tasks/backlog.md` — test coverage could be extended to the services/adapter layer with mocks (new item).
+- **Report:** none
