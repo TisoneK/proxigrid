@@ -12,19 +12,14 @@ export function Header() {
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Wordmark */}
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shrink-0">
-              <span className="text-base font-bold text-primary-foreground">P</span>
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-lg font-bold tracking-tight leading-none">
-                <span className="text-brand-gradient">Proxi</span>
-                <span className="text-foreground">grid</span>
-              </h1>
-              <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                Crypto markets &amp; automation
-              </p>
-            </div>
+          <div className="min-w-0">
+            <h1 className="text-lg font-bold tracking-tight leading-none">
+              <span className="text-brand-gradient">Proxi</span>
+              <span className="text-foreground">grid</span>
+            </h1>
+            <p className="text-xs text-muted-foreground mt-0.5 truncate">
+              Crypto markets &amp; automation
+            </p>
           </div>
 
           {/* Right cluster */}
