@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useSignals, useGenerateSignals } from "@/hooks/use-signals";
 import { formatPrice, timeAgo } from "@/lib/utils/format";
 import { Brain, RefreshCw, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react";
+import { CoinLogo } from "@/components/dashboard/coin-logo";
+import { coinIdentity } from "@/lib/coins";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -96,9 +98,10 @@ export function SignalsFeed() {
                   )}
                   style={{ animationDelay: `${Math.min(idx, 8) * 40}ms` }}
                 >
+                  <CoinLogo base={coinIdentity(s.symbol).base} size={22} className="mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono text-xs font-semibold tracking-tight text-foreground">
+                      <span className="text-xs font-semibold tracking-tight text-foreground">
                         {s.symbol}
                       </span>
                       <Badge

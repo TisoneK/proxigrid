@@ -110,7 +110,7 @@ export default function Home() {
             <span className="text-brand-gradient font-semibold">Proxigrid</span>
             <span className="text-muted-foreground"> · Crypto markets &amp; automation</span>
           </span>
-          <span>Market data via Binance · Not financial advice</span>
+          <span>Market data via Binance · Signals &amp; automation</span>
         </div>
       </footer>
     </div>
