@@ -20,7 +20,9 @@ export function ThemeToggle() {
     () => false
   );
 
-  const isDark = resolvedTheme === "dark";
+  // Only trust the resolved theme after mount, so the server render and the
+  // first client render agree (both assume "not dark") — no hydration mismatch.
+  const isDark = mounted && resolvedTheme === "dark";
 
   return (
     <button
@@ -29,7 +31,7 @@ export function ThemeToggle() {
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
     >
-      {mounted && isDark ? (
+      {isDark ? (
         <Sun className="h-[18px] w-[18px]" />
       ) : (
         <Moon className="h-[18px] w-[18px]" />
