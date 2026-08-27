@@ -25,17 +25,12 @@ export function MarketGrid() {
           <h2 className="text-sm font-semibold text-foreground">Markets</h2>
           <p className="text-xs text-muted-foreground mt-0.5">Top by 24h volume · Binance</p>
         </div>
-        <div
-          className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium",
-            showEmpty
-              ? "bg-rose-500/12 text-rose-600 dark:text-rose-400"
-              : "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400"
-          )}
-        >
-          <StatusDot color={showEmpty ? "rose" : "emerald"} pulse={!showEmpty} size="sm" />
-          {showEmpty ? "Offline" : "Live"}
-        </div>
+        {showEmpty && (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/12 text-rose-600 dark:text-rose-400">
+            <StatusDot color="rose" size="sm" />
+            Offline
+          </div>
+        )}
       </div>
 
       {/* Body */}

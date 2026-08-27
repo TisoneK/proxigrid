@@ -1,6 +1,5 @@
 "use client";
 
-import { StatusDot } from "@/components/dashboard/status-dot";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 
 /**
@@ -30,11 +29,6 @@ export function Header() {
 
           {/* Right cluster */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary">
-              <StatusDot color="emerald" pulse size="sm" />
-              <span className="text-xs font-medium text-foreground">Live</span>
-            </div>
-
             <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
               <span className="text-xs font-medium text-amber-600 dark:text-amber-300">
