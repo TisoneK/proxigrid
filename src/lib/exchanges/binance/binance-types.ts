@@ -41,7 +41,8 @@ export interface BinanceTickerResponse {
   closeTime: number;
 }
 
-// Binance kline response is an array of arrays, each shaped like:
+// A single Binance kline (candlestick) row. The /api/v3/klines endpoint
+// returns an array of these — hence getKlines(): Promise<BinanceKlineResponse[]>.
 //   [openTime, open, high, low, close, volume, closeTime, ...]
 export type BinanceKlineResponse = [
   number, // openTime
@@ -52,7 +53,7 @@ export type BinanceKlineResponse = [
   string, // volume
   number, // closeTime
   ...unknown[] // (other fields we ignore)
-][];
+];
 
 export interface BinanceOrderBookResponse {
   lastUpdateId: number;
