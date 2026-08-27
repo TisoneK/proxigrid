@@ -118,3 +118,13 @@ past entries — append corrections instead.
 - **Notes:** New reusable design token in globals: `--shadow-card` / `--shadow-card-hover` (theme-tuned). The old "terminal" utility class names (card-premium, lit-top, tint-up/down, scrollbar-terminal, shadow-glow-brand) were kept but restyled theme-aware, so no component references broke.
 - **Open items:** possible follow-ups — humanize signal-row symbols (still raw BTCUSDT), and real coin logos (currently monogram avatars, no logo assets shipped).
 - **Report:** none
+
+---
+## 2026-08-26 — Session 11
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User feedback "something still feels vibe coded" — hunt down and fix the tells.
+- **Commits:** 3 (c870f28 curate markets; 33753e7 real sparklines; + this chore(context) commit).
+- **Outcome:** done — found two integrity tells and fixed both. (1) **Markets were nonsensical**: sorting all pairs by raw quote volume surfaced fiat pairs (BTC/IDR etc.) shown as USD → "Bitcoin $1,042,508,253". The ticker route now curates to USDT-quoted spot coins (excludes stablecoin/fiat bases + leveraged tokens; `?quote=` override); top markets are now BTC/ETH/SOL/BNB/DOGE at real prices, and "Avg 24h change" is meaningful. (2) **Sparklines were fabricated**: `synthesizeSeries()` generated pseudo-random per-ticker chart data. Replaced with `MarketSparkline` + `useSparkline` hook fetching each symbol's real last-24 hourly candles (cached 60s); deleted the fabricator. Verified in-browser (real prices + distinct real chart shapes); tsc/lint/build green.
+- **Notes:** The dev console showed stale `synthesizeSeries/Sparkline/showError is not defined` errors that persisted across reloads — they are `read_console_messages` buffered history from this session's many HMR reloads, NOT live (page renders clean with no Next error overlay; production build is green). This session's HMR staleness is a recurring friction; a clean dev-server restart is the reliable way to get a truthful console.
+- **Open items:** signal notes still dump raw indicator values (e.g. "MACD hist=… macd=… signal=…") — developer-y, could be humanized; user said signal rows are otherwise fine.
+- **Report:** none
