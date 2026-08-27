@@ -23,6 +23,7 @@ function buildAdapters(): void {
   const binance = new BinanceAdapter({
     apiKey: process.env.BINANCE_API_KEY,
     apiSecret: process.env.BINANCE_API_SECRET,
+    privateKey: process.env.BINANCE_PRIVATE_KEY?.replace(/\\n/g, "\n"), // Ed25519 (preferred)
     isPaper: process.env.BINANCE_PAPER !== "false", // default to testnet for safety
   });
   adapters.set(binance.code, binance);

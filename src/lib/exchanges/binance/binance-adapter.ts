@@ -36,11 +36,19 @@ export class BinanceAdapter extends BaseExchangeAdapter implements ExchangeAdapt
 
   private readonly client: BinanceClient;
 
-  constructor(opts?: { apiKey?: string; apiSecret?: string; isPaper?: boolean }) {
+  constructor(opts?: {
+    apiKey?: string;
+    apiSecret?: string;
+    privateKey?: string;
+    isPaper?: boolean;
+  }) {
     super(opts);
     this.client = new BinanceClient({
       apiKey: opts?.apiKey ?? process.env.BINANCE_API_KEY,
       apiSecret: opts?.apiSecret ?? process.env.BINANCE_API_SECRET,
+      // PEM keys are commonly stored with escaped newlines in env vars.
+      privateKey:
+        opts?.privateKey ?? process.env.BINANCE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
       isPaper: opts?.isPaper ?? (process.env.BINANCE_PAPER !== "false"),
     });
   }
