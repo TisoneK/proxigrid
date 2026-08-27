@@ -29,11 +29,10 @@ export function Header() {
 
           {/* Right cluster */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-              <span className="text-xs font-medium text-amber-600 dark:text-amber-300">
-                Binance testnet
-              </span>
+            <div className="hidden md:flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full bg-secondary border border-border">
+              <img src="/coins/bnb.svg" alt="Binance" width={18} height={18} />
+              <span className="text-xs font-medium text-foreground">Binance</span>
+              <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">testnet</span>
             </div>
 
             <ThemeToggle />

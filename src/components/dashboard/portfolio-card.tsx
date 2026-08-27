@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { usePortfolio } from "@/hooks/use-portfolio";
 import { formatPrice, formatUsd } from "@/lib/utils/format";
 import { CountUp } from "@/components/dashboard/count-up";
-import { CoinAvatar } from "@/components/dashboard/coin-avatar";
+import { CoinLogo } from "@/components/dashboard/coin-logo";
 import { Wallet, AlertCircle } from "lucide-react";
 
 export function PortfolioCard() {
@@ -113,7 +113,7 @@ export function PortfolioCard() {
                   key={`${h.exchangeCode}-${h.asset}`}
                   className="flex items-center gap-2.5 text-sm py-1.5 px-2 -mx-2 rounded-lg hover:bg-secondary/60 transition-colors"
                 >
-                  <CoinAvatar base={h.asset} size={28} />
+                  <CoinLogo base={h.asset} size={28} />
                   <span className="font-medium text-foreground w-14 truncate">{h.asset}</span>
                   <span className="text-muted-foreground tabular-nums text-xs flex-1 text-right pr-3 truncate">
                     {h.quantity.toFixed(4)}

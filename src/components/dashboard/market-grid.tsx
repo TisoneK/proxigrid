@@ -6,7 +6,7 @@ import { formatPrice, formatPercent, formatCompact } from "@/lib/utils/format";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { MarketSparkline } from "@/components/dashboard/market-sparkline";
 import { StatusDot } from "@/components/dashboard/status-dot";
-import { CoinAvatar } from "@/components/dashboard/coin-avatar";
+import { CoinLogo } from "@/components/dashboard/coin-logo";
 import { coinIdentity } from "@/lib/coins";
 import { cn } from "@/lib/utils";
 
@@ -77,7 +77,7 @@ export function MarketGrid() {
                   key={t.symbol}
                   className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-secondary/70"
                 >
-                  <CoinAvatar base={id.base} size={28} />
+                  <CoinLogo base={id.base} size={28} />
 
                   <div className="min-w-0 flex-1">
                     <div className="text-[13px] font-semibold text-foreground truncate leading-tight">
