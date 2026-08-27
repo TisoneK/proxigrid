@@ -35,17 +35,19 @@ export function StatDetailDialog({
 }) {
   return (
     <Dialog open={metric !== null} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg p-0 gap-0 flex flex-col max-h-[80vh]">
         {metric && (
-          <DialogHeader>
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border text-left space-y-1 shrink-0">
             <DialogTitle>{TITLES[metric].title}</DialogTitle>
             <DialogDescription>{TITLES[metric].description}</DialogDescription>
           </DialogHeader>
         )}
-        {metric === "portfolio" && <PortfolioDetail />}
-        {metric === "change" && <MoversDetail />}
-        {metric === "signals" && <SignalsDetail />}
-        {metric === "automations" && <AutomationsDetail />}
+        <div className="overflow-y-auto px-6 py-4 scrollbar-terminal">
+          {metric === "portfolio" && <PortfolioDetail />}
+          {metric === "change" && <MoversDetail />}
+          {metric === "signals" && <SignalsDetail />}
+          {metric === "automations" && <AutomationsDetail />}
+        </div>
       </DialogContent>
     </Dialog>
   );

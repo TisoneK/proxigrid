@@ -60,7 +60,7 @@ export function StatCard({
       className={cn(
         "card-premium p-3.5 flex flex-col gap-2.5 h-full text-left",
         clickable &&
-          "cursor-pointer hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "cursor-pointer transition-all duration-150 hover:-translate-y-0.5 hover:border-primary/50 active:translate-y-0 active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className
       )}
     >
