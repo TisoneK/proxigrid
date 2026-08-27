@@ -137,3 +137,11 @@ past entries — append corrections instead.
 - **Outcome:** done — the AI-generated tells were the **emerald→teal gradients + glow orbs everywhere** and generic soft shadcn cards. Reworked `globals.css` to ink-neutral surfaces (dark is now true near-black, not blue-navy), a **single refined green used sparingly (no gradients)**, crisp flat hairline cards, 0.5rem radius, and precise numeric type (tabular + slashed-zero + tight tracking). Removed gradient logo/wordmark/buttons, portfolio hero gradient + blur orbs, and gradient/blur empty-state icons; neutralized the glow utility. Then fixed a **hydration mismatch** in ThemeToggle: aria-label/icon read `resolvedTheme` without gating on mount → server/client disagreed; folded the mount check into `isDark`. Both themes verified; no hydration error on a clean load; tsc/lint/build green.
 - **Open items:** asked the user whether to push **density** further (tighter rows / more data per screen) for the data-forward feel — awaiting their steer. The `text-brand-gradient` CSS class is now a solid-color no-op kept for existing references.
 - **Report:** none
+
+---
+## 2026-08-27 — Session 13
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Tighten UI density for the data-forward fintech feel (user said "Tighten").
+- **Commits:** 2 (34d2261 density; + this chore(context) commit).
+- **Outcome:** done — compacted the whole dashboard: markets now show 16 rows (was 12) with shorter rows and a new 24h VOLUME column (`formatCompact` -> 1.24B/340.5M); tighter page rhythm (py-4/space-y-4/gap-3), smaller stat tiles, tighter card headers + list rows, full-strength hairline borders. Reads like a pro trading app (CoinGecko/Coinbase-Pro register). Both themes verified; tsc/lint/build green.
+- **Report:** none
