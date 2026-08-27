@@ -211,3 +211,11 @@ past entries — append corrections instead.
 - **Outcome:** done — StatDetailDialog now pins the DialogHeader (border-b, shrink-0) and scrolls only the body (overflow-y-auto). StatCard clickable tiles lift on hover (-translate-y-0.5, border highlight, shadow grows) and press on click (active:scale-0.985). Verified in-browser (movers dialog body scrolls beneath the fixed header); tsc/lint green.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 22
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: the Automations detail dialog has no options/buttons.
+- **Commits:** 2 (functional automations dialog; + this chore(context) commit).
+- **Outcome:** done — extracted `RuleRow` (evaluate/toggle/delete controls, own mutation hooks) and exported `CreateRuleDialog` from automation-rules-table; the StatDetailDialog Automations view now renders a 'New rule' button + `RuleRow` per rule, sharing one implementation with the card (DRY). Verified in-browser (dialog shows New rule + play/toggle/delete on the BTC oversold rule); tsc/lint/build green.
+- **Report:** none
+
