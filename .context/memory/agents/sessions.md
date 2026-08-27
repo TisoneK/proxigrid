@@ -128,3 +128,12 @@ past entries — append corrections instead.
 - **Notes:** The dev console showed stale `synthesizeSeries/Sparkline/showError is not defined` errors that persisted across reloads — they are `read_console_messages` buffered history from this session's many HMR reloads, NOT live (page renders clean with no Next error overlay; production build is green). This session's HMR staleness is a recurring friction; a clean dev-server restart is the reliable way to get a truthful console.
 - **Open items:** signal notes still dump raw indicator values (e.g. "MACD hist=… macd=… signal=…") — developer-y, could be humanized; user said signal rows are otherwise fine.
 - **Report:** none
+
+---
+## 2026-08-26 — Session 12
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: the UI still felt "vibe coded (AI generated)". Chose direction "serious data-forward fintech, keep green (refined)". Plus fixed a hydration error they pasted.
+- **Commits:** 3 (2b9bd7c fintech refactor; 94a8f09 ThemeToggle hydration fix; + this chore(context) commit).
+- **Outcome:** done — the AI-generated tells were the **emerald→teal gradients + glow orbs everywhere** and generic soft shadcn cards. Reworked `globals.css` to ink-neutral surfaces (dark is now true near-black, not blue-navy), a **single refined green used sparingly (no gradients)**, crisp flat hairline cards, 0.5rem radius, and precise numeric type (tabular + slashed-zero + tight tracking). Removed gradient logo/wordmark/buttons, portfolio hero gradient + blur orbs, and gradient/blur empty-state icons; neutralized the glow utility. Then fixed a **hydration mismatch** in ThemeToggle: aria-label/icon read `resolvedTheme` without gating on mount → server/client disagreed; folded the mount check into `isDark`. Both themes verified; no hydration error on a clean load; tsc/lint/build green.
+- **Open items:** asked the user whether to push **density** further (tighter rows / more data per screen) for the data-forward feel — awaiting their steer. The `text-brand-gradient` CSS class is now a solid-color no-op kept for existing references.
+- **Report:** none
