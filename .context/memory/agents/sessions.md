@@ -187,3 +187,11 @@ past entries — append corrections instead.
 - **Outcome:** done — removed the green "P" square; header is now just the Proxigrid wordmark + tagline. lint green.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 19
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: the card icons look vibe-coded — keep icons but make them real/clean.
+- **Commits:** 2 (clean card icons; + this chore(context) commit).
+- **Outcome:** done — removed the tinted colored-disc treatment on KPI tiles and the Portfolio/Signals/Automations card headers; icons are now clean small monochrome glyphs inline with the label (Wallet/LineChart/Radar/Zap). Dropped the now-unused `accent` prop from StatCard. (Briefly removed icons per an initial reading, then the user clarified "do not remove, we need real icons" — reverted to keeping them, cleaned the treatment.) tsc/lint green; verified in-browser.
+- **Report:** none
+
