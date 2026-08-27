@@ -203,3 +203,11 @@ past entries — append corrections instead.
 - **Outcome:** done — removed the redundant body Portfolio card (Markets now full-width) and deleted the orphaned `portfolio-card.tsx`. Made StatCard clickable (optional onClick, keyboard-accessible). New `StatDetailDialog` opens a drill-down per tile: Portfolio→balances/holdings, Avg 24h change→top movers (gainers/losers), Active signals→recent signals, Automations→rules. Verified both Portfolio and Movers dialogs live in-browser; tsc/lint/build green.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 21
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: dialogs need a fixed header + scrollable body; stat tiles should animate on hover/click.
+- **Commits:** 2 (sticky dialog header/scroll body + tile animation; + this chore(context) commit).
+- **Outcome:** done — StatDetailDialog now pins the DialogHeader (border-b, shrink-0) and scrolls only the body (overflow-y-auto). StatCard clickable tiles lift on hover (-translate-y-0.5, border highlight, shadow grows) and press on click (active:scale-0.985). Verified in-browser (movers dialog body scrolls beneath the fixed header); tsc/lint green.
+- **Report:** none
+
