@@ -18,6 +18,8 @@ interface StatCardProps {
   trend?: number;
   /** Small monochrome icon shown beside the label. */
   icon?: React.ReactNode;
+  /** When set, the tile becomes a button that opens a detail view. */
+  onClick?: () => void;
   className?: string;
 }
 
@@ -33,13 +35,35 @@ export function StatCard({
   sublabel,
   trend,
   icon,
+  onClick,
   className,
 }: StatCardProps) {
   const trendUp = trend !== undefined && trend >= 0;
   const valueColored = suffix !== undefined && trend !== undefined;
+  const clickable = !!onClick;
 
   return (
-    <div className={cn("card-premium p-3.5 flex flex-col gap-2.5 h-full", className)}>
+    <div
+      {...(clickable
+        ? {
+            role: "button" as const,
+            tabIndex: 0,
+            onClick,
+            onKeyDown: (e: React.KeyboardEvent) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick!();
+              }
+            },
+          }
+        : {})}
+      className={cn(
+        "card-premium p-3.5 flex flex-col gap-2.5 h-full text-left",
+        clickable &&
+          "cursor-pointer hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        className
+      )}
+    >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0 text-muted-foreground">
           {icon && (

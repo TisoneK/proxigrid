@@ -1,10 +1,11 @@
 "use client";
 
-import { PortfolioCard } from "@/components/dashboard/portfolio-card";
+import { useState } from "react";
 import { MarketGrid } from "@/components/dashboard/market-grid";
 import { SignalsFeed } from "@/components/dashboard/signals-feed";
 import { AutomationRulesTable } from "@/components/dashboard/automation-rules-table";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { StatDetailDialog, type StatMetric } from "@/components/dashboard/stat-detail-dialog";
 import { Header } from "@/components/dashboard/header";
 import { usePortfolio } from "@/hooks/use-portfolio";
 import { useTickers } from "@/hooks/use-ticker";
@@ -17,6 +18,8 @@ export default function Home() {
   const { data: tickers } = useTickers("binance");
   const { data: signals } = useSignals(50);
   const { data: rules } = useAutomationRules();
+
+  const [detail, setDetail] = useState<StatMetric | null>(null);
 
   const totalValue = portfolio?.totalValue ?? 0;
   const signalCount = signals?.length ?? 0;
@@ -39,7 +42,7 @@ export default function Home() {
       </div>
 
       <main className="container mx-auto px-4 sm:px-6 py-4 space-y-4">
-        {/* KPI tiles */}
+        {/* KPI tiles — click any to drill into its detail. */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 animate-fade-up">
           <StatCard
             label="Portfolio value"
@@ -50,6 +53,7 @@ export default function Home() {
             format={(n) => formatCurrency(n)}
             sublabel="Across all exchanges"
             icon={<Wallet />}
+            onClick={() => setDetail("portfolio")}
           />
           <StatCard
             label="Avg 24h change"
@@ -60,6 +64,7 @@ export default function Home() {
             trend={avgChange}
             sublabel="Top 5 markets by volume"
             icon={<LineChart />}
+            onClick={() => setDetail("change")}
           />
           <StatCard
             label="Active signals"
@@ -68,6 +73,7 @@ export default function Home() {
             decimals={0}
             sublabel="RSI · MACD · EMA · Bollinger"
             icon={<Radar />}
+            onClick={() => setDetail("signals")}
           />
           <StatCard
             label="Automations"
@@ -76,17 +82,13 @@ export default function Home() {
             decimals={0}
             sublabel={`${totalRuleCount} configured`}
             icon={<Zap />}
+            onClick={() => setDetail("automations")}
           />
         </div>
 
-        {/* Hero: portfolio + markets */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <div className="lg:col-span-1 animate-fade-up" style={{ animationDelay: "60ms" }}>
-            <PortfolioCard />
-          </div>
-          <div className="lg:col-span-2 animate-fade-up" style={{ animationDelay: "120ms" }}>
-            <MarketGrid />
-          </div>
+        {/* Markets */}
+        <div className="animate-fade-up" style={{ animationDelay: "120ms" }}>
+          <MarketGrid />
         </div>
 
         {/* Signals + automation */}
@@ -109,6 +111,8 @@ export default function Home() {
           <span>Market data via Binance · Signals &amp; automation</span>
         </div>
       </footer>
+
+      <StatDetailDialog metric={detail} onClose={() => setDetail(null)} />
     </div>
   );
 }
