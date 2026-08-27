@@ -145,3 +145,12 @@ past entries — append corrections instead.
 - **Commits:** 2 (34d2261 density; + this chore(context) commit).
 - **Outcome:** done — compacted the whole dashboard: markets now show 16 rows (was 12) with shorter rows and a new 24h VOLUME column (`formatCompact` -> 1.24B/340.5M); tighter page rhythm (py-4/space-y-4/gap-3), smaller stat tiles, tighter card headers + list rows, full-strength hairline borders. Reads like a pro trading app (CoinGecko/Coinbase-Pro register). Both themes verified; tsc/lint/build green.
 - **Report:** none
+
+---
+## 2026-08-27 — Session 14
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: "the light theme is too bright." Soften it.
+- **Commits:** 2 (light-theme softening; + this chore(context) commit).
+- **Outcome:** done — light `--background` 0.984 → 0.955 (soft gray canvas), `--card` 1.0 → 0.992, muted/secondary/border nudged for depth. Cards now lift off the canvas instead of blending into a blinding white sheet. Dark theme unchanged. Verified in-browser.
+- **Report:** none
+
