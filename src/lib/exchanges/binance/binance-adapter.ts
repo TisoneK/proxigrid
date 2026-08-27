@@ -8,6 +8,8 @@
 import type { ExchangeAdapter } from "../adapter";
 import { BaseExchangeAdapter } from "../adapter";
 import { BinanceClient } from "./binance-client";
+import type { BinanceSymbolFilter } from "./binance-types";
+import { validateOrderAgainstFilters } from "./binance-filters";
 import type {
   AccountSummary,
   Balance,
@@ -35,6 +37,11 @@ export class BinanceAdapter extends BaseExchangeAdapter implements ExchangeAdapt
   readonly kind = "crypto" as const;
 
   private readonly client: BinanceClient;
+  /** Per-symbol exchange filters, cached briefly (they change rarely). */
+  private readonly filtersCache = new Map<
+    string,
+    { filters: BinanceSymbolFilter[]; expiresAt: number }
+  >();
 
   constructor(opts?: {
     apiKey?: string;
@@ -172,15 +179,39 @@ export class BinanceAdapter extends BaseExchangeAdapter implements ExchangeAdapt
     return summary.balances;
   }
 
+  /** Symbol filters with a 60s cache, so repeated orders don't refetch. */
+  private async getCachedFilters(symbol: string): Promise<BinanceSymbolFilter[]> {
+    const hit = this.filtersCache.get(symbol);
+    if (hit && hit.expiresAt > Date.now()) return hit.filters;
+    const filters = await this.client.getSymbolFilters(symbol);
+    this.filtersCache.set(symbol, { filters, expiresAt: Date.now() + 60_000 });
+    return filters;
+  }
+
   async placeOrder(req: OrderRequest): Promise<OrderResult> {
     this.requireCredentials();
+    const type = req.type === "market" ? "MARKET" : "LIMIT";
+
+    // Validate against the symbol's exchange filters before submitting, so an
+    // out-of-spec price/quantity fails fast with a clear reason (manual §3).
+    const filters = await this.getCachedFilters(req.symbol);
+    const check = validateOrderAgainstFilters(filters, {
+      type,
+      quantity: req.quantity,
+      price: req.price,
+    });
+    if (!check.ok) {
+      throw new Error(`Order rejected by ${this.name} filters: ${check.reason}`);
+    }
+
     const res = await this.client.placeOrder({
       symbol: req.symbol,
       side: req.side === "buy" ? "BUY" : "SELL",
-      type: req.type === "market" ? "MARKET" : "LIMIT",
+      type,
       quantity: req.quantity,
       price: req.price,
-      timeInForce: req.type === "limit" ? "GTC" : undefined,
+      timeInForce: type === "LIMIT" ? req.timeInForce ?? "GTC" : undefined,
+      selfTradePreventionMode: req.selfTradePreventionMode,
       clientOrderId: req.clientOrderId,
       newOrderRespType: "RESULT",
     });

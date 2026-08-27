@@ -73,6 +73,16 @@ export interface Balance {
 export type OrderSide = "buy" | "sell";
 export type OrderType = "market" | "limit";
 
+/** Time-in-force: GTC, IOC, FOK, or GTX (post-only). */
+export type TimeInForce = "GTC" | "IOC" | "FOK" | "GTX";
+
+/** Self-Trade Prevention mode (manual §3). */
+export type SelfTradePreventionMode =
+  | "EXPIRE_TAKER"
+  | "EXPIRE_MAKER"
+  | "EXPIRE_BOTH"
+  | "NONE";
+
 export interface OrderRequest {
   symbol: string;
   side: OrderSide;
@@ -80,6 +90,9 @@ export interface OrderRequest {
   quantity: number;
   price?: number; // for limit orders
   clientOrderId?: string;
+  /** Defaults to GTC for limit orders; ignored for market orders. */
+  timeInForce?: TimeInForce;
+  selfTradePreventionMode?: SelfTradePreventionMode;
 }
 
 export interface OrderResult {

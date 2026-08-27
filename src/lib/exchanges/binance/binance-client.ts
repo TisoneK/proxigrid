@@ -25,6 +25,7 @@ import type {
   BinanceKlineResponse,
   BinanceOrderBookResponse,
   BinanceOrderResponse,
+  BinanceSymbolFilter,
   BinanceTicker24hResponse,
   BinanceTickerResponse,
   BinanceWsKlineMessage,
@@ -251,6 +252,16 @@ export class BinanceClient {
     return this.request<BinanceExchangeInfoResponse>("GET", "/api/v3/exchangeInfo");
   }
 
+  /** Exchange filters for a single symbol (PRICE_FILTER / LOT_SIZE / NOTIONAL / …). */
+  async getSymbolFilters(symbol: string): Promise<BinanceSymbolFilter[]> {
+    const info = await this.request<BinanceExchangeInfoResponse>(
+      "GET",
+      "/api/v3/exchangeInfo",
+      { symbol }
+    );
+    return info.symbols[0]?.filters ?? [];
+  }
+
   getTicker24h(symbol: string): Promise<BinanceTicker24hResponse> {
     return this.request<BinanceTicker24hResponse>("GET", "/api/v3/ticker/24hr", {
       symbol,
@@ -309,6 +320,7 @@ export class BinanceClient {
     quantity: number;
     price?: number;
     timeInForce?: string;
+    selfTradePreventionMode?: string;
     clientOrderId?: string;
     newOrderRespType?: "ACK" | "RESULT" | "FULL";
   }): Promise<BinanceOrderResponse> {
@@ -320,6 +332,9 @@ export class BinanceClient {
     };
     if (opts.price !== undefined) params.price = opts.price;
     if (opts.timeInForce) params.timeInForce = opts.timeInForce;
+    if (opts.selfTradePreventionMode) {
+      params.selfTradePreventionMode = opts.selfTradePreventionMode;
+    }
     if (opts.clientOrderId) params.newClientOrderId = opts.clientOrderId;
     if (opts.newOrderRespType) params.newOrderRespType = opts.newOrderRespType;
     return this.request<BinanceOrderResponse>("POST", "/api/v3/order", params, true);

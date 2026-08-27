@@ -3,6 +3,14 @@
  * Subset of Binance REST + WebSocket types used by the adapter.
  */
 
+/** A symbol's exchange filter (PRICE_FILTER / LOT_SIZE / NOTIONAL / …). */
+export type BinanceSymbolFilter =
+  | { filterType: "PRICE_FILTER"; minPrice: string; maxPrice: string; tickSize: string }
+  | { filterType: "LOT_SIZE"; minQty: string; maxQty: string; stepSize: string }
+  | { filterType: "NOTIONAL"; minNotional: string; maxNotional?: string; applyMinToMarket?: boolean }
+  | { filterType: "MIN_NOTIONAL"; minNotional: string; applyToMarket?: boolean }
+  | { filterType: string; [key: string]: unknown };
+
 export interface BinanceExchangeInfoResponse {
   symbols: Array<{
     symbol: string;
@@ -12,6 +20,7 @@ export interface BinanceExchangeInfoResponse {
     baseAssetPrecision: number;
     quoteAssetPrecision: number;
     quotePrecision: number;
+    filters?: BinanceSymbolFilter[];
   }>;
 }
 
