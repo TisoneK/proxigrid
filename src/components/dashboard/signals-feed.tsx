@@ -31,15 +31,11 @@ export function SignalsFeed() {
       <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-border/40">
         <div className="flex items-center gap-2.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-500/10 border border-emerald-500/20">
-            <Brain className="h-3.5 w-3.5 text-emerald-300" />
+            <Brain className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-              Intelligence
-            </div>
-            <div className="text-sm font-semibold text-foreground">
-              Signals Feed
-            </div>
+            <h2 className="text-base font-semibold text-foreground">Signals</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">RSI · MACD · EMA · Bollinger</p>
           </div>
         </div>
         <Button
@@ -47,7 +43,7 @@ export function SignalsFeed() {
           variant="outline"
           onClick={handleGenerate}
           disabled={generate.isPending}
-          className="h-7 text-[11px] gap-1.5 border-emerald-500/25 bg-emerald-500/5 text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200"
+          className="h-7 text-[11px] gap-1.5 border-emerald-500/25 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-200"
         >
           <RefreshCw className={cn("h-3 w-3", generate.isPending && "animate-spin")} />
           Scan BTC
@@ -85,10 +81,10 @@ export function SignalsFeed() {
                 ) : null;
               const dirText =
                 dir === "up"
-                  ? "text-emerald-300"
+                  ? "text-emerald-600 dark:text-emerald-400"
                   : dir === "down"
-                  ? "text-rose-300"
-                  : "text-slate-300";
+                  ? "text-rose-600 dark:text-rose-400"
+                  : "text-slate-600 dark:text-slate-400";
               return (
                 <div
                   key={s.id}
@@ -116,10 +112,10 @@ export function SignalsFeed() {
                         className={cn(
                           "text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0 h-4 inline-flex items-center gap-0.5",
                           dir === "up"
-                            ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
+                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
                             : dir === "down"
-                            ? "bg-rose-500/10 text-rose-300 border-rose-500/20"
-                            : "bg-slate-500/10 text-slate-300 border-slate-500/20"
+                            ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                            : "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20"
                         )}
                       >
                         {dirIcon}
@@ -167,7 +163,7 @@ function EmptySignals({
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 blur-xl rounded-full" />
         <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/15 to-teal-500/10 border border-emerald-500/25">
-          <Activity className="h-5 w-5 text-emerald-300" />
+          <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
         </div>
       </div>
       <p className="mt-4 text-sm font-medium text-foreground">No signals yet</p>
@@ -179,7 +175,7 @@ function EmptySignals({
         variant="outline"
         onClick={onScan}
         disabled={scanning}
-        className="mt-4 h-7 text-[11px] gap-1.5 border-emerald-500/25 bg-emerald-500/5 text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200"
+        className="mt-4 h-7 text-[11px] gap-1.5 border-emerald-500/25 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-200"
       >
         <RefreshCw className={cn("h-3 w-3", scanning && "animate-spin")} />
         Scan BTC now

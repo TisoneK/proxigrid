@@ -48,15 +48,11 @@ export function AutomationRulesTable() {
       <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-border/40">
         <div className="flex items-center gap-2.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-500/10 border border-emerald-500/20">
-            <Zap className="h-3.5 w-3.5 text-emerald-300" />
+            <Zap className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-              Automation
-            </div>
-            <div className="text-sm font-semibold text-foreground">
-              Rules Engine
-            </div>
+            <h2 className="text-base font-semibold text-foreground">Automations</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Trigger actions on market conditions</p>
           </div>
         </div>
         <CreateRuleDialog />
@@ -96,14 +92,14 @@ export function AutomationRulesTable() {
                     {r.enabled ? (
                       <Badge
                         variant="outline"
-                        className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0 h-4 bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
+                        className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0 h-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
                       >
                         Active
                       </Badge>
                     ) : (
                       <Badge
                         variant="outline"
-                        className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0 h-4 bg-slate-500/10 text-slate-400 border-slate-500/20"
+                        className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0 h-4 bg-slate-500/10 text-slate-500 dark:text-slate-400 border-slate-500/20"
                       >
                         Paused
                       </Badge>
@@ -148,7 +144,7 @@ export function AutomationRulesTable() {
                       });
                     }}
                     title="Evaluate now"
-                    className="h-7 w-7 p-0 text-muted-foreground hover:text-emerald-300 hover:bg-emerald-500/10"
+                    className="h-7 w-7 p-0 text-muted-foreground hover:text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
                   >
                     <Play className={cn("h-3.5 w-3.5", triggerRule.isPending && triggerRule.variables === r.id && "animate-pulse")} />
                   </Button>
@@ -179,7 +175,7 @@ export function AutomationRulesTable() {
                       }
                     }}
                     title="Delete"
-                    className="h-7 w-7 p-0 text-muted-foreground hover:text-rose-300 hover:bg-rose-500/10"
+                    className="h-7 w-7 p-0 text-muted-foreground hover:text-rose-600 dark:text-rose-400 hover:bg-rose-500/10"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
@@ -201,7 +197,7 @@ function EmptyRules() {
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 blur-xl rounded-full" />
         <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/15 to-teal-500/10 border border-emerald-500/25">
-          <Cpu className="h-5 w-5 text-emerald-300" />
+          <Cpu className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
         </div>
       </div>
       <p className="mt-4 text-sm font-medium text-foreground">No automation rules yet</p>
