@@ -28,7 +28,7 @@ export function SignalsFeed() {
   return (
     <div className="card-premium lit-top relative overflow-hidden h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-border/40">
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border">
         <div className="flex items-center gap-2.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-500/10 border border-emerald-500/20">
             <Brain className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -51,7 +51,7 @@ export function SignalsFeed() {
       </div>
 
       {/* Body */}
-      <div className="p-3 flex-1">
+      <div className="p-2 flex-1">
         {isLoading ? (
           <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -59,7 +59,7 @@ export function SignalsFeed() {
             ))}
           </div>
         ) : signals && signals.length > 0 ? (
-          <div className="space-y-1.5 max-h-[28rem] overflow-y-auto pr-1 scrollbar-terminal">
+          <div className="space-y-1 max-h-[28rem] overflow-y-auto pr-1 scrollbar-terminal">
             {signals.map((s, idx) => {
               const dir =
                 s.direction === "long"
@@ -89,7 +89,7 @@ export function SignalsFeed() {
                 <div
                   key={s.id}
                   className={cn(
-                    "group relative flex items-start gap-3 rounded-md border border-border/40 border-l-2 bg-card/30 px-3 py-2.5",
+                    "group relative flex items-start gap-3 rounded-md border border-border border-l-2 bg-transparent px-3 py-2",
                     "hover:bg-accent/40 transition-colors",
                     dirColor,
                     "animate-slide-in-top"

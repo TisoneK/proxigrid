@@ -2,7 +2,7 @@
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTickers } from "@/hooks/use-ticker";
-import { formatPrice, formatPercent } from "@/lib/utils/format";
+import { formatPrice, formatPercent, formatCompact } from "@/lib/utils/format";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { MarketSparkline } from "@/components/dashboard/market-sparkline";
 import { StatusDot } from "@/components/dashboard/status-dot";
@@ -20,9 +20,9 @@ export function MarketGrid() {
   return (
     <div className="card-premium lit-top h-full flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-4">
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border">
         <div>
-          <h2 className="text-base font-semibold text-foreground">Markets</h2>
+          <h2 className="text-sm font-semibold text-foreground">Markets</h2>
           <p className="text-xs text-muted-foreground mt-0.5">Top by 24h volume · Binance</p>
         </div>
         <div
@@ -39,7 +39,7 @@ export function MarketGrid() {
       </div>
 
       {/* Body */}
-      <div className="px-3 pb-3 flex-1 min-h-0">
+      <div className="p-2 flex-1 min-h-0">
         {showEmpty ? (
           <div className="flex flex-col items-center justify-center gap-3 py-14 text-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-rose-500/10">
@@ -66,45 +66,54 @@ export function MarketGrid() {
             </button>
           </div>
         ) : isLoading ? (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-[68px] rounded-xl" />
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-4">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <Skeleton key={i} className="h-[44px] my-0.5 rounded-lg" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 max-h-[26rem] overflow-y-auto pr-1 scrollbar-terminal">
-            {(tickers ?? []).slice(0, 12).map((t) => {
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-4 max-h-[28rem] overflow-y-auto scrollbar-terminal">
+            {(tickers ?? []).slice(0, 16).map((t) => {
               const id = coinIdentity(t.symbol);
               const change = t.priceChangePercent24h ?? 0;
               const up = change >= 0;
               return (
                 <div
                   key={t.symbol}
-                  className="group flex items-center gap-3 rounded-xl border border-border/70 p-3 transition-colors hover:bg-secondary/60"
+                  className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-secondary/70"
                 >
-                  <CoinAvatar base={id.base} size={38} />
+                  <CoinAvatar base={id.base} size={28} />
 
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-semibold text-foreground truncate">
+                    <div className="text-[13px] font-semibold text-foreground truncate leading-tight">
                       {id.name}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-[11px] text-muted-foreground leading-tight">
                       {id.base}
-                      {id.quote && <span className="text-muted-foreground/60"> / {id.quote}</span>}
+                      {id.quote && <span className="text-muted-foreground/60">/{id.quote}</span>}
                     </div>
                   </div>
 
-                  <div className="hidden sm:block opacity-80 group-hover:opacity-100 transition-opacity">
-                    <MarketSparkline symbol={t.symbol} width={64} height={30} />
+                  <div className="hidden lg:block text-right shrink-0 w-14 tabular-nums">
+                    <div className="text-[11px] text-muted-foreground leading-tight">
+                      ${formatCompact(t.quoteVolume24h)}
+                    </div>
+                    <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 leading-tight">
+                      vol
+                    </div>
                   </div>
 
-                  <div className="text-right shrink-0">
-                    <div className="text-sm font-semibold text-foreground tabular-nums">
+                  <div className="hidden sm:block opacity-70 group-hover:opacity-100 transition-opacity">
+                    <MarketSparkline symbol={t.symbol} width={54} height={24} />
+                  </div>
+
+                  <div className="text-right shrink-0 w-[88px]">
+                    <div className="text-[13px] font-semibold text-foreground tabular-nums leading-tight">
                       {formatPrice(t.price)}
                     </div>
                     <div
                       className={cn(
-                        "text-xs font-semibold tabular-nums mt-0.5",
+                        "text-[11px] font-semibold tabular-nums leading-tight",
                         up
                           ? "text-emerald-600 dark:text-emerald-400"
                           : "text-rose-600 dark:text-rose-400"

@@ -45,7 +45,7 @@ export function AutomationRulesTable() {
   return (
     <div className="card-premium lit-top relative overflow-hidden h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-border/40">
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border">
         <div className="flex items-center gap-2.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-500/10 border border-emerald-500/20">
             <Zap className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -59,7 +59,7 @@ export function AutomationRulesTable() {
       </div>
 
       {/* Body */}
-      <div className="p-3 flex-1">
+      <div className="p-2 flex-1">
         {isLoading ? (
           <div className="space-y-2">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -67,11 +67,11 @@ export function AutomationRulesTable() {
             ))}
           </div>
         ) : rules && rules.length > 0 ? (
-          <div className="space-y-1.5 max-h-[28rem] overflow-y-auto pr-1 scrollbar-terminal">
+          <div className="space-y-1 max-h-[28rem] overflow-y-auto pr-1 scrollbar-terminal">
             {rules.map((r) => (
               <div
                 key={r.id}
-                className="group relative flex items-start gap-3 rounded-md border border-border/40 bg-card/30 px-3 py-2.5 hover:bg-accent/40 hover:border-border transition-all"
+                className="group relative flex items-start gap-3 rounded-md border border-border bg-transparent px-3 py-2 hover:bg-accent/40 hover:border-border transition-all"
               >
                 {/* Status dot column */}
                 <div className="flex flex-col items-center pt-1">

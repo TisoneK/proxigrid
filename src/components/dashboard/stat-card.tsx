@@ -47,7 +47,7 @@ export function StatCard({
   const valueColored = suffix !== undefined && trend !== undefined;
 
   return (
-    <div className={cn("card-premium p-4 sm:p-5 flex flex-col gap-3 h-full", className)}>
+    <div className={cn("card-premium p-3.5 flex flex-col gap-2.5 h-full", className)}>
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
           {icon && (
