@@ -88,3 +88,14 @@ past entries — append corrections instead.
 - **Open items:** `tasks/backlog.md` — eslint-10 blocked; prisma-chain advisory. Minor (not actioned): `db.ts` logs every query (`log: ['query']`) — noisy in dev; webhook action has no SSRF guard (intentional user-configured URLs).
 - **Notes:** Dev StrictMode double-mount cancels react-query's first fetch, so `isError` doesn't latch in dev on a hard failure — the market-grid empty state was made robust to a blank result rather than depending on `isError`. Verifying UI states required full dev-server restarts (HMR served stale code mid-edit, producing transient `showError is not defined` / getSnapshot console errors that cleared on clean reload).
 - **Report:** none
+
+---
+## 2026-08-26 — Session 8
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Align the Binance integration with the user's Binance API manual (PDF on Desktop) — user chose all three: robustness, order-safety, Ed25519.
+- **Commits:** 4 (1af9e65 Ed25519 signer; 0e66071 client hardening; bbf7507 order-safety filters+TIF/STP; + this chore(context) commit).
+- **Outcome:** done. (A) **Robustness** — server-time offset sync (GET /api/v3/time) applied to signed timestamps + single auto-retry on -1021; HTTP 429/418 now raise a typed `BinanceRateLimitError` with Retry-After (corrected a stale comment that claimed unimplemented behavior). (B) **Order-safety** — new `binance-filters.ts` validates price/qty against PRICE_FILTER/LOT_SIZE/NOTIONAL before submit (adapter caches per-symbol filters 60s); `OrderRequest` gained TIF (GTC/IOC/FOK/GTX) + STP modes. (C) **Ed25519** — signer supports HMAC or Ed25519 (base64, URL-encoded); client prefers Ed25519 when `BINANCE_PRIVATE_KEY` (PEM) is set, else HMAC via `BINANCE_API_SECRET`.
+- **Verification:** can't hit authenticated Binance (no creds + geo-block), so verified with Node self-tests — HMAC matches known hex; **Ed25519 88-byte sig verifies against the derived public key** (matches manual's spec); filter validation checked against **live BTCUSDT filters** (valid passes; bad tick/step/notional rejected). tsc/lint/build all green; app public paths unaffected (100 tickers, candles 200).
+- **New env vars:** `BINANCE_API_KEY`, `BINANCE_API_SECRET` (HMAC) or `BINANCE_PRIVATE_KEY` (Ed25519 PEM, escaped newlines ok), `BINANCE_PAPER` (default testnet), `BINANCE_REST_URL` (Session 6), `ENABLE_LIVE_TRADING`.
+- **Open items:** `tasks/backlog.md` — User Data Streams + listenKey lifecycle, and FIX protocol (both from the manual, deliberately not implemented).
+- **Report:** none
