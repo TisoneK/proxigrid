@@ -3,13 +3,20 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTickers } from "@/hooks/use-ticker";
 import { formatPrice, formatPercent } from "@/lib/utils/format";
-import { Activity, ChevronRight } from "lucide-react";
+import { Activity, ChevronRight, AlertTriangle, RefreshCw } from "lucide-react";
 import { Sparkline, synthesizeSeries } from "@/components/dashboard/sparkline";
 import { StatusDot } from "@/components/dashboard/status-dot";
 import { cn } from "@/lib/utils";
 
 export function MarketGrid() {
-  const { data: tickers, isLoading } = useTickers("binance");
+  const { data: tickers, isLoading, isError, error, refetch, isFetching } =
+    useTickers("binance");
+  const hasData = (tickers?.length ?? 0) > 0;
+  const isBusy = isLoading || isFetching;
+  // Show the empty/error panel whenever we've settled with nothing to display —
+  // covers both a failed fetch and a genuinely empty response. If a refetch
+  // fails while we still hold data, we keep rendering the data instead.
+  const showEmpty = !hasData && !isBusy;
 
   return (
     <div className="card-premium lit-top relative overflow-hidden h-full">
@@ -31,17 +38,54 @@ export function MarketGrid() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/8 border border-emerald-500/20">
-          <StatusDot color="emerald" pulse size="sm" />
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
-            Streaming
+        <div
+          className={cn(
+            "flex items-center gap-1.5 px-2 py-0.5 rounded-md border",
+            showEmpty
+              ? "bg-rose-500/8 border-rose-500/20"
+              : "bg-emerald-500/8 border-emerald-500/20"
+          )}
+        >
+          <StatusDot color={showEmpty ? "rose" : "emerald"} pulse={!showEmpty} size="sm" />
+          <span
+            className={cn(
+              "text-[10px] font-semibold uppercase tracking-wider",
+              showEmpty ? "text-rose-300" : "text-emerald-300"
+            )}
+          >
+            {showEmpty ? "Offline" : "Streaming"}
           </span>
         </div>
       </div>
 
       {/* Body */}
       <div className="p-3">
-        {isLoading ? (
+        {showEmpty ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/10 border border-rose-500/20">
+              <AlertTriangle className="h-5 w-5 text-rose-400" />
+            </div>
+            <div className="space-y-1">
+              <div className="text-sm font-semibold text-foreground">
+                {isError ? "Couldn't load market data" : "No market data available"}
+              </div>
+              <div className="max-w-sm text-xs text-muted-foreground">
+                {isError && error instanceof Error
+                  ? error.message
+                  : "The market feed returned no symbols. Try again in a moment."}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-border disabled:opacity-50"
+            >
+              <RefreshCw className={cn("h-3.5 w-3.5", isFetching && "animate-spin")} />
+              {isFetching ? "Retrying…" : "Retry"}
+            </button>
+          </div>
+        ) : isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             {Array.from({ length: 9 }).map((_, i) => (
               <Skeleton key={i} className="h-20 rounded-lg" />
