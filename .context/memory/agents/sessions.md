@@ -179,3 +179,11 @@ past entries — append corrections instead.
 - **Outcome:** done — added CoinLogo to each signal row; changed footer to 'Market data via Binance · Signals & automation' (the 'Not financial advice' line undercut a product whose purpose is generating signals + automating actions). Verified in-browser; tsc/lint green.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 18
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: remove the placeholder "P" icon from the header (no product icon designed yet).
+- **Commits:** 2 (drop P logo; + this chore(context) commit).
+- **Outcome:** done — removed the green "P" square; header is now just the Proxigrid wordmark + tagline. lint green.
+- **Report:** none
+
