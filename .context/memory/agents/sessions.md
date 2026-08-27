@@ -162,3 +162,12 @@ past entries — append corrections instead.
 - **Outcome:** done — removed the header's always-on "Live" pill; the Markets pill now renders only when the feed is down ("Offline"), making it a real status signal. tsc/lint green.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 16
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: download real logos (Binance + coins).
+- **Commits:** 2 (8618d04 logos; + this chore(context) commit). Also dropped Live pills (82ab3e9) and footer GitHub link (cc4b690) earlier this thread.
+- **Outcome:** done — bundled self-hosted coin logos from `cryptocurrency-icons` (CC0/public-domain, 483 SVGs → `public/coins/`, no runtime external fetch, CSP-safe). New `CoinLogo` component renders a coin's real logo with onError fallback to the monogram `CoinAvatar` (covers the long tail: ENA/SUI/PYTH/TAO/etc. not in the set). Wired into markets grid + portfolio holdings; header 'Binance testnet' chip now shows the Binance/BNB mark (`bnb.svg`). Majors (BTC/ETH/SOL/XRP/BNB/DOGE/ZEC) get real logos. tsc/lint/build green; verified in-browser.
+- **Notes:** chose the CC0 icon package over scraping trademarked assets off exchange sites. Binance exchange logo == BNB gold diamond, so `bnb.svg` doubles as the Binance mark.
+- **Report:** none
+
