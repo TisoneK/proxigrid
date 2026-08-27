@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useTickers } from "@/hooks/use-ticker";
 import { formatPrice, formatPercent } from "@/lib/utils/format";
 import { AlertTriangle, RefreshCw } from "lucide-react";
-import { Sparkline, synthesizeSeries } from "@/components/dashboard/sparkline";
+import { MarketSparkline } from "@/components/dashboard/market-sparkline";
 import { StatusDot } from "@/components/dashboard/status-dot";
 import { CoinAvatar } from "@/components/dashboard/coin-avatar";
 import { coinIdentity } from "@/lib/coins";
@@ -77,7 +77,6 @@ export function MarketGrid() {
               const id = coinIdentity(t.symbol);
               const change = t.priceChangePercent24h ?? 0;
               const up = change >= 0;
-              const series = synthesizeSeries(t.symbol, t.price, change, 20);
               return (
                 <div
                   key={t.symbol}
@@ -96,7 +95,7 @@ export function MarketGrid() {
                   </div>
 
                   <div className="hidden sm:block opacity-80 group-hover:opacity-100 transition-opacity">
-                    <Sparkline data={series} width={64} height={30} ariaLabel={`${id.name} trend`} />
+                    <MarketSparkline symbol={t.symbol} width={64} height={30} />
                   </div>
 
                   <div className="text-right shrink-0">
