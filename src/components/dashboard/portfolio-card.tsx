@@ -45,43 +45,38 @@ export function PortfolioCard() {
   return (
     <div className="card-premium lit-top h-full flex flex-col overflow-hidden">
       {/* Hero */}
-      <div className="relative p-5 sm:p-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/8 via-teal-500/5 to-transparent pointer-events-none" />
-        <div className="absolute -top-14 -right-14 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-
-        <div className="relative">
-          <div className="flex items-center gap-2.5 mb-4">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/12 text-emerald-600 dark:text-emerald-400">
-              <Wallet className="h-[18px] w-[18px]" />
-            </div>
-            <span className="text-sm font-semibold text-foreground">Portfolio</span>
+      <div className="p-5 sm:p-6 border-b border-border">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-primary">
+            <Wallet className="h-[18px] w-[18px]" />
           </div>
+          <span className="text-sm font-semibold text-foreground">Portfolio</span>
+        </div>
 
-          <div className="text-xs text-muted-foreground">Total balance · {data.quoteCurrency}</div>
-          <div
-            className="text-3xl sm:text-[34px] leading-none font-bold tracking-tight mt-1.5 text-foreground tabular-nums"
-            aria-label={formatUsd(data.totalValue)}
-          >
-            <CountUp
-              value={data.totalValue}
-              prefix="$"
-              decimals={2}
-              format={(n) =>
-                new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }).format(n)
-              }
-            />
-          </div>
+        <div className="text-xs text-muted-foreground">Total balance · {data.quoteCurrency}</div>
+        <div
+          className="text-3xl sm:text-[34px] leading-none font-bold tracking-tight mt-1.5 text-foreground tabular-nums"
+          aria-label={formatUsd(data.totalValue)}
+        >
+          <CountUp
+            value={data.totalValue}
+            prefix="$"
+            decimals={2}
+            format={(n) =>
+              new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }).format(n)
+            }
+          />
+        </div>
 
-          <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground tabular-nums">
-            <span>{totalExchanges} exchange{totalExchanges !== 1 ? "s" : ""}</span>
-            <span className="text-border">·</span>
-            <span>{totalHoldings} asset{totalHoldings !== 1 ? "s" : ""}</span>
-          </div>
+        <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground tabular-nums">
+          <span>{totalExchanges} exchange{totalExchanges !== 1 ? "s" : ""}</span>
+          <span className="text-border">·</span>
+          <span>{totalHoldings} asset{totalHoldings !== 1 ? "s" : ""}</span>
         </div>
       </div>
 

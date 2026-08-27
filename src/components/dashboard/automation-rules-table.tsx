@@ -194,11 +194,8 @@ export function AutomationRulesTable() {
 function EmptyRules() {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 blur-xl rounded-full" />
-        <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/15 to-teal-500/10 border border-emerald-500/25">
-          <Cpu className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-        </div>
+      <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-secondary text-primary">
+        <Cpu className="h-5 w-5" />
       </div>
       <p className="mt-4 text-sm font-medium text-foreground">No automation rules yet</p>
       <p className="mt-1 text-xs text-muted-foreground/70 max-w-[20rem]">
@@ -266,9 +263,9 @@ function CreateRuleDialog() {
       <DialogTrigger asChild>
         <Button
           size="sm"
-          className="h-7 text-[11px] gap-1.5 bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-0 hover:from-emerald-400 hover:to-teal-500 shadow-[0_0_18px_-4px_oklch(0.78_0.19_162/0.5)]"
+          className="h-8 gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          <Plus className="h-3 w-3" /> New Rule
+          <Plus className="h-3.5 w-3.5" /> New rule
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md border-border/60">
@@ -380,9 +377,9 @@ function CreateRuleDialog() {
           <Button
             onClick={handleCreate}
             disabled={create.isPending}
-            className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-0 hover:from-emerald-400 hover:to-teal-500"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
-            {create.isPending ? "Creating..." : "Create Rule"}
+            {create.isPending ? "Creating…" : "Create rule"}
           </Button>
         </DialogFooter>
       </DialogContent>

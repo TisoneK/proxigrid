@@ -14,13 +14,8 @@ export function Header() {
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Wordmark */}
           <div className="flex items-center gap-3 min-w-0">
-            <div className="relative h-10 w-10 rounded-2xl overflow-hidden shrink-0 shadow-glow-brand">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-lg font-black tracking-tighter text-white drop-shadow">
-                  P
-                </span>
-              </div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shrink-0">
+              <span className="text-base font-bold text-primary-foreground">P</span>
             </div>
             <div className="min-w-0">
               <h1 className="text-lg font-bold tracking-tight leading-none">
