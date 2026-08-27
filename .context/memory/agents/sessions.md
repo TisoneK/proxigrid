@@ -77,3 +77,14 @@ past entries — append corrections instead.
 - **Open items:** `tasks/backlog.md` — market-grid error state; eslint-10 blocked; prisma-chain advisory; (unbacklogged) pre-existing tsc errors in binance-adapter / mini-services.
 - **Notes:** Browser pane `scroll` action timed out repeatedly ("pane hidden"); worked around by resizing the viewport taller. Screenshots/clicks/refs were fine.
 - **Report:** none
+
+---
+## 2026-08-26 — Session 7
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Full code-quality sweep, backend → UI, running the app; fix everything found.
+- **Commits:** 5 (0f0255d fix binance kline type; 5158440 tsconfig exclude mini-services; 1822211 fix header getSnapshot; 05543e0 feat market-grid error state; + this chore(context) memory commit).
+- **Outcome:** done — baseline had 8 `tsc` errors; **now 0** (lint clean, build green throughout). Fixed: (1) **real bug** — `BinanceKlineResponse` was typed as an array-of-tuples, doubly-wrapping `getKlines()` and breaking the candle mapping (verified `/candles` returns correct OHLCV after the fix). (2) `mini-services` (standalone bun service) excluded from the app typecheck. (3) **regression from Session 3** — the header clock's `useSyncExternalStore` `getSnapshot` returned a fresh string each call, tripping React's "getSnapshot should be cached" infinite-loop guard; now uses a module-level cache. (4) added the Markets grid error/empty state (backlog item) — verified live against a broken endpoint (Offline badge + Retry).
+- **Backend review:** indicators (SMA/EMA/RSI-Wilder/MACD/Bollinger) mathematically sound; rule engine key scheme (`${indicator}_${period}`) consistent with `buildRuleContext`; `place_order` correctly gated behind `ENABLE_LIVE_TRADING`; Prisma singleton correct. No further bugs found.
+- **Open items:** `tasks/backlog.md` — eslint-10 blocked; prisma-chain advisory. Minor (not actioned): `db.ts` logs every query (`log: ['query']`) — noisy in dev; webhook action has no SSRF guard (intentional user-configured URLs).
+- **Notes:** Dev StrictMode double-mount cancels react-query's first fetch, so `isError` doesn't latch in dev on a hard failure — the market-grid empty state was made robust to a blank result rather than depending on `isError`. Verifying UI states required full dev-server restarts (HMR served stale code mid-edit, producing transient `showError is not defined` / getSnapshot console errors that cleared on clean reload).
+- **Report:** none
