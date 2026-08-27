@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useSignals, useGenerateSignals } from "@/hooks/use-signals";
 import { formatPrice, timeAgo } from "@/lib/utils/format";
-import { Brain, RefreshCw, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react";
+import { Radar, RefreshCw, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
 import { coinIdentity } from "@/lib/coins";
 import { cn } from "@/lib/utils";
@@ -31,10 +31,8 @@ export function SignalsFeed() {
     <div className="card-premium lit-top relative overflow-hidden h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-500/10 border border-emerald-500/20">
-            <Brain className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-          </div>
+        <div className="flex items-center gap-2">
+          <Radar className="h-4 w-4 text-muted-foreground shrink-0" />
           <div>
             <h2 className="text-base font-semibold text-foreground">Signals</h2>
             <p className="text-xs text-muted-foreground mt-0.5">RSI · MACD · EMA · Bollinger</p>

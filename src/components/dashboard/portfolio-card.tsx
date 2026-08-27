@@ -46,10 +46,8 @@ export function PortfolioCard() {
     <div className="card-premium lit-top h-full flex flex-col overflow-hidden">
       {/* Hero */}
       <div className="p-5 sm:p-6 border-b border-border">
-        <div className="flex items-center gap-2.5 mb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-primary">
-            <Wallet className="h-[18px] w-[18px]" />
-          </div>
+        <div className="flex items-center gap-2 mb-4">
+          <Wallet className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-semibold text-foreground">Portfolio</span>
         </div>
 

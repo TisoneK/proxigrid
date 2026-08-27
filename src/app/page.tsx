@@ -10,7 +10,7 @@ import { usePortfolio } from "@/hooks/use-portfolio";
 import { useTickers } from "@/hooks/use-ticker";
 import { useSignals } from "@/hooks/use-signals";
 import { useAutomationRules } from "@/hooks/use-automation-rules";
-import { Activity, Brain, Zap, Wallet } from "lucide-react";
+import { Wallet, LineChart, Radar, Zap } from "lucide-react";
 
 export default function Home() {
   const { data: portfolio } = usePortfolio();
@@ -50,7 +50,6 @@ export default function Home() {
             format={(n) => formatCurrency(n)}
             sublabel="Across all exchanges"
             icon={<Wallet />}
-            accent="emerald"
           />
           <StatCard
             label="Avg 24h change"
@@ -60,8 +59,7 @@ export default function Home() {
             decimals={2}
             trend={avgChange}
             sublabel="Top 5 markets by volume"
-            icon={<Activity />}
-            accent={avgChange >= 0 ? "emerald" : "amber"}
+            icon={<LineChart />}
           />
           <StatCard
             label="Active signals"
@@ -69,8 +67,7 @@ export default function Home() {
             valueLabel={String(signalCount)}
             decimals={0}
             sublabel="RSI · MACD · EMA · Bollinger"
-            icon={<Brain />}
-            accent="teal"
+            icon={<Radar />}
           />
           <StatCard
             label="Automations"
@@ -79,7 +76,6 @@ export default function Home() {
             decimals={0}
             sublabel={`${totalRuleCount} configured`}
             icon={<Zap />}
-            accent="slate"
           />
         </div>
 

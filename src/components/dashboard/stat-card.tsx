@@ -16,19 +16,12 @@ interface StatCardProps {
   sublabel?: string;
   /** Optional trend percentage → colored chip / value tint. */
   trend?: number;
+  /** Small monochrome icon shown beside the label. */
   icon?: React.ReactNode;
-  accent?: "emerald" | "teal" | "amber" | "slate";
   className?: string;
 }
 
-const accentMap: Record<NonNullable<StatCardProps["accent"]>, string> = {
-  emerald: "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400",
-  teal: "bg-teal-500/12 text-teal-600 dark:text-teal-400",
-  amber: "bg-amber-500/12 text-amber-600 dark:text-amber-400",
-  slate: "bg-secondary text-muted-foreground",
-};
-
-/** A friendly stat tile: soft icon disc, plain-language label, big value. */
+/** A stat tile: plain-language label, big value, optional trend. */
 export function StatCard({
   label,
   value,
@@ -40,7 +33,6 @@ export function StatCard({
   sublabel,
   trend,
   icon,
-  accent = "emerald",
   className,
 }: StatCardProps) {
   const trendUp = trend !== undefined && trend >= 0;
@@ -49,20 +41,11 @@ export function StatCard({
   return (
     <div className={cn("card-premium p-3.5 flex flex-col gap-2.5 h-full", className)}>
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5 min-w-0">
+        <div className="flex items-center gap-1.5 min-w-0 text-muted-foreground">
           {icon && (
-            <div
-              className={cn(
-                "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl",
-                accentMap[accent]
-              )}
-            >
-              <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">{icon}</span>
-            </div>
+            <span className="shrink-0 [&_svg]:h-4 [&_svg]:w-4">{icon}</span>
           )}
-          <div className="text-sm font-medium text-muted-foreground truncate">
-            {label}
-          </div>
+          <div className="text-sm font-medium truncate">{label}</div>
         </div>
 
         {trend !== undefined && !suffix && (

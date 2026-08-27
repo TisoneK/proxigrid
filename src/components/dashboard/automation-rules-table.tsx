@@ -46,10 +46,8 @@ export function AutomationRulesTable() {
     <div className="card-premium lit-top relative overflow-hidden h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-500/10 border border-emerald-500/20">
-            <Zap className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-          </div>
+        <div className="flex items-center gap-2">
+          <Zap className="h-4 w-4 text-muted-foreground shrink-0" />
           <div>
             <h2 className="text-base font-semibold text-foreground">Automations</h2>
             <p className="text-xs text-muted-foreground mt-0.5">Trigger actions on market conditions</p>
