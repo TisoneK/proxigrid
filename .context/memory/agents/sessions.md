@@ -154,3 +154,11 @@ past entries — append corrections instead.
 - **Outcome:** done — light `--background` 0.984 → 0.955 (soft gray canvas), `--card` 1.0 → 0.992, muted/secondary/border nudged for depth. Cards now lift off the canvas instead of blending into a blinding white sheet. Dark theme unchanged. Verified in-browser.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 15
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: the "Live" pills are redundant (there are multiple). Remove them.
+- **Commits:** 2 (drop Live pills; + this chore(context) commit).
+- **Outcome:** done — removed the header's always-on "Live" pill; the Markets pill now renders only when the feed is down ("Offline"), making it a real status signal. tsc/lint green.
+- **Report:** none
+
