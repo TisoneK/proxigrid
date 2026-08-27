@@ -171,3 +171,11 @@ past entries — append corrections instead.
 - **Notes:** chose the CC0 icon package over scraping trademarked assets off exchange sites. Binance exchange logo == BNB gold diamond, so `bnb.svg` doubles as the Binance mark.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 17
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: signals lack logos; footer 'Not financial advice' contradicts the app's goal.
+- **Commits:** 2 (signals logos + footer copy; + this chore(context) commit).
+- **Outcome:** done — added CoinLogo to each signal row; changed footer to 'Market data via Binance · Signals & automation' (the 'Not financial advice' line undercut a product whose purpose is generating signals + automating actions). Verified in-browser; tsc/lint green.
+- **Report:** none
+
