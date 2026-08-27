@@ -22,9 +22,24 @@ function formatUtcTime() {
   });
 }
 
+// useSyncExternalStore requires getSnapshot to return a *cached* value that
+// only changes when the store does — returning a fresh string on every call
+// trips React's "getSnapshot should be cached" infinite-loop guard. So we keep
+// the formatted time in a module-level cache and refresh it once per tick.
+let cachedTime = TIME_PLACEHOLDER;
+
 function subscribeToSecond(onTick: () => void) {
-  const id = setInterval(onTick, 1000);
+  cachedTime = formatUtcTime(); // show the real time immediately on mount
+  onTick();
+  const id = setInterval(() => {
+    cachedTime = formatUtcTime();
+    onTick();
+  }, 1000);
   return () => clearInterval(id);
+}
+
+function getTimeSnapshot() {
+  return cachedTime;
 }
 
 export function Header() {
@@ -33,7 +48,7 @@ export function Header() {
   // placeholder, then reconciles to the live UTC time on the client.
   const time = React.useSyncExternalStore(
     subscribeToSecond,
-    formatUtcTime,
+    getTimeSnapshot,
     () => TIME_PLACEHOLDER,
   );
 
