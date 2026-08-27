@@ -195,3 +195,11 @@ past entries — append corrections instead.
 - **Outcome:** done — removed the tinted colored-disc treatment on KPI tiles and the Portfolio/Signals/Automations card headers; icons are now clean small monochrome glyphs inline with the label (Wallet/LineChart/Radar/Zap). Dropped the now-unused `accent` prop from StatCard. (Briefly removed icons per an initial reading, then the user clarified "do not remove, we need real icons" — reverted to keeping them, cleaned the treatment.) tsc/lint green; verified in-browser.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 20
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: the body Portfolio card duplicates the KPI tile — remove it; make the top KPI tiles clickable to open a detail popup.
+- **Commits:** 2 (clickable tiles + detail dialogs, delete portfolio-card; + this chore(context) commit).
+- **Outcome:** done — removed the redundant body Portfolio card (Markets now full-width) and deleted the orphaned `portfolio-card.tsx`. Made StatCard clickable (optional onClick, keyboard-accessible). New `StatDetailDialog` opens a drill-down per tile: Portfolio→balances/holdings, Avg 24h change→top movers (gainers/losers), Active signals→recent signals, Automations→rules. Verified both Portfolio and Movers dialogs live in-browser; tsc/lint/build green.
+- **Report:** none
+
