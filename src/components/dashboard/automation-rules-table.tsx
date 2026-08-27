@@ -36,11 +36,10 @@ import { toast } from "sonner";
 import { timeAgo } from "@/lib/utils/format";
 import { cn } from "@/lib/utils";
 
+type AutomationRule = NonNullable<ReturnType<typeof useAutomationRules>["data"]>[number];
+
 export function AutomationRulesTable() {
   const { data: rules, isLoading } = useAutomationRules();
-  const toggleRule = useToggleRule();
-  const deleteRule = useDeleteRule();
-  const triggerRule = useTriggerRule();
 
   return (
     <div className="card-premium lit-top relative overflow-hidden h-full flex flex-col">
@@ -67,123 +66,121 @@ export function AutomationRulesTable() {
         ) : rules && rules.length > 0 ? (
           <div className="space-y-1 max-h-[28rem] overflow-y-auto pr-1 scrollbar-terminal">
             {rules.map((r) => (
-              <div
-                key={r.id}
-                className="group relative flex items-start gap-3 rounded-md border border-border bg-transparent px-3 py-2 hover:bg-accent/40 hover:border-border transition-all"
-              >
-                {/* Status dot column */}
-                <div className="flex flex-col items-center pt-1">
-                  <StatusDot
-                    color={r.enabled ? "emerald" : "slate"}
-                    pulse={r.enabled}
-                    size="md"
-                    label={r.enabled ? "active" : "paused"}
-                  />
-                </div>
-
-                {/* Rule content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-foreground">
-                      {r.name}
-                    </span>
-                    {r.enabled ? (
-                      <Badge
-                        variant="outline"
-                        className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0 h-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                      >
-                        Active
-                      </Badge>
-                    ) : (
-                      <Badge
-                        variant="outline"
-                        className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0 h-4 bg-slate-500/10 text-slate-500 dark:text-slate-400 border-slate-500/20"
-                      >
-                        Paused
-                      </Badge>
-                    )}
-                    <span className="text-[10px] font-mono tabular-nums text-muted-foreground/60">
-                      {r.trigger.exchange}:{r.trigger.symbol} · {r.trigger.timeframe}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground mt-1 font-mono">
-                    {r.description ||
-                      `${r.trigger.conditions.length} condition${r.trigger.conditions.length !== 1 ? "s" : ""} · action: ${r.action.type}`}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground/60 mt-0.5 font-mono tabular-nums">
-                    Last fired: {r.lastFiredAt ? timeAgo(r.lastFiredAt) : "never"} · cooldown {r.cooldownSec}s
-                  </p>
-                </div>
-
-                {/* Action controls */}
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={triggerRule.isPending && triggerRule.variables === r.id}
-                    onClick={() => {
-                      triggerRule.mutate(r.id, {
-                        onSuccess: (res) => {
-                          if (res.fired) {
-                            toast.success(`Rule fired: ${r.name}`, {
-                              description: res.evaluationNotes?.join(", ") || "Action executed",
-                            });
-                          } else if (res.skippedDueToCooldown) {
-                            toast.warning(`Cooldown active — rule skipped`, {
-                              description: `Try again in a few minutes`,
-                            });
-                          } else {
-                            toast.info(`Conditions not met for "${r.name}"`, {
-                              description: res.evaluationReasons?.join(", ") || "Market state didn't match",
-                            });
-                          }
-                        },
-                        onError: (e) => toast.error(`Failed: ${(e as Error).message}`),
-                      });
-                    }}
-                    title="Evaluate now"
-                    className="h-7 w-7 p-0 text-muted-foreground hover:text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
-                  >
-                    <Play className={cn("h-3.5 w-3.5", triggerRule.isPending && triggerRule.variables === r.id && "animate-pulse")} />
-                  </Button>
-                  <Switch
-                    checked={r.enabled}
-                    onCheckedChange={(checked) => {
-                      toggleRule.mutate(
-                        { id: r.id, enabled: checked },
-                        {
-                          onSuccess: () =>
-                            toast.success(checked ? `Rule enabled` : `Rule paused`, {
-                              description: r.name,
-                            }),
-                          onError: (e) => toast.error(`Failed: ${(e as Error).message}`),
-                        }
-                      );
-                    }}
-                    aria-label={`Toggle ${r.name}`}
-                  />
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      if (confirm(`Delete rule "${r.name}"?`)) {
-                        deleteRule.mutate(r.id, {
-                          onSuccess: () => toast.success("Rule deleted"),
-                        });
-                      }
-                    }}
-                    title="Delete"
-                    className="h-7 w-7 p-0 text-muted-foreground hover:text-rose-600 dark:text-rose-400 hover:bg-rose-500/10"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </div>
+              <RuleRow key={r.id} rule={r} />
             ))}
           </div>
         ) : (
           <EmptyRules />
         )}
+      </div>
+    </div>
+  );
+}
+
+/** One automation rule with its live controls (evaluate / toggle / delete). */
+export function RuleRow({ rule: r }: { rule: AutomationRule }) {
+  const toggleRule = useToggleRule();
+  const deleteRule = useDeleteRule();
+  const triggerRule = useTriggerRule();
+  const triggering = triggerRule.isPending && triggerRule.variables === r.id;
+
+  return (
+    <div className="group relative flex items-start gap-3 rounded-md border border-border bg-transparent px-3 py-2 hover:bg-accent/40 transition-all">
+      <div className="flex flex-col items-center pt-1">
+        <StatusDot
+          color={r.enabled ? "emerald" : "slate"}
+          pulse={r.enabled}
+          size="md"
+          label={r.enabled ? "active" : "paused"}
+        />
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm font-semibold text-foreground">{r.name}</span>
+          <Badge
+            variant="outline"
+            className={cn(
+              "text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0 h-4",
+              r.enabled
+                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                : "bg-slate-500/10 text-slate-500 dark:text-slate-400 border-slate-500/20"
+            )}
+          >
+            {r.enabled ? "Active" : "Paused"}
+          </Badge>
+          <span className="text-[10px] font-mono tabular-nums text-muted-foreground/60">
+            {r.trigger.exchange}:{r.trigger.symbol} · {r.trigger.timeframe}
+          </span>
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-1 font-mono">
+          {r.description ||
+            `${r.trigger.conditions.length} condition${r.trigger.conditions.length !== 1 ? "s" : ""} · action: ${r.action.type}`}
+        </p>
+        <p className="text-[10px] text-muted-foreground/60 mt-0.5 font-mono tabular-nums">
+          Last fired: {r.lastFiredAt ? timeAgo(r.lastFiredAt) : "never"} · cooldown {r.cooldownSec}s
+        </p>
+      </div>
+
+      <div className="flex items-center gap-1 flex-shrink-0">
+        <Button
+          size="sm"
+          variant="ghost"
+          disabled={triggering}
+          onClick={() => {
+            triggerRule.mutate(r.id, {
+              onSuccess: (res) => {
+                if (res.fired) {
+                  toast.success(`Rule fired: ${r.name}`, {
+                    description: res.evaluationNotes?.join(", ") || "Action executed",
+                  });
+                } else if (res.skippedDueToCooldown) {
+                  toast.warning("Cooldown active — rule skipped", {
+                    description: "Try again in a few minutes",
+                  });
+                } else {
+                  toast.info(`Conditions not met for "${r.name}"`, {
+                    description: res.evaluationReasons?.join(", ") || "Market state didn't match",
+                  });
+                }
+              },
+              onError: (e) => toast.error(`Failed: ${(e as Error).message}`),
+            });
+          }}
+          title="Evaluate now"
+          className="h-7 w-7 p-0 text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10"
+        >
+          <Play className={cn("h-3.5 w-3.5", triggering && "animate-pulse")} />
+        </Button>
+        <Switch
+          checked={r.enabled}
+          onCheckedChange={(checked) => {
+            toggleRule.mutate(
+              { id: r.id, enabled: checked },
+              {
+                onSuccess: () =>
+                  toast.success(checked ? "Rule enabled" : "Rule paused", { description: r.name }),
+                onError: (e) => toast.error(`Failed: ${(e as Error).message}`),
+              }
+            );
+          }}
+          aria-label={`Toggle ${r.name}`}
+        />
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => {
+            if (confirm(`Delete rule "${r.name}"?`)) {
+              deleteRule.mutate(r.id, {
+                onSuccess: () => toast.success("Rule deleted"),
+              });
+            }
+          }}
+          title="Delete"
+          className="h-7 w-7 p-0 text-muted-foreground hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
       </div>
     </div>
   );
@@ -203,7 +200,7 @@ function EmptyRules() {
   );
 }
 
-function CreateRuleDialog() {
+export function CreateRuleDialog() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("BTCUSDT");
@@ -268,9 +265,7 @@ function CreateRuleDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md border-border/60">
         <DialogHeader>
-          <DialogTitle className="text-base font-semibold">
-            Create Automation Rule
-          </DialogTitle>
+          <DialogTitle className="text-base font-semibold">Create automation rule</DialogTitle>
           <DialogDescription>
             Define a trigger condition and an action. When the condition is met, the action fires.
           </DialogDescription>
@@ -290,11 +285,7 @@ function CreateRuleDialog() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="symbol">Symbol</Label>
-              <Input
-                id="symbol"
-                value={symbol}
-                onChange={(e) => setSymbol(e.target.value)}
-              />
+              <Input id="symbol" value={symbol} onChange={(e) => setSymbol(e.target.value)} />
             </div>
             <div>
               <Label>Timeframe</Label>
@@ -356,10 +347,7 @@ function CreateRuleDialog() {
 
           <div>
             <Label>Action</Label>
-            <Select
-              value={actionType}
-              onValueChange={(v) => setActionType(v as "notify" | "webhook")}
-            >
+            <Select value={actionType} onValueChange={(v) => setActionType(v as "notify" | "webhook")}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -384,5 +372,3 @@ function CreateRuleDialog() {
     </Dialog>
   );
 }
-
-

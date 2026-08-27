@@ -12,7 +12,7 @@ import { useTickers } from "@/hooks/use-ticker";
 import { useSignals } from "@/hooks/use-signals";
 import { useAutomationRules } from "@/hooks/use-automation-rules";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
-import { StatusDot } from "@/components/dashboard/status-dot";
+import { RuleRow, CreateRuleDialog } from "@/components/dashboard/automation-rules-table";
 import { coinIdentity } from "@/lib/coins";
 import { formatUsd, formatPrice, formatPercent, timeAgo } from "@/lib/utils/format";
 import { cn } from "@/lib/utils";
@@ -190,26 +190,20 @@ function SignalsDetail() {
 
 function AutomationsDetail() {
   const { data: rules } = useAutomationRules();
-  if (!rules || rules.length === 0) return <Empty>No automation rules yet.</Empty>;
   return (
-    <div className="space-y-2">
-      {rules.map((r) => (
-        <div key={r.id} className="flex items-start gap-2.5 py-1.5 border-b border-border last:border-0">
-          <StatusDot color={r.enabled ? "emerald" : "slate"} pulse={r.enabled} size="md" className="mt-1" />
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold">{r.name}</div>
-            <div className="text-xs text-muted-foreground">
-              {r.description || `${r.trigger.conditions.length} condition(s) · ${r.action.type}`}
-            </div>
-            <div className="text-[10px] text-muted-foreground/60 tabular-nums mt-0.5">
-              {r.trigger.exchange}:{r.trigger.symbol} · {r.trigger.timeframe} · last fired {r.lastFiredAt ? timeAgo(r.lastFiredAt) : "never"}
-            </div>
-          </div>
-          <span className={cn("text-[10px] font-semibold uppercase shrink-0", r.enabled ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground")}>
-            {r.enabled ? "Active" : "Paused"}
-          </span>
+    <div className="space-y-3">
+      <div className="flex justify-end">
+        <CreateRuleDialog />
+      </div>
+      {!rules || rules.length === 0 ? (
+        <Empty>No automation rules yet. Create one to get started.</Empty>
+      ) : (
+        <div className="space-y-1.5">
+          {rules.map((r) => (
+            <RuleRow key={r.id} rule={r} />
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }
