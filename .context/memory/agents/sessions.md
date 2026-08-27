@@ -108,3 +108,13 @@ past entries — append corrections instead.
 - **Outcome:** done — introduced **Vitest** (`npm test` / `npm run test:watch`, added as devDependency; no config file needed — the tested modules use relative imports). **24 tests, all green**, covering: indicators (SMA/EMA seeding, RSI bounds + extremes, MACD histogram = macd−signal, Bollinger ordering + zero-variance), `binance-filters` (tick/step/notional/minQty rejection, market + unknown-filter cases), `binance-signer` (HMAC reference digest + tamper check, Ed25519 88-char sign/verify, buildSignedQuery recvWindow cap + URL-encoding). tsc/lint/build all unaffected.
 - **Open items:** `tasks/backlog.md` — test coverage could be extended to the services/adapter layer with mocks (new item).
 - **Report:** none
+
+---
+## 2026-08-26 — Session 10
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** UI redesign — the app felt like a dev terminal; make it a consumer crypto site. User chose: light+dark both first-class (default light) with a visible toggle; full pass over header + KPI + all four cards.
+- **Commits:** 3 (5722895 design-system + theme toggle; 1a7deb0 dashboard redesign; + this chore(context) commit).
+- **Outcome:** done. Reworked `globals.css` into polished first-class light (default) + dark palettes with soft theme-aware card elevation; **de-monospaced** by pointing `--font-mono` at the sans face (tabular figures retained), so no per-component churn was needed. Added a visible **ThemeToggle** (sun/moon; client-only via `useSyncExternalStore` to stay lint-clean — same rule as the header clock). New `coins.ts` + `CoinAvatar` give markets friendly names ("Bitcoin", "The Sandbox") + monogram avatars + BASE/QUOTE pairs. Redesigned header (dropped the terminal UTC clock), KPI (separate soft stat tiles), markets (coin cards), portfolio/signals/automations (sentence-case labels, light+dark-safe colors, "Rules Engine"→"Automations"). Switched `page.tsx` from a locked single-screen to natural scroll + sticky header. **Verified in-browser in both themes** (screenshots); tsc/lint/build green.
+- **Notes:** New reusable design token in globals: `--shadow-card` / `--shadow-card-hover` (theme-tuned). The old "terminal" utility class names (card-premium, lit-top, tint-up/down, scrollbar-terminal, shadow-glow-brand) were kept but restyled theme-aware, so no component references broke.
+- **Open items:** possible follow-ups — humanize signal-row symbols (still raw BTCUSDT), and real coin logos (currently monogram avatars, no logo assets shipped).
+- **Report:** none
