@@ -209,8 +209,8 @@ const bollingerSignal: SignalGenerator = (candles, ctx) => {
   };
 };
 
-// Registry
-const SIGNAL_GENERATORS: Record<string, SignalGenerator> = {
+// Registry (exported for unit testing the pure generators)
+export const SIGNAL_GENERATORS: Record<string, SignalGenerator> = {
   RSI: rsiSignal,
   MACD: macdSignal,
   EMA_CROSS: emaCrossSignal,
