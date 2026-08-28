@@ -75,11 +75,11 @@ export function MarketGrid() {
               return (
                 <div
                   key={t.symbol}
-                  className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-secondary/70"
+                  className="group flex items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-secondary/70"
                 >
                   <CoinLogo base={id.base} size={28} />
 
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 max-w-[45%]">
                     <div className="text-[13px] font-semibold text-foreground truncate leading-tight">
                       {id.name}
                     </div>
@@ -89,7 +89,13 @@ export function MarketGrid() {
                     </div>
                   </div>
 
-                  <div className="hidden lg:block text-right shrink-0 w-14 tabular-nums">
+                  {/* Sparkline fills the flexible middle so the row isn't hollow. */}
+                  <div className="flex-1 hidden sm:flex items-center justify-center min-w-0 opacity-70 group-hover:opacity-100 transition-opacity">
+                    <MarketSparkline symbol={t.symbol} width={84} height={24} />
+                  </div>
+                  <div className="flex-1 sm:hidden" />
+
+                  <div className="hidden lg:block text-right shrink-0 w-16 tabular-nums">
                     <div className="text-[11px] text-muted-foreground leading-tight">
                       ${formatCompact(t.quoteVolume24h)}
                     </div>
@@ -98,11 +104,7 @@ export function MarketGrid() {
                     </div>
                   </div>
 
-                  <div className="hidden sm:block opacity-70 group-hover:opacity-100 transition-opacity">
-                    <MarketSparkline symbol={t.symbol} width={54} height={24} />
-                  </div>
-
-                  <div className="text-right shrink-0 w-[88px]">
+                  <div className="text-right shrink-0 w-[92px]">
                     <div className="text-[13px] font-semibold text-foreground tabular-nums leading-tight">
                       {formatPrice(t.price)}
                     </div>

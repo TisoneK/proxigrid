@@ -271,7 +271,7 @@ export function CreateRuleDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3">
+        <div className="space-y-4 [&_label]:block [&_label]:mb-1.5">
           <div>
             <Label htmlFor="rule-name">Rule name</Label>
             <Input
