@@ -9,6 +9,8 @@ import {
 import { Bell, Zap, TrendingUp, TrendingDown } from "lucide-react";
 import { useSignals } from "@/hooks/use-signals";
 import { useExecutions } from "@/hooks/use-executions";
+import { useTickers, type Ticker } from "@/hooks/use-ticker";
+import { CoinDetailDialog } from "@/components/dashboard/coin-detail-dialog";
 import { coinIdentity } from "@/lib/coins";
 import { timeAgo } from "@/lib/utils/format";
 import { cn } from "@/lib/utils";
@@ -20,6 +22,8 @@ interface NotifItem {
   desc: string;
   time: number;
   up?: boolean;
+  symbol?: string;
+  price?: number;
 }
 
 const SEEN_KEY = "proxigrid:notif-seen";
@@ -28,7 +32,9 @@ const SEEN_KEY = "proxigrid:notif-seen";
 export function NotificationBell() {
   const { data: signals } = useSignals(30);
   const { data: execs } = useExecutions(30);
+  const { data: tickers } = useTickers("binance");
   const [open, setOpen] = React.useState(false);
+  const [detail, setDetail] = React.useState<Ticker | null>(null);
   const [lastSeen, setLastSeen] = React.useState<number>(() => {
     try {
       return Number(localStorage.getItem(SEEN_KEY) ?? 0);
@@ -46,6 +52,8 @@ export function NotificationBell() {
         title: `Rule fired: ${e.rule?.name ?? "automation"}`,
         desc: e.actionResult?.detail ?? e.triggerSnapshot?.notes?.join(", ") ?? "",
         time: new Date(e.firedAt).getTime(),
+        symbol: e.triggerSnapshot?.ctx?.symbol,
+        price: e.triggerSnapshot?.ctx?.price,
       });
     }
     for (const s of signals ?? []) {
@@ -58,6 +66,8 @@ export function NotificationBell() {
         desc: `${s.indicator} · ${(s.strength * 100).toFixed(0)}% confidence`,
         time: new Date(s.createdAt).getTime(),
         up: s.direction === "long",
+        symbol: s.symbol,
+        price: s.price,
       });
     }
     return out.sort((a, b) => b.time - a.time).slice(0, 30);
@@ -76,6 +86,20 @@ export function NotificationBell() {
         /* ignore */
       }
     }
+  };
+
+  const openDetail = (item: NotifItem) => {
+    if (!item.symbol) return;
+    setOpen(false);
+    const live = (tickers ?? []).find((t) => t.symbol === item.symbol);
+    setDetail(
+      live ?? {
+        exchangeCode: "binance",
+        symbol: item.symbol,
+        price: item.price ?? 0,
+        timestamp: item.time,
+      }
+    );
   };
 
   return (
@@ -103,9 +127,12 @@ export function NotificationBell() {
             </p>
           ) : (
             items.map((i) => (
-              <div
+              <button
                 key={i.id}
-                className="flex items-start gap-2.5 px-4 py-2.5 border-b border-border last:border-0 hover:bg-secondary/50"
+                type="button"
+                onClick={() => openDetail(i)}
+                disabled={!i.symbol}
+                className="flex w-full items-start gap-2.5 px-4 py-2.5 border-b border-border last:border-0 text-left hover:bg-secondary/50 transition-colors disabled:cursor-default disabled:hover:bg-transparent"
               >
                 <span
                   className={cn(
@@ -132,11 +159,12 @@ export function NotificationBell() {
                 <span className="shrink-0 text-[10px] text-muted-foreground/60 tabular-nums">
                   {timeAgo(i.time)}
                 </span>
-              </div>
+              </button>
             ))
           )}
         </div>
       </PopoverContent>
+      <CoinDetailDialog ticker={detail} onClose={() => setDetail(null)} />
     </Popover>
   );
 }
