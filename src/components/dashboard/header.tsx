@@ -2,6 +2,7 @@
 
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
+import { SettingsMenu } from "@/components/dashboard/settings-menu";
 import { Search } from "lucide-react";
 
 /**
@@ -44,6 +45,7 @@ export function Header() {
             </div>
 
             <NotificationBell />
+            <SettingsMenu />
             <ThemeToggle />
           </div>
         </div>

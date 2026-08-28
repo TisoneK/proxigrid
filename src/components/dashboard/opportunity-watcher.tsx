@@ -5,9 +5,9 @@ import { useSignals } from "@/hooks/use-signals";
 import { coinIdentity } from "@/lib/coins";
 import { toast } from "sonner";
 import { OrderConfirmDialog, type OrderIntent } from "@/components/dashboard/order-confirm-dialog";
+import { useLocalSetting } from "@/hooks/use-local-setting";
+import { SETTINGS } from "@/lib/settings";
 
-/** Only surface directional signals at/above this strength. */
-const STRENGTH_THRESHOLD = 0.5;
 /** Ignore signals older than this (avoid alerting on stale backlog). */
 const MAX_AGE_MS = 10 * 60 * 1000;
 
@@ -17,6 +17,7 @@ const MAX_AGE_MS = 10 * 60 * 1000;
  */
 export function OpportunityWatcher() {
   const { data: signals } = useSignals(50);
+  const [threshold] = useLocalSetting(SETTINGS.oppThreshold.key, SETTINGS.oppThreshold.default);
   const seen = React.useRef<Set<string>>(new Set());
   const initialized = React.useRef(false);
   const [intent, setIntent] = React.useState<OrderIntent | null>(null);
@@ -36,7 +37,7 @@ export function OpportunityWatcher() {
       seen.current.add(s.id);
 
       const dir = s.direction;
-      if ((dir !== "long" && dir !== "short") || s.strength < STRENGTH_THRESHOLD) continue;
+      if ((dir !== "long" && dir !== "short") || s.strength < threshold) continue;
       if (Date.now() - new Date(s.createdAt).getTime() > MAX_AGE_MS) continue;
 
       const id = coinIdentity(s.symbol);
@@ -56,7 +57,9 @@ export function OpportunityWatcher() {
         },
       });
     }
-  }, [signals]);
+    // threshold is in deps so a change takes effect immediately; re-running is
+    // harmless since every already-processed signal is in `seen`.
+  }, [signals, threshold]);
 
   return <OrderConfirmDialog intent={intent} onClose={() => setIntent(null)} />;
 }
