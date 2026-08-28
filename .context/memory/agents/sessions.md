@@ -235,3 +235,12 @@ past entries — append corrections instead.
 - **Outcome:** done — light `--card`/`--popover` 0.992 → 0.978 (gentle off-white); cards lift off the 0.955 gray canvas via border + shadow instead of glaring. Dark unchanged. Verified in-browser.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 25
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Build the two code gaps toward running the app on a real Binance account: (1) background automation worker so rules fire on their own; (2) expose the place_order action so automations can trade.
+- **Commits:** 3 (cdf0935 worker + sweep route + instrumentation; d086eac place_order in rule form; + this chore(context) commit).
+- **Outcome:** done — `automation-worker.ts` (interval sweep, default 60s), `src/instrumentation.ts` starts it on boot gated behind `ENABLE_AUTOMATION_WORKER=true`, and `POST /api/automation/sweep` for manual/cron triggering (tested: swept 1 rule, 0 fired). Rule form gains a 'Place order (live trade)' action with side/order-type/quantity(+limit price) + safety note; still double-gated by `ENABLE_LIVE_TRADING`. tsc/lint/build green; UI verified in-browser.
+- **Notes:** For real-account/testnet testing the app must run where Binance isn't geo-blocked (signed endpoints + testnet are 451 here; the data-api override is public-data-only). Recorded env + geo caveat in system/environments.md. Remaining toward live trading (not built): validate the order path on testnet, User Data Streams for fills, encrypted key storage (only relevant if multi-tenant later).
+- **Report:** none
+
