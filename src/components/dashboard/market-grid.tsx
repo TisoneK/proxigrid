@@ -1,7 +1,9 @@
 "use client";
 
+import * as React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTickers } from "@/hooks/use-ticker";
+import { useTickers, type Ticker } from "@/hooks/use-ticker";
+import { CoinDetailDialog } from "@/components/dashboard/coin-detail-dialog";
 import { formatPrice, formatPercent, formatCompact } from "@/lib/utils/format";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { MarketSparkline } from "@/components/dashboard/market-sparkline";
@@ -16,6 +18,7 @@ export function MarketGrid() {
   const hasData = (tickers?.length ?? 0) > 0;
   const isBusy = isLoading || isFetching;
   const showEmpty = !hasData && !isBusy;
+  const [detail, setDetail] = React.useState<Ticker | null>(null);
 
   return (
     <div className="card-premium lit-top h-full flex flex-col overflow-hidden">
@@ -75,7 +78,16 @@ export function MarketGrid() {
               return (
                 <div
                   key={t.symbol}
-                  className="group flex items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-secondary/70"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setDetail(t)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setDetail(t);
+                    }
+                  }}
+                  className="group flex items-center gap-3 rounded-lg px-2 py-1.5 cursor-pointer transition-colors hover:bg-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <CoinLogo base={id.base} size={28} />
 
@@ -125,6 +137,8 @@ export function MarketGrid() {
           </div>
         )}
       </div>
+
+      <CoinDetailDialog ticker={detail} onClose={() => setDetail(null)} />
     </div>
   );
 }
