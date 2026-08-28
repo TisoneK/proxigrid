@@ -244,3 +244,12 @@ past entries — append corrections instead.
 - **Notes:** For real-account/testnet testing the app must run where Binance isn't geo-blocked (signed endpoints + testnet are 451 here; the data-api override is public-data-only). Recorded env + geo caveat in system/environments.md. Remaining toward live trading (not built): validate the order path on testnet, User Data Streams for fills, encrypted key storage (only relevant if multi-tenant later).
 - **Report:** none
 
+---
+## 2026-08-27 — Session 26
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Opportunity feed — auto-detect strong signals and prompt the user to act (popup → one-click place order).
+- **Commits:** 3 (baea32d scanner + order route; 0fea220 opportunity watcher + confirm dialog; + this chore(context) commit).
+- **Outcome:** done — `signal-scanner.ts` auto-generates signals for a watchlist (gated `ENABLE_SIGNAL_SCANNER`), wired into instrumentation. `POST /api/orders` places one order (gated `ENABLE_LIVE_TRADING`; returns `skipped` otherwise — verified). `OpportunityWatcher` (mounted in page.tsx) detects strong new directional signals (>=0.5, <10min) from the live feed and raises a sonner toast with a 'Place order' action → `OrderConfirmDialog` (coin/side/qty) → /api/orders. Detection verified firing via console; order leg returns skipped safely. tsc/lint/build green.
+- **Notes:** In quiet markets few signals clear 0.5 (correct — no strong opportunity, no alert). Threshold is a constant (0.5) for now; could be user-configurable later. Scanner persists all generated signals each pass → DB growth over time (retention/pruning is a future cleanup). Verifying the toast needed a temp low threshold + fast poll (reverted).
+- **Report:** none
+
