@@ -295,3 +295,12 @@ past entries — append corrections instead.
 - **Outcome:** done — `src/components/ui/dialog.tsx` close button now has a padded rounded container with hover:bg-destructive/15 + red icon and active:bg-destructive/25; applies to every dialog. Verified in-browser (red tint on hover). lint green.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 32
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Work the backlog top-down — build the Strategy backtester (top item).
+- **Commits:** 3 (backtester feat; backlog mark-done; + this chore(context) commit).
+- **Outcome:** done — pure `lib/backtest.ts` (long-only sim, compounding equity, MA crossover / RSI reversion) + `BacktestPanel` (symbol/timeframe picker, strategy toggle, param sliders, recharts price+MA chart with green buy / red sell ReferenceDots, Total Return / Win Rate / Total Trades). Mounted on the dashboard. Added `vitest.config.ts` resolving the `@/` alias (previously tests could only use relative imports); 3 backtest tests → **27 total green**. Matches the user's mockup; verified in-browser (BTC MA-crossover: +0.2% / 40% / 5 trades). tsc/lint/build green. Marked the backlog item done.
+- **Notes:** recharts v3: `ReferenceDot` has no `isFront` prop (tsc caught it). RSI-reversion backtest buys on *crossing into* oversold, so a monotonic decline (already oversold) yields no trade — test series must rise→fall→rise to cross the thresholds.
+- **Report:** none
+
