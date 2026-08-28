@@ -9,6 +9,7 @@
  */
 
 import { getIntelligenceService } from "./intelligence-service";
+import { db } from "../db";
 import type { CandleInterval } from "../exchanges/types";
 
 let started = false;
@@ -19,7 +20,7 @@ export function startSignalScanner(): void {
 
   const seconds = Math.max(30, Number(process.env.SIGNAL_SCAN_SEC ?? 120));
   const timeframe = (process.env.SIGNAL_SCAN_TIMEFRAME ?? "1h") as CandleInterval;
-  const symbols = (process.env.SIGNAL_SCAN_SYMBOLS ??
+  const baseSymbols = (process.env.SIGNAL_SCAN_SYMBOLS ??
     "BTCUSDT,ETHUSDT,SOLUSDT,BNBUSDT,XRPUSDT")
     .split(",")
     .map((s) => s.trim().toUpperCase())
@@ -28,6 +29,14 @@ export function startSignalScanner(): void {
   const intel = getIntelligenceService();
 
   const tick = async () => {
+    // Scan the env watchlist plus any symbols the user has starred.
+    let symbols = baseSymbols;
+    try {
+      const watched = await db.watchItem.findMany();
+      symbols = Array.from(new Set([...baseSymbols, ...watched.map((w) => w.symbol)]));
+    } catch {
+      /* db unavailable — fall back to env symbols */
+    }
     for (const symbol of symbols) {
       try {
         await intel.generateAndPersist("binance", symbol, timeframe);
@@ -38,7 +47,7 @@ export function startSignalScanner(): void {
     console.log(`[scanner] scanned ${symbols.length} symbol(s) @ ${timeframe}`);
   };
 
-  console.log(`[scanner] started — [${symbols.join(", ")}] every ${seconds}s`);
+  console.log(`[scanner] started — base [${baseSymbols.join(", ")}] + watchlist, every ${seconds}s`);
   setTimeout(tick, 8000);
   setInterval(tick, seconds * 1000);
 }

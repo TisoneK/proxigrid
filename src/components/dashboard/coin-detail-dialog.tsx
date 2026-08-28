@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
+import { WatchStar } from "@/components/dashboard/watch-star";
 import { PriceChart } from "@/components/dashboard/price-chart";
 import { OrderConfirmDialog, type OrderIntent } from "@/components/dashboard/order-confirm-dialog";
 import { useCandles } from "@/hooks/use-candles";
@@ -81,7 +82,8 @@ export function CoinDetailDialog({
                     </span>
                   </div>
                 </div>
-                <div className="ml-auto flex gap-2">
+                <WatchStar symbol={ticker.symbol} size={20} className="ml-auto" />
+                <div className="flex gap-2">
                   <Button
                     size="sm"
                     className="bg-emerald-600 hover:bg-emerald-600/90 text-white"

@@ -129,3 +129,10 @@ model RuleExecution {
 
   @@index([ruleId, firedAt])
 }
+
+/// A symbol the user has starred to track (feeds the signal scanner)
+model WatchItem {
+  id        String   @id @default(cuid())
+  symbol    String   @unique
+  createdAt DateTime @default(now())
+}
