@@ -103,7 +103,7 @@ export function MarketGrid() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-4 max-h-[28rem] overflow-y-auto scrollbar-terminal">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-4 xl:max-h-[28rem] xl:overflow-y-auto scrollbar-terminal">
             {rows.slice(0, 16).map((t) => {
               const id = coinIdentity(t.symbol);
               const change = t.priceChangePercent24h ?? 0;

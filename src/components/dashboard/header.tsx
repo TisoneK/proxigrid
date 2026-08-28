@@ -27,6 +27,8 @@ export function Header() {
 
           {/* Right cluster */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Desktop: labelled search pill. Mobile: compact icon button so the
+                command palette is still reachable without a keyboard. */}
             <button
               type="button"
               onClick={() => document.dispatchEvent(new CustomEvent("proxigrid:command"))}
@@ -36,6 +38,14 @@ export function Header() {
               <Search className="h-3.5 w-3.5" />
               <span>Search</span>
               <kbd className="ml-1 rounded border border-border bg-secondary px-1 py-0.5 text-[10px]">⌘K</kbd>
+            </button>
+            <button
+              type="button"
+              onClick={() => document.dispatchEvent(new CustomEvent("proxigrid:command"))}
+              className="sm:hidden grid place-items-center size-9 rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
+              aria-label="Search"
+            >
+              <Search className="h-[18px] w-[18px]" />
             </button>
 
             <div className="hidden md:flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full bg-secondary border border-border">
