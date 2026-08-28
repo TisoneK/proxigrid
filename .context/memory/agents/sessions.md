@@ -322,3 +322,12 @@ past entries — append corrections instead.
 - **Notes:** hit the `react-hooks/set-state-in-effect` lint rule again when seeding the form from the intent prop — resolved with the render-time reset pattern (compare intent by reference to a `seededFor` state, adjust state during render, not in an effect). The parent passes a fresh intent object per open so it reseeds each time.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 35
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog #4 — configurable opportunity-alert threshold.
+- **Commits:** 2 (settings feat; + this chore(context) log/mark-done).
+- **Outcome:** done — the OpportunityWatcher's hardcoded `0.5` strength cutoff is now a user setting. New `useLocalSetting` hook (localStorage-backed, SSR-safe via `useSyncExternalStore`, same-tab broadcast + cross-tab `storage` event), `lib/settings.ts` (key + default), and a `SettingsMenu` popover (gear in the header) with a sensitivity slider. Watcher reads the threshold via the hook. Verified in-browser: seeded localStorage → reload → popover shows ≥75% (read/persist path). tsc/lint/build green.
+- **Notes:** two lint rules bit in sequence — `react-hooks/refs` now forbids assigning `ref.current` during render (had tried it to read latest threshold in the effect without re-running); resolved by just putting `threshold` in the effect deps (re-run is harmless — all prior signals are in `seen`). Radix Slider drags don't fire via synthetic pointer events in the Browser pane; verified the value path by seeding localStorage + reload instead.
+- **Report:** none
+
