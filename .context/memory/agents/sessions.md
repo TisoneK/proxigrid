@@ -349,3 +349,12 @@ past entries — append corrections instead.
 - **Notes:** the executions embedded on a rule (use-automation-rules) are typed with `unknown` snapshots and carry no back-reference to the rule name — cast to RuleExecution and inject `{ rule: { name } }` when opening from the table.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 38
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog #7 — portfolio allocation chart.
+- **Commits:** 2 (allocation feat; + this chore(context) log/mark-done).
+- **Outcome:** done — `PortfolioAllocation` renders a recharts donut of holdings by value in the Portfolio stat-detail dialog: aggregates by asset across exchanges, keeps the top 6 slices and groups the tail into "Other", literal-hex palette with a color-matched legend (asset · value · %) and a % tooltip; returns null when total <= 0 so it stays hidden in the current unconfigured/no-balances state. Verified in-browser by temporarily injecting synthetic holdings into /api/portfolio (BTC 51% / ETH 19% / SOL 12% / BNB 10% / XRP 5% / TRX 2% / Other 2%) — donut + legend correct, DOGE correctly folded into Other — then fully reverted the debug block (git diff clean). tsc/lint/build green.
+- **Notes:** real balances still need creds + a Binance-reachable host (signed endpoints are 451 geo-blocked here), so the donut is dormant until an account is connected — the component and its empty behavior are done and shippable.
+- **Report:** none
+
