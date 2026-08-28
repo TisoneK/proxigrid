@@ -304,3 +304,12 @@ past entries — append corrections instead.
 - **Notes:** recharts v3: `ReferenceDot` has no `isFront` prop (tsc caught it). RSI-reversion backtest buys on *crossing into* oversold, so a monotonic decline (already oversold) yields no trade — test series must rise→fall→rise to cross the thresholds.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 33
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog #2 — candlestick chart mode.
+- **Commits:** 2 (candlestick feat; + this chore(context) log/mark-done).
+- **Outcome:** done — `PriceChart` now takes a `mode` prop (`area` | `candles`). Candlesticks render with a recharts `ComposedChart` + a `Bar` whose custom shape draws the high/low wick and the open/close body (green close>=open / red) using the [low,high] range bar's pixel scale. A line/candles icon toggle sits left of the timeframe buttons in the coin detail dialog; candle tooltip shows O/H/L/C. tsc/lint/build green; verified in-browser (BTC candles + OHLC tooltip render correctly).
+- **Notes:** recharts has no native candlestick — the range-bar-plus-custom-shape trick (dataKey `[low, high]`, derive px/price from the resolved y/height) is the reliable v3 path. Area chart is still the default mode.
+- **Report:** none
+
