@@ -2,6 +2,7 @@
 
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
+import { Search } from "lucide-react";
 
 /**
  * Proxigrid top bar — friendly wordmark, a calm "live" indicator, the paper
@@ -25,6 +26,17 @@ export function Header() {
 
           {/* Right cluster */}
           <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => document.dispatchEvent(new CustomEvent("proxigrid:command"))}
+              className="hidden sm:inline-flex items-center gap-2 h-9 rounded-full border border-border bg-card px-3 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
+              aria-label="Search"
+            >
+              <Search className="h-3.5 w-3.5" />
+              <span>Search</span>
+              <kbd className="ml-1 rounded border border-border bg-secondary px-1 py-0.5 text-[10px]">⌘K</kbd>
+            </button>
+
             <div className="hidden md:flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full bg-secondary border border-border">
               <img src="/coins/bnb.svg" alt="Binance" width={18} height={18} />
               <span className="text-xs font-medium text-foreground">Binance</span>
