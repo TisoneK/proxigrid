@@ -8,9 +8,10 @@ import {
 } from "@/components/ui/popover";
 import { Bell, Zap, TrendingUp, TrendingDown } from "lucide-react";
 import { useSignals } from "@/hooks/use-signals";
-import { useExecutions } from "@/hooks/use-executions";
+import { useExecutions, type RuleExecution } from "@/hooks/use-executions";
 import { useTickers, type Ticker } from "@/hooks/use-ticker";
 import { CoinDetailDialog } from "@/components/dashboard/coin-detail-dialog";
+import { ExecutionDetailDialog } from "@/components/dashboard/execution-detail-dialog";
 import { coinIdentity } from "@/lib/coins";
 import { timeAgo } from "@/lib/utils/format";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ interface NotifItem {
   up?: boolean;
   symbol?: string;
   price?: number;
+  exec?: RuleExecution;
 }
 
 const SEEN_KEY = "proxigrid:notif-seen";
@@ -35,6 +37,7 @@ export function NotificationBell() {
   const { data: tickers } = useTickers("binance");
   const [open, setOpen] = React.useState(false);
   const [detail, setDetail] = React.useState<Ticker | null>(null);
+  const [execDetail, setExecDetail] = React.useState<RuleExecution | null>(null);
   const [lastSeen, setLastSeen] = React.useState<number>(() => {
     try {
       return Number(localStorage.getItem(SEEN_KEY) ?? 0);
@@ -54,6 +57,7 @@ export function NotificationBell() {
         time: new Date(e.firedAt).getTime(),
         symbol: e.triggerSnapshot?.ctx?.symbol,
         price: e.triggerSnapshot?.ctx?.price,
+        exec: e,
       });
     }
     for (const s of signals ?? []) {
@@ -89,6 +93,12 @@ export function NotificationBell() {
   };
 
   const openDetail = (item: NotifItem) => {
+    // Rule fires open the execution inspector; signals open the coin detail.
+    if (item.kind === "execution" && item.exec) {
+      setOpen(false);
+      setExecDetail(item.exec);
+      return;
+    }
     if (!item.symbol) return;
     setOpen(false);
     const live = (tickers ?? []).find((t) => t.symbol === item.symbol);
@@ -131,7 +141,7 @@ export function NotificationBell() {
                 key={i.id}
                 type="button"
                 onClick={() => openDetail(i)}
-                disabled={!i.symbol}
+                disabled={i.kind === "execution" ? !i.exec : !i.symbol}
                 className="flex w-full items-start gap-2.5 px-4 py-2.5 border-b border-border last:border-0 text-left hover:bg-secondary/50 transition-colors disabled:cursor-default disabled:hover:bg-transparent"
               >
                 <span
@@ -165,6 +175,7 @@ export function NotificationBell() {
         </div>
       </PopoverContent>
       <CoinDetailDialog ticker={detail} onClose={() => setDetail(null)} />
+      <ExecutionDetailDialog execution={execDetail} onClose={() => setExecDetail(null)} />
     </Popover>
   );
 }

@@ -31,6 +31,8 @@ import {
   useTriggerRule,
 } from "@/hooks/use-automation-rules";
 import { StatusDot } from "@/components/dashboard/status-dot";
+import { ExecutionDetailDialog } from "@/components/dashboard/execution-detail-dialog";
+import type { RuleExecution } from "@/hooks/use-executions";
 import { Zap, Plus, Play, Trash2, Cpu } from "lucide-react";
 import { toast } from "sonner";
 import { timeAgo } from "@/lib/utils/format";
@@ -83,6 +85,14 @@ export function RuleRow({ rule: r }: { rule: AutomationRule }) {
   const deleteRule = useDeleteRule();
   const triggerRule = useTriggerRule();
   const triggering = triggerRule.isPending && triggerRule.variables === r.id;
+  const [execDetail, setExecDetail] = useState<RuleExecution | null>(null);
+  const lastExec = r.executions?.[0];
+
+  const openLastExec = () => {
+    if (!lastExec) return;
+    // Attach the rule name; the row's executions don't carry it back-referenced.
+    setExecDetail({ ...lastExec, rule: { name: r.name } } as unknown as RuleExecution);
+  };
 
   return (
     <div className="group relative flex items-start gap-3 rounded-md border border-border bg-transparent px-3 py-2 hover:bg-accent/40 transition-all">
@@ -117,9 +127,19 @@ export function RuleRow({ rule: r }: { rule: AutomationRule }) {
           {r.description ||
             `${r.trigger.conditions.length} condition${r.trigger.conditions.length !== 1 ? "s" : ""} · action: ${r.action.type}`}
         </p>
-        <p className="text-[10px] text-muted-foreground/60 mt-0.5 font-mono tabular-nums">
-          Last fired: {r.lastFiredAt ? timeAgo(r.lastFiredAt) : "never"} · cooldown {r.cooldownSec}s
-        </p>
+        {lastExec ? (
+          <button
+            type="button"
+            onClick={openLastExec}
+            className="text-[10px] text-muted-foreground/60 mt-0.5 font-mono tabular-nums text-left hover:text-foreground hover:underline transition-colors"
+          >
+            Last fired: {r.lastFiredAt ? timeAgo(r.lastFiredAt) : "never"} · cooldown {r.cooldownSec}s ›
+          </button>
+        ) : (
+          <p className="text-[10px] text-muted-foreground/60 mt-0.5 font-mono tabular-nums">
+            Last fired: never · cooldown {r.cooldownSec}s
+          </p>
+        )}
       </div>
 
       <div className="flex items-center gap-1 flex-shrink-0">
@@ -182,6 +202,8 @@ export function RuleRow({ rule: r }: { rule: AutomationRule }) {
           <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </div>
+
+      <ExecutionDetailDialog execution={execDetail} onClose={() => setExecDetail(null)} />
     </div>
   );
 }

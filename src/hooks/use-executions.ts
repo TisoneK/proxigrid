@@ -7,8 +7,11 @@ export interface RuleExecution {
   ruleId: string;
   status: string;
   firedAt: string;
-  triggerSnapshot: { ctx?: { symbol?: string; price?: number }; notes?: string[] };
-  actionResult: { status?: string; detail?: string };
+  triggerSnapshot: {
+    ctx?: { symbol?: string; price?: number; exchange?: string; timeframe?: string };
+    notes?: string[];
+  };
+  actionResult: { status?: string; detail?: string; [key: string]: unknown };
   rule?: { name?: string } | null;
 }
 
