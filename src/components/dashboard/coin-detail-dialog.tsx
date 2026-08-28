@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
 import { WatchStar } from "@/components/dashboard/watch-star";
-import { PriceChart } from "@/components/dashboard/price-chart";
+import { PriceChart, type ChartMode } from "@/components/dashboard/price-chart";
+import { LineChart as LineChartIcon, CandlestickChart as CandlestickIcon } from "lucide-react";
 import { OrderConfirmDialog, type OrderIntent } from "@/components/dashboard/order-confirm-dialog";
 import { useCandles } from "@/hooks/use-candles";
 import { useSignals, useGenerateSignals } from "@/hooks/use-signals";
@@ -31,6 +32,7 @@ export function CoinDetailDialog({
   onClose: () => void;
 }) {
   const [interval, setInterval] = React.useState<string>("1h");
+  const [chartMode, setChartMode] = React.useState<ChartMode>("area");
   const [intent, setIntent] = React.useState<OrderIntent | null>(null);
 
   const symbol = ticker?.symbol ?? null;
@@ -108,25 +110,52 @@ export function CoinDetailDialog({
 
               {/* Timeframe + chart */}
               <div>
-                <div className="flex items-center justify-end gap-1 mb-2">
-                  {TIMEFRAMES.map((tf) => (
+                <div className="flex items-center justify-between gap-1 mb-2">
+                  {/* Area / candlestick mode */}
+                  <div className="flex items-center gap-0.5 p-0.5 rounded-md bg-secondary">
                     <button
-                      key={tf}
                       type="button"
-                      onClick={() => setInterval(tf)}
+                      onClick={() => setChartMode("area")}
+                      aria-label="Line chart"
                       className={cn(
-                        "text-xs font-medium px-2 py-1 rounded-md transition-colors",
-                        interval === tf ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
+                        "grid place-items-center size-6 rounded transition-colors",
+                        chartMode === "area" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
                       )}
                     >
-                      {tf}
+                      <LineChartIcon className="size-3.5" />
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => setChartMode("candles")}
+                      aria-label="Candlestick chart"
+                      className={cn(
+                        "grid place-items-center size-6 rounded transition-colors",
+                        chartMode === "candles" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <CandlestickIcon className="size-3.5" />
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {TIMEFRAMES.map((tf) => (
+                      <button
+                        key={tf}
+                        type="button"
+                        onClick={() => setInterval(tf)}
+                        className={cn(
+                          "text-xs font-medium px-2 py-1 rounded-md transition-colors",
+                          interval === tf ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        {tf}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 {isLoading ? (
                   <Skeleton className="h-[220px] w-full rounded-lg" />
                 ) : (
-                  <PriceChart candles={candles ?? []} height={220} />
+                  <PriceChart candles={candles ?? []} height={220} mode={chartMode} />
                 )}
               </div>
 
