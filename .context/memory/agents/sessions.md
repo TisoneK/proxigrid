@@ -313,3 +313,12 @@ past entries — append corrections instead.
 - **Notes:** recharts has no native candlestick — the range-bar-plus-custom-shape trick (dataKey `[low, high]`, derive px/price from the resolved y/height) is the reliable v3 path. Area chart is still the default mode.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 34
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog #3 — price alerts.
+- **Commits:** 2 (price-alerts feat; + this chore(context) log/mark-done).
+- **Outcome:** done — `PriceAlertDialog` gives a consumer-friendly "notify me when <coin> rises above / falls below $X" flow by composing an automation rule (`price` condition + `notify` in-app action) through the existing `useCreateRule` — no backend changes. Triggered by a bell button added to the coin detail header (beside the watch star); seeds the target with the live price; 3600s cooldown so a price hovering at the threshold doesn't spam. Verified in-browser: created "BTC above 85,000.00" → toast + appears in the Automations list. tsc/lint/build green.
+- **Notes:** hit the `react-hooks/set-state-in-effect` lint rule again when seeding the form from the intent prop — resolved with the render-time reset pattern (compare intent by reference to a `seededFor` state, adjust state during render, not in an effect). The parent passes a fresh intent object per open so it reseeds each time.
+- **Report:** none
+
