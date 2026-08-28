@@ -73,9 +73,9 @@
   /* Ink-neutral surfaces (very low chroma). */
   --background: oklch(0.955 0.003 255);
   --foreground: oklch(0.21 0.008 265);
-  --card: oklch(0.992 0.001 255);
+  --card: oklch(0.978 0.002 255);
   --card-foreground: oklch(0.21 0.008 265);
-  --popover: oklch(0.992 0.001 255);
+  --popover: oklch(0.978 0.002 255);
   --popover-foreground: oklch(0.21 0.008 265);
   --primary: oklch(0.55 0.14 158);
   --primary-foreground: oklch(0.99 0 0);
