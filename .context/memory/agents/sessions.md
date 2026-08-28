@@ -367,3 +367,12 @@ past entries — append corrections instead.
 - **Notes:** DEVIATED from strict top-down order — the backlog item above this one, **Multi-exchange support**, is an architectural spike (cross-exchange symbol mapping BTCUSDT↔BTC-USD, getTickers rate-limits with no cheap batch endpoint on Coinbase, and a UI exchange-switcher) that needs a design decision, so per the standing "flag architectural changes" rule it was left in the backlog for a dedicated session rather than half-built. Browser-pane mobile emulation flakiness: taps sometimes select text / time out ("pane hidden"); verified layout via tall-viewport screenshots + JS-dispatched events instead of synthetic taps.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 40
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog — extend test coverage to services + adapter.
+- **Commits:** 2 (test-coverage feat, amended to include the files after a git-add slip; + this chore(context) log/mark-done).
+- **Outcome:** done — +27 tests (suite 27 -> 54, 7 files green). `conditions.test.ts` covers the rule-engine core: price/indicator/volume compares, crosses_above/below against a numeric value and against a ref indicator (incl. the "already above, no cross" and "not ready/unavailable" paths), and matchMode all/any. `signal-generators.test.ts` asserts each generator's direction on crafted series (RSI over/oversold, MACD momentum via a quadratic trend, EMA trend, Bollinger band-pierce + neutral) plus the common output shape — exported `SIGNAL_GENERATORS` to enable it. `binance-adapter.test.ts` guards the kline->Candle mapping (the past double-wrap regression) by spying on `getClient().getKlines`. tsc/lint/build green.
+- **Notes:** MACD needs an *accelerating* series (quadratic `i*i`), not a linear ramp — a linear trend flattens the histogram and the sign flips as signal catches up. Renamed `vitest.config.ts` -> `.mts` to clear the CJS/ESM config warning that printed on every run. git-add gotcha: passing the old `vitest.config.ts` path (already renamed) made `git add` abort and stage nothing, so the first commit caught only the rename — fixed with `--amend`. Remaining follow-up noted in backlog: automation-service sweep/cooldown DB-path tests (need a Prisma mock).
+- **Report:** none
+
