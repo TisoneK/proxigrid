@@ -227,3 +227,11 @@ past entries — append corrections instead.
 - **Outcome:** done — create-rule form: added label margin via `[&_label]:block [&_label]:mb-1.5` on the container + `space-y-4` between fields. Markets rows: the name was `flex-1` (data hugged both edges, hollow center); gave the name a natural `max-w-[45%]` and made the sparkline container `flex-1` centered to fill the middle. Verified both in-browser; tsc/lint green.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 24
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: cards too bright in light mode.
+- **Commits:** 2 (soften light cards; + this chore(context) commit).
+- **Outcome:** done — light `--card`/`--popover` 0.992 → 0.978 (gentle off-white); cards lift off the 0.955 gray canvas via border + shadow instead of glaring. Dark unchanged. Verified in-browser.
+- **Report:** none
+
