@@ -208,7 +208,11 @@ export function CreateRuleDialog() {
   const [indicator, setIndicator] = useState("RSI");
   const [operator, setOperator] = useState("<");
   const [value, setValue] = useState("30");
-  const [actionType, setActionType] = useState<"notify" | "webhook">("notify");
+  const [actionType, setActionType] = useState<"notify" | "webhook" | "place_order">("notify");
+  const [side, setSide] = useState<"buy" | "sell">("buy");
+  const [orderType, setOrderType] = useState<"market" | "limit">("market");
+  const [quantity, setQuantity] = useState("0.001");
+  const [price, setPrice] = useState("");
 
   const create = useCreateRule();
 
@@ -239,7 +243,17 @@ export function CreateRuleDialog() {
         action:
           actionType === "notify"
             ? { type: "notify", channel: "in_app" }
-            : { type: "webhook", url: "" },
+            : actionType === "webhook"
+              ? { type: "webhook", url: "" }
+              : {
+                  type: "place_order",
+                  exchange: "binance",
+                  symbol,
+                  side,
+                  orderType,
+                  quantity: parseFloat(quantity),
+                  ...(orderType === "limit" && price ? { price: parseFloat(price) } : {}),
+                },
         cooldownSec: 300,
       },
       {
@@ -347,16 +361,68 @@ export function CreateRuleDialog() {
 
           <div>
             <Label>Action</Label>
-            <Select value={actionType} onValueChange={(v) => setActionType(v as "notify" | "webhook")}>
+            <Select
+              value={actionType}
+              onValueChange={(v) => setActionType(v as "notify" | "webhook" | "place_order")}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="notify">In-app notification</SelectItem>
                 <SelectItem value="webhook">Webhook (POST)</SelectItem>
+                <SelectItem value="place_order">Place order (live trade)</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
+          {actionType === "place_order" && (
+            <div className="space-y-4 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 [&_label]:block [&_label]:mb-1.5">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Side</Label>
+                  <Select value={side} onValueChange={(v) => setSide(v as "buy" | "sell")}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="buy">Buy</SelectItem>
+                      <SelectItem value="sell">Sell</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Order type</Label>
+                  <Select value={orderType} onValueChange={(v) => setOrderType(v as "market" | "limit")}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="market">Market</SelectItem>
+                      <SelectItem value="limit">Limit</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className={cn("grid gap-3", orderType === "limit" ? "grid-cols-2" : "grid-cols-1")}>
+                <div>
+                  <Label htmlFor="qty">Quantity (base asset)</Label>
+                  <Input id="qty" type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                </div>
+                {orderType === "limit" && (
+                  <div>
+                    <Label htmlFor="limit-price">Limit price</Label>
+                    <Input id="limit-price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+                  </div>
+                )}
+              </div>
+              <p className="text-[11px] text-amber-700 dark:text-amber-300 leading-relaxed">
+                Places a real {orderType} order on {symbol} when the rule fires. Requires{" "}
+                <code>ENABLE_LIVE_TRADING=true</code> and configured API keys on the server —
+                otherwise it is skipped safely.
+              </p>
+            </div>
+          )}
         </div>
 
         <DialogFooter>
