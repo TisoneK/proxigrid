@@ -60,9 +60,10 @@ export function CoinDetailDialog({
         <DialogContent className="sm:max-w-xl p-0 gap-0 flex flex-col max-h-[85vh]">
           {ticker && id && (
             <DialogHeader className="px-5 pt-5 pb-4 border-b border-border text-left space-y-0 shrink-0">
-              <div className="flex items-center gap-3">
+              {/* pr-8 reserves room for the dialog's close (X) button. */}
+              <div className="flex items-center gap-3 pr-8">
                 <CoinLogo base={id.base} size={40} />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <DialogTitle className="text-base">
                     {id.name}{" "}
                     <span className="text-muted-foreground font-normal">
@@ -82,29 +83,29 @@ export function CoinDetailDialog({
                     </span>
                   </div>
                 </div>
-                <WatchStar symbol={ticker.symbol} size={20} className="ml-auto" />
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    className="bg-emerald-600 hover:bg-emerald-600/90 text-white"
-                    onClick={() => setIntent({ symbol: ticker.symbol, side: "buy", price: ticker.price, reason: "Manual buy" })}
-                  >
-                    Buy
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="bg-rose-600 hover:bg-rose-600/90 text-white"
-                    onClick={() => setIntent({ symbol: ticker.symbol, side: "sell", price: ticker.price, reason: "Manual sell" })}
-                  >
-                    Sell
-                  </Button>
-                </div>
+                <WatchStar symbol={ticker.symbol} size={20} />
               </div>
             </DialogHeader>
           )}
 
           {ticker && id && (
             <div className="overflow-y-auto px-5 py-4 scrollbar-terminal space-y-5">
+              {/* Buy / Sell */}
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  className="bg-emerald-600 hover:bg-emerald-600/90 text-white"
+                  onClick={() => setIntent({ symbol: ticker.symbol, side: "buy", price: ticker.price, reason: "Manual buy" })}
+                >
+                  Buy
+                </Button>
+                <Button
+                  className="bg-rose-600 hover:bg-rose-600/90 text-white"
+                  onClick={() => setIntent({ symbol: ticker.symbol, side: "sell", price: ticker.price, reason: "Manual sell" })}
+                >
+                  Sell
+                </Button>
+              </div>
+
               {/* Timeframe + chart */}
               <div>
                 <div className="flex items-center justify-end gap-1 mb-2">
