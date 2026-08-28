@@ -13,6 +13,7 @@ import { useSignals } from "@/hooks/use-signals";
 import { useAutomationRules } from "@/hooks/use-automation-rules";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
 import { RuleRow, CreateRuleDialog } from "@/components/dashboard/automation-rules-table";
+import { PortfolioAllocation } from "@/components/dashboard/portfolio-allocation";
 import { coinIdentity } from "@/lib/coins";
 import { formatUsd, formatPrice, formatPercent, timeAgo } from "@/lib/utils/format";
 import { cn } from "@/lib/utils";
@@ -82,6 +83,8 @@ function PortfolioDetail() {
           ))}
         </section>
       )}
+
+      {data.holdings.length > 0 && <PortfolioAllocation holdings={data.holdings} />}
 
       {data.holdings.length > 0 && (
         <section className="space-y-1.5">
