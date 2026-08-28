@@ -287,3 +287,11 @@ past entries — append corrections instead.
 - **Outcome:** done — moved Buy/Sell out of the coin-detail header (where they collided with the dialog X) into a full-width action row in the body; header keeps coin identity + watch star with pr-8 reserving X space. Verified in-browser. Other dialogs (StatDetail/OrderConfirm/CreateRule) have no right-aligned header content, so no similar collision. Also seeded `tasks/backlog.md` with a 10-item feature roadmap (headline: strategy backtester from the user's mockup).
 - **Report:** none
 
+---
+## 2026-08-28 — Session 31
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: make the dialog close (X) container turn red on hover/click.
+- **Commits:** 2 (dialog close red hover; + this chore(context) commit).
+- **Outcome:** done — `src/components/ui/dialog.tsx` close button now has a padded rounded container with hover:bg-destructive/15 + red icon and active:bg-destructive/25; applies to every dialog. Verified in-browser (red tint on hover). lint green.
+- **Report:** none
+
