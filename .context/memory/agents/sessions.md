@@ -358,3 +358,12 @@ past entries — append corrections instead.
 - **Notes:** real balances still need creds + a Binance-reachable host (signed endpoints are 451 geo-blocked here), so the donut is dormant until an account is connected — the component and its empty behavior are done and shippable.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 39
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog #8 — mobile / responsive polish. (Multi-exchange, the item above it, deliberately skipped — see Notes.)
+- **Commits:** 2 (mobile feat; + this chore(context) log/mark-done).
+- **Outcome:** done — audited the dashboard at 375px: the KPI 2x2 grid, single-column markets, signals/automations, backtester (chart + metrics + sliders) and footer all already stack cleanly (no horizontal overflow). Fixed two real gaps: (1) the Markets list's unconditional `max-h-[28rem] overflow-y-auto` created a nested scroll-trap on touch — gated it to `xl:` so mobile flows with the page; (2) the search/command-palette trigger was `hidden sm:inline-flex` — added a compact `sm:hidden` search icon in the header dispatching the same `proxigrid:command` event. Verified in-browser (mobile emulation): search icon present, market list flows without an inner scrollbar, palette opens as a usable bottom sheet. tsc/lint/build green.
+- **Notes:** DEVIATED from strict top-down order — the backlog item above this one, **Multi-exchange support**, is an architectural spike (cross-exchange symbol mapping BTCUSDT↔BTC-USD, getTickers rate-limits with no cheap batch endpoint on Coinbase, and a UI exchange-switcher) that needs a design decision, so per the standing "flag architectural changes" rule it was left in the backlog for a dedicated session rather than half-built. Browser-pane mobile emulation flakiness: taps sometimes select text / time out ("pane hidden"); verified layout via tall-viewport screenshots + JS-dispatched events instead of synthetic taps.
+- **Report:** none
+
