@@ -279,3 +279,11 @@ past entries — append corrections instead.
 - **Notes:** IMPORTANT — after a Prisma schema change + `db push`, the RUNNING dev server keeps the stale generated client (`db.watchItem` undefined → 500); **restart the dev server** to load the regenerated client. Prod build is fine (regenerates at build).
 - **Report:** none
 
+---
+## 2026-08-28 — Session 30
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: coin detail close (X) overlaps the Sell button — accidental-click hazard; fix header + UI inconsistencies. Also added the feature roadmap to backlog.
+- **Commits:** 3 (250af1a feature roadmap in backlog; coin-detail header fix; + this chore(context) commit).
+- **Outcome:** done — moved Buy/Sell out of the coin-detail header (where they collided with the dialog X) into a full-width action row in the body; header keeps coin identity + watch star with pr-8 reserving X space. Verified in-browser. Other dialogs (StatDetail/OrderConfirm/CreateRule) have no right-aligned header content, so no similar collision. Also seeded `tasks/backlog.md` with a 10-item feature roadmap (headline: strategy backtester from the user's mockup).
+- **Report:** none
+
