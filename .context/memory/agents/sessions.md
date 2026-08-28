@@ -219,3 +219,11 @@ past entries — append corrections instead.
 - **Outcome:** done — extracted `RuleRow` (evaluate/toggle/delete controls, own mutation hooks) and exported `CreateRuleDialog` from automation-rules-table; the StatDetailDialog Automations view now renders a 'New rule' button + `RuleRow` per rule, sharing one implementation with the card (DRY). Verified in-browser (dialog shows New rule + play/toggle/delete on the BTC oversold rule); tsc/lint/build green.
 - **Report:** none
 
+---
+## 2026-08-27 — Session 23
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: create-rule form fields lack margins; markets rows are hollow in the middle.
+- **Commits:** 2 (form spacing + market row fill; + this chore(context) commit).
+- **Outcome:** done — create-rule form: added label margin via `[&_label]:block [&_label]:mb-1.5` on the container + `space-y-4` between fields. Markets rows: the name was `flex-1` (data hugged both edges, hollow center); gave the name a natural `max-w-[45%]` and made the sparkline container `flex-1` centered to fill the middle. Verified both in-browser; tsc/lint green.
+- **Report:** none
+
