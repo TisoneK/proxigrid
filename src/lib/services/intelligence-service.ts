@@ -251,9 +251,23 @@ export class IntelligenceService {
       if (draft) drafts.push(draft);
     }
 
+    // Dedupe: only persist a signal when its direction *changed* from the most
+    // recent stored one for the same (symbol, timeframe, indicator). The scanner
+    // runs on a short interval and most ticks repeat the prior state — persisting
+    // those would grow the table unbounded and re-alert on unchanged conditions.
+    const fresh: SignalDraft[] = [];
+    for (const d of drafts) {
+      const last = await db.signal.findFirst({
+        where: { symbol: d.symbol, timeframe: d.timeframe, indicator: d.indicator },
+        orderBy: { createdAt: "desc" },
+        select: { direction: true },
+      });
+      if (!last || last.direction !== d.direction) fresh.push(d);
+    }
+
     // Persist
     const created = await Promise.all(
-      drafts.map((d) =>
+      fresh.map((d) =>
         db.signal.create({
           data: {
             exchangeCode: d.exchangeCode,
@@ -271,10 +285,23 @@ export class IntelligenceService {
     );
 
     return created.map((c, i) => ({
-      ...drafts[i],
+      ...fresh[i],
       id: c.id,
       createdAt: c.createdAt,
     }));
+  }
+
+  /**
+   * Delete signals older than the retention window. Run periodically from the
+   * scanner so the Signal table doesn't grow without bound.
+   */
+  async pruneOldSignals(
+    retentionDays: number = Number(process.env.SIGNAL_RETENTION_DAYS ?? 7)
+  ): Promise<number> {
+    const days = Number.isFinite(retentionDays) && retentionDays > 0 ? retentionDays : 7;
+    const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const { count } = await db.signal.deleteMany({ where: { createdAt: { lt: cutoff } } });
+    return count;
   }
 
   /**

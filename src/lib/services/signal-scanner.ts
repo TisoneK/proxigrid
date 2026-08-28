@@ -45,6 +45,14 @@ export function startSignalScanner(): void {
       }
     }
     console.log(`[scanner] scanned ${symbols.length} symbol(s) @ ${timeframe}`);
+
+    // Retention: drop signals past the retention window so the table stays bounded.
+    try {
+      const pruned = await intel.pruneOldSignals();
+      if (pruned > 0) console.log(`[scanner] pruned ${pruned} old signal(s)`);
+    } catch (e) {
+      console.error(`[scanner] prune failed:`, (e as Error).message);
+    }
   };
 
   console.log(`[scanner] started — base [${baseSymbols.join(", ")}] + watchlist, every ${seconds}s`);
