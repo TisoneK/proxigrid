@@ -6,6 +6,7 @@ import { SignalsFeed } from "@/components/dashboard/signals-feed";
 import { AutomationRulesTable } from "@/components/dashboard/automation-rules-table";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { StatDetailDialog, type StatMetric } from "@/components/dashboard/stat-detail-dialog";
+import { OpportunityWatcher } from "@/components/dashboard/opportunity-watcher";
 import { Header } from "@/components/dashboard/header";
 import { usePortfolio } from "@/hooks/use-portfolio";
 import { useTickers } from "@/hooks/use-ticker";
@@ -113,6 +114,7 @@ export default function Home() {
       </footer>
 
       <StatDetailDialog metric={detail} onClose={() => setDetail(null)} />
+      <OpportunityWatcher />
     </div>
   );
 }
