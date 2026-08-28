@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MarketGrid } from "@/components/dashboard/market-grid";
 import { SignalsFeed } from "@/components/dashboard/signals-feed";
 import { AutomationRulesTable } from "@/components/dashboard/automation-rules-table";
+import { BacktestPanel } from "@/components/dashboard/backtest-panel";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { StatDetailDialog, type StatMetric } from "@/components/dashboard/stat-detail-dialog";
 import { OpportunityWatcher } from "@/components/dashboard/opportunity-watcher";
@@ -101,6 +102,11 @@ export default function Home() {
           <div className="animate-fade-up" style={{ animationDelay: "240ms" }}>
             <AutomationRulesTable />
           </div>
+        </div>
+
+        {/* Strategy backtester */}
+        <div className="animate-fade-up" style={{ animationDelay: "300ms" }}>
+          <BacktestPanel />
         </div>
       </main>
 
