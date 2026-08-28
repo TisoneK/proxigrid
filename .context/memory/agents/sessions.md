@@ -270,3 +270,12 @@ past entries — append corrections instead.
 - **Outcome:** done — notification items are now buttons; each carries symbol/price and on click closes the panel + opens that coin's CoinDetailDialog (uses the live ticker if present, else a minimal ticker from the signal). Verified: clicking 'Ethereum: Sell signal' opened ETH's detail with chart/stats/signals. tsc/lint/build green.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 29
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Autonomous feature batch (user greenlit): DB-backed watchlist + Cmd/Ctrl-K command palette.
+- **Commits:** 3 (6708483 watchlist; 85d84b6 command palette; + this chore(context) commit).
+- **Outcome:** done — (1) **Watchlist**: new `WatchItem` Prisma model (db push), `/api/watchlist` GET/POST + `/api/watchlist/[symbol]` DELETE, `useWatchlist`/`WatchStar`; stars on market rows + coin detail; a 'Watchlist' filter on the markets card; the signal scanner now also scans watched symbols. (2) **Command palette**: Cmd/Ctrl-K (or header Search button, via a `proxigrid:command` CustomEvent) opens a cmdk palette to jump to any coin (→ CoinDetailDialog) or run actions (toggle theme, scan BTC). Both verified in-browser (star BTC/ETH persist + filter; palette 'sol' → Solana detail). tsc/lint/build green.
+- **Notes:** IMPORTANT — after a Prisma schema change + `db push`, the RUNNING dev server keeps the stale generated client (`db.watchItem` undefined → 500); **restart the dev server** to load the regenerated client. Prod build is fine (regenerates at build).
+- **Report:** none
+
