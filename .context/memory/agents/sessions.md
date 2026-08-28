@@ -331,3 +331,12 @@ past entries — append corrections instead.
 - **Notes:** two lint rules bit in sequence — `react-hooks/refs` now forbids assigning `ref.current` during render (had tried it to read latest threshold in the effect without re-running); resolved by just putting `threshold` in the effect deps (re-run is harmless — all prior signals are in `seen`). Radix Slider drags don't fire via synthetic pointer events in the Browser pane; verified the value path by seeding localStorage + reload instead.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 36
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog #5 — signal retention / pruning + dedupe.
+- **Commits:** 2 (signals feat; + this chore(context) log/mark-done).
+- **Outcome:** done — `generateAndPersist` dedupes: it queries the most recent stored signal per (symbol, timeframe, indicator) and only persists when the direction changed, so each Signal row is a real state change (and the OpportunityWatcher stops re-alerting on unchanged conditions). Added `pruneOldSignals(SIGNAL_RETENTION_DAYS|7)` (deleteMany where createdAt < cutoff), called each scanner tick. Verified via the /api/signals POST: first scan created 2, immediate re-scan created 0. tsc/lint/build green.
+- **Notes:** dedupe changes manual-scan UX slightly — a re-scan with no state change now returns 0 created (honest: nothing changed). Prune interval piggybacks the scanner (only runs when ENABLE_SIGNAL_SCANNER=true); a standalone cron could be added later if the scanner is off but signals still accumulate via manual scans.
+- **Report:** none
+
