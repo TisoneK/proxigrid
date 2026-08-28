@@ -340,3 +340,12 @@ past entries — append corrections instead.
 - **Notes:** dedupe changes manual-scan UX slightly — a re-scan with no state change now returns 0 created (honest: nothing changed). Prune interval piggybacks the scanner (only runs when ENABLE_SIGNAL_SCANNER=true); a standalone cron could be added later if the scanner is off but signals still accumulate via manual scans.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 37
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog #6 — rule execution detail view.
+- **Commits:** 2 (execution-detail feat; + this chore(context) log/mark-done).
+- **Outcome:** done — `ExecutionDetailDialog` inspects one rule fire: trigger snapshot (symbol, price at fire, exchange, timeframe, the matched-condition notes) + action result (status, detail, and a raw JSON block for extras like an order payload). Two entry points: notification-bell "Rule fired" items now open the inspector (signals still open coin detail), and each automations RuleRow's "Last fired" line is a button opening that rule's latest execution (rules API already includes the 5 latest). Widened the RuleExecution type (ctx.exchange/timeframe, actionResult index signature). Verified in-browser: created + evaluated an always-true price rule → dialog showed SUCCESS, price 77,678.64, "price 77678.64 <= 999999", notify payload. Cleaned up the throwaway rule. tsc/lint/build green.
+- **Notes:** the executions embedded on a rule (use-automation-rules) are typed with `unknown` snapshots and carry no back-reference to the rule name — cast to RuleExecution and inject `{ rule: { name } }` when opening from the table.
+- **Report:** none
+
