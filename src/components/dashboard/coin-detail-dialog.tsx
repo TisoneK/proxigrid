@@ -14,6 +14,8 @@ import { WatchStar } from "@/components/dashboard/watch-star";
 import { PriceChart, type ChartMode } from "@/components/dashboard/price-chart";
 import { LineChart as LineChartIcon, CandlestickChart as CandlestickIcon } from "lucide-react";
 import { OrderConfirmDialog, type OrderIntent } from "@/components/dashboard/order-confirm-dialog";
+import { PriceAlertDialog, type AlertIntent } from "@/components/dashboard/price-alert-dialog";
+import { Bell } from "lucide-react";
 import { useCandles } from "@/hooks/use-candles";
 import { useSignals, useGenerateSignals } from "@/hooks/use-signals";
 import type { Ticker } from "@/hooks/use-ticker";
@@ -34,6 +36,7 @@ export function CoinDetailDialog({
   const [interval, setInterval] = React.useState<string>("1h");
   const [chartMode, setChartMode] = React.useState<ChartMode>("area");
   const [intent, setIntent] = React.useState<OrderIntent | null>(null);
+  const [alertIntent, setAlertIntent] = React.useState<AlertIntent | null>(null);
 
   const symbol = ticker?.symbol ?? null;
   const { data: candles, isLoading } = useCandles(symbol, interval, 120);
@@ -85,6 +88,15 @@ export function CoinDetailDialog({
                     </span>
                   </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setAlertIntent({ symbol: ticker.symbol, price: ticker.price })}
+                  aria-label="Set price alert"
+                  title="Set price alert"
+                  className="grid place-items-center size-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                >
+                  <Bell className="size-4" />
+                </button>
                 <WatchStar symbol={ticker.symbol} size={20} />
               </div>
             </DialogHeader>
@@ -206,6 +218,7 @@ export function CoinDetailDialog({
       </Dialog>
 
       <OrderConfirmDialog intent={intent} onClose={() => setIntent(null)} />
+      <PriceAlertDialog intent={alertIntent} onClose={() => setAlertIntent(null)} />
     </>
   );
 }
