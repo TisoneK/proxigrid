@@ -253,3 +253,12 @@ past entries — append corrections instead.
 - **Notes:** In quiet markets few signals clear 0.5 (correct — no strong opportunity, no alert). Threshold is a constant (0.5) for now; could be user-configurable later. Scanner persists all generated signals each pass → DB growth over time (retention/pruning is a future cleanup). Verifying the toast needed a temp low threshold + fast poll (reverted).
 - **Report:** none
 
+---
+## 2026-08-28 — Session 27
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User asked me to stop waiting for feature requests and build proactively. Shipped a feature batch.
+- **Commits:** 3 (772b7fb coin detail + chart; + notifications bell; + this chore(context) commit).
+- **Outcome:** done — (1) **Coin detail view**: market rows are clickable → dialog with a real recharts area price chart (1h/4h/1d, use-candles hook, price-chart component), live price + 24h change, 24h high/low/volume, the coin's signals + Scan, and Buy/Sell quick-trade wired to OrderConfirmDialog. (2) **Notifications bell** in the header: panel of recent strong signals + rule executions with an unread badge (localStorage last-seen); use-executions hook. Both verified in-browser (BTC chart renders; panel shows ETH/BTC signals); tsc/lint/build green.
+- **Notes:** recharts stroke uses literal hex (#10b981/#f43f5e) — CSS vars don't resolve as SVG presentation attributes. Notification bell trigger sits at the screen top edge; clicking via center works.
+- **Report:** none
+
