@@ -1,6 +1,7 @@
 "use client";
 
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
+import { NotificationBell } from "@/components/dashboard/notification-bell";
 
 /**
  * Proxigrid top bar — friendly wordmark, a calm "live" indicator, the paper
@@ -30,6 +31,7 @@ export function Header() {
               <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">testnet</span>
             </div>
 
+            <NotificationBell />
             <ThemeToggle />
           </div>
         </div>
