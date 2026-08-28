@@ -262,3 +262,11 @@ past entries — append corrections instead.
 - **Notes:** recharts stroke uses literal hex (#10b981/#f43f5e) — CSS vars don't resolve as SVG presentation attributes. Notification bell trigger sits at the screen top edge; clicking via center works.
 - **Report:** none
 
+---
+## 2026-08-28 — Session 28
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User: notification items aren't clickable.
+- **Commits:** 2 (clickable notifications; + this chore(context) commit).
+- **Outcome:** done — notification items are now buttons; each carries symbol/price and on click closes the panel + opens that coin's CoinDetailDialog (uses the live ticker if present, else a minimal ticker from the signal). Verified: clicking 'Ethereum: Sell signal' opened ETH's detail with chart/stats/signals. tsc/lint/build green.
+- **Report:** none
+
