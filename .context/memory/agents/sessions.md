@@ -403,3 +403,12 @@ past entries — append corrections instead.
 - **Notes:** command-palette's "Toggle theme" action still works (it uses next-themes useTheme directly, not the removed component). Restored the theme to Light after testing so the user's preference isn't changed.
 - **Report:** none
 
+---
+## 2026-08-29 — Session 44
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Move the exchange switcher from the Markets card onto the header Binance/testnet badge.
+- **Commits:** 2 (switcher relocation; + this chore(context) log).
+- **Outcome:** done — user expected the header's "Binance · testnet" badge to be the clickable exchange picker (with Deriv etc.), not a dropdown on the Markets card. Reworked ExchangeSwitcher so its trigger IS the header badge (per-exchange logo · name · testnet-from-isPaper · chevron), moved it into the header where the static badge was, and removed it from the Markets card header (kept useExchange there for the ticker/sparkline queries). Menu unchanged: Binance live radio + Coming soon (Coinbase/Kraken/Deriv) teaser toasts. Verified in-browser: header badge opens the menu, Deriv teaser fires, app stays on Binance. tsc/lint/build/60 tests green.
+- **Notes:** trigger stays hidden below md (matches the original badge's `hidden md:flex`). Only Binance has a logo (/coins/bnb.svg); other exchanges would need one when they go live, but the trigger only ever shows the active (live) exchange so it's a non-issue for now.
+- **Report:** none
+
