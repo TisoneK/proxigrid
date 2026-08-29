@@ -448,3 +448,12 @@ past entries — append corrections instead.
 - **Notes:** lesson refined — check the *kind* of mark, not just that a logo exists: Simple Icons' Coinbase entry is the wordmark, useless as a small badge. Always eyeball the vendored SVG at render size. svgl/vectorlogo.zone carry proper square symbol icons.
 - **Report:** none
 
+---
+## 2026-08-29 — Session 49
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Design + ship the first Proxigrid product mark (favicon / app icon).
+- **Commits:** 2 (favicon; + this chore(context) log).
+- **Outcome:** done — showed the user favicon concepts (green P vs a grid mark) then 6 grid-mark variations via the visualize widget; user chose their own idea: a 2x2 grid on a dark rounded tile, top-right green (#34D399) / bottom-left white (#F6F8F7) / other two muted (#2E3731) — a market grid with one lit signal cell (the 'grid' in Proxigrid). Added src/app/icon.svg (64x64) + src/app/apple-icon.svg (180) — Next.js App Router auto-serves them as favicon + touch icon. Verified: /icon.svg 200 image/svg+xml, linked in <head>, renders correctly at tab size. Build green.
+- **Notes:** original in-house mark (no third-party asset). To restyle later just edit the two SVGs. Header still has no P/logo mark — could add this grid mark beside the wordmark if wanted; not done (out of scope of the favicon ask).
+- **Report:** none
+
