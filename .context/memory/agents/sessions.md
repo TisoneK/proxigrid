@@ -394,3 +394,12 @@ past entries — append corrections instead.
 - **Notes:** Design decision reversal is clean because session 41 gated Coinbase behind an env flag and hid the switcher on a single exchange — flipping default + adding the teaser list was ~3 files, no revert. To bring Coinbase back live: COINBASE_ENABLED=true (it then leaves the coming-soon list and becomes selectable automatically). The Deriv probe earlier (public app_id 1089) connected but returned zero active_symbols, so Deriv stays a roadmap teaser, not a build.
 - **Report:** none
 
+---
+## 2026-08-29 — Session 43
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Header cleanup — theme toggle redundant with settings; search bar too short.
+- **Commits:** 2 (header refactor; + this chore(context) log).
+- **Outcome:** done — user noted the standalone theme toggle overlapped the settings gear. Moved the theme control into the SettingsMenu popover as an Appearance segmented control (Light / Dark / Auto, with a mounted-gated active highlight to avoid a hydration mismatch), removed the ThemeToggle button from the header, and deleted the now-dead theme-toggle.tsx. Also widened the header search trigger from a stubby pill into a proper search bar (w-56 / lg:w-72, "Search markets…" with ⌘K pushed right via ml-auto). Verified in-browser: header shows the wider search + bell + settings only; Settings popover switches theme live (Light/Dark/Auto). tsc/lint/build/60 tests green.
+- **Notes:** command-palette's "Toggle theme" action still works (it uses next-themes useTheme directly, not the removed component). Restored the theme to Light after testing so the user's preference isn't changed.
+- **Report:** none
+
