@@ -457,3 +457,12 @@ past entries — append corrections instead.
 - **Notes:** original in-house mark (no third-party asset). To restyle later just edit the two SVGs. Header still has no P/logo mark — could add this grid mark beside the wordmark if wanted; not done (out of scope of the favicon ask).
 - **Report:** none
 
+---
+## 2026-08-29 — Session 50
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Make the header wordmark an SVG (keep its exact look).
+- **Commits:** 2 (svg wordmark; + this chore(context) log).
+- **Outcome:** done — replaced the header's two text spans with a Wordmark <svg> component. Font is Geist Bold (the app font, --font-geist-sans), tracking-tight, viewBox sized to Geist metrics (advance 441.7 @ em100, so nothing clips); "Proxi" fills var(--primary) green, "grid" fills currentColor — both theme-aware. Verified in-browser: matches the original exactly. tsc/lint/build green.
+- **Notes:** first tried TRUE outlined paths (fetched Geist-Bold.ttf OFL, opentype.js). My manual glyph-by-glyph concat dropped "roxi"; switching to font.getPath fixed Proxi but "grid" still dropped the d + i-dot under nonzero fill winding (Proxi rendered fine — asymmetry unexplained). Abandoned outlining for the robust SVG <text> (font-dependent, but Geist is loaded app-wide, so identical result). The browser pane intermittently "not compositing frames" made getBBox/screenshots unreliable mid-debug — standalone /public svg in a fresh foreground tab was the reliable visual check. If a font-INDEPENDENT logo asset is ever needed, revisit outlining (try per-glyph separate <path> elements, or a proper text-to-path tool).
+- **Report:** none
+
