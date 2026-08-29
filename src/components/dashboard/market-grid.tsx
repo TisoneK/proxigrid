@@ -4,7 +4,6 @@ import * as React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTickers, type Ticker } from "@/hooks/use-ticker";
 import { useExchange } from "@/hooks/use-exchange";
-import { ExchangeSwitcher } from "@/components/dashboard/exchange-switcher";
 import { CoinDetailDialog } from "@/components/dashboard/coin-detail-dialog";
 import { formatPrice, formatPercent, formatCompact } from "@/lib/utils/format";
 import { AlertTriangle, RefreshCw } from "lucide-react";
@@ -42,7 +41,6 @@ export function MarketGrid() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <ExchangeSwitcher />
           <button
             type="button"
             onClick={() => setWatchOnly((v) => !v)}

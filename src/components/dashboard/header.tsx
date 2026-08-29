@@ -2,6 +2,7 @@
 
 import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { SettingsMenu } from "@/components/dashboard/settings-menu";
+import { ExchangeSwitcher } from "@/components/dashboard/exchange-switcher";
 import { Search } from "lucide-react";
 
 /**
@@ -47,11 +48,7 @@ export function Header() {
               <Search className="h-[18px] w-[18px]" />
             </button>
 
-            <div className="hidden md:flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full bg-secondary border border-border">
-              <img src="/coins/bnb.svg" alt="Binance" width={18} height={18} />
-              <span className="text-xs font-medium text-foreground">Binance</span>
-              <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">testnet</span>
-            </div>
+            <ExchangeSwitcher />
 
             <NotificationBell />
             <SettingsMenu />

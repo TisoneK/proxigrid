@@ -17,8 +17,8 @@ import { toast } from "sonner";
 
 /**
  * Providers on the roadmap but not yet live. Selecting one just teases it —
- * the app stays purely on the active exchange. Wiring a provider up (an adapter
- * + registry entry) moves it out of this list into the live section on its own.
+ * the app stays on the active exchange. Wiring a provider up (an adapter +
+ * registry entry) moves it out of this list into the live section on its own.
  */
 const COMING_SOON = [
   { code: "coinbase", name: "Coinbase" },
@@ -26,16 +26,23 @@ const COMING_SOON = [
   { code: "deriv", name: "Deriv" },
 ];
 
+/** Per-exchange logo (only the live one is ever shown on the trigger). */
+const LOGOS: Record<string, string> = { binance: "/coins/bnb.svg" };
+
 /**
- * Picks the market-data exchange. Live providers (from /api/exchanges) are
- * selectable; roadmap providers show under "Coming soon" and pop a teaser.
+ * The header's exchange badge, made clickable: it shows the active exchange
+ * (logo · name · testnet) and opens a menu of live providers plus a
+ * "Coming soon" list. Lives in the top bar so it reads as the app's exchange.
  */
 export function ExchangeSwitcher() {
   const { data: exchanges } = useExchanges();
   const [exchange, setExchange] = useExchange();
   const live = exchanges ?? [];
   const liveCodes = new Set(live.map((e) => e.code));
-  const current = live.find((e) => e.code === exchange)?.name ?? "Binance";
+  const current = live.find((e) => e.code === exchange);
+  const currentName = current?.name ?? "Binance";
+  const isPaper = current?.isPaper ?? true;
+  const logo = LOGOS[exchange];
   const soon = COMING_SOON.filter((e) => !liveCodes.has(e.code));
 
   return (
@@ -44,13 +51,17 @@ export function ExchangeSwitcher() {
         <button
           type="button"
           aria-label="Select exchange"
-          className="inline-flex items-center gap-1.5 h-7 rounded-md border border-border bg-card px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary"
+          className="hidden md:flex items-center gap-1.5 pl-1.5 pr-2 py-1 rounded-full bg-secondary border border-border transition-colors hover:border-border/80"
         >
-          {current}
+          {logo && <img src={logo} alt="" width={18} height={18} />}
+          <span className="text-xs font-medium text-foreground">{currentName}</span>
+          {isPaper && (
+            <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">testnet</span>
+          )}
           <ChevronDown className="size-3.5 text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44">
+      <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuRadioGroup value={exchange} onValueChange={setExchange}>
           {live.map((e) => (
             <DropdownMenuRadioItem key={e.code} value={e.code} className="text-xs">
