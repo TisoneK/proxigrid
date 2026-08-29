@@ -23,7 +23,6 @@ import { toast } from "sonner";
  */
 const COMING_SOON = [
   { code: "coinbase", name: "Coinbase" },
-  { code: "kraken", name: "Kraken" },
   { code: "deriv", name: "Deriv" },
 ];
 
