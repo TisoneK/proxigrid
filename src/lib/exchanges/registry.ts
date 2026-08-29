@@ -30,8 +30,9 @@ function buildAdapters(): void {
   adapters.set(binance.code, binance);
 
   // Coinbase — public market data only (browse-only; no credentials needed).
-  // Disable with COINBASE_ENABLED=false.
-  if (process.env.COINBASE_ENABLED !== "false") {
+  // Off by default: the app runs purely on Binance. Opt in with
+  // COINBASE_ENABLED=true, and the exchange switcher appears automatically.
+  if (process.env.COINBASE_ENABLED === "true") {
     const coinbase = new CoinbaseAdapter();
     adapters.set(coinbase.code, coinbase);
   }
