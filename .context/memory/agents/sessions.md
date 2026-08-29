@@ -439,3 +439,12 @@ past entries — append corrections instead.
 - **Notes:** lesson — for brand logos, the company's own brand-assets/press-kit page is the right source, not just CC0 icon libraries. Kraken (removed last session) would be the same if ever re-added.
 - **Report:** none
 
+---
+## 2026-08-29 — Session 48
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Verify the Coinbase logo is real/right (user asked).
+- **Commits:** 2 (swap Coinbase wordmark->symbol; + this chore(context) log).
+- **Outcome:** done — inspected the vendored coinbase.svg by opening it full-size: it was the Coinbase *wordmark* ("coinbase" text, from Simple Icons), which renders as an unreadable blue smudge at 18px. Sourced the real Coinbase coin *symbol* (blue roundel + white C mark) from svgl (also on vectorlogo.zone), vendored it over public/exchanges/coinbase.svg. Now Binance/Coinbase/Deriv are all recognizable brand symbols at small size. Verified in-browser; build green.
+- **Notes:** lesson refined — check the *kind* of mark, not just that a logo exists: Simple Icons' Coinbase entry is the wordmark, useless as a small badge. Always eyeball the vendored SVG at render size. svgl/vectorlogo.zone carry proper square symbol icons.
+- **Report:** none
+
