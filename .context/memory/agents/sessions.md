@@ -430,3 +430,12 @@ past entries — append corrections instead.
 - **Notes:** ExchangeLogo auto-adopts a real /exchanges/{code}.svg if one is dropped in later (official brand/press-kit SVG is the licensing-clean source). Binance + Coinbase already have real CC0 marks vendored.
 - **Report:** none
 
+---
+## 2026-08-29 — Session 47
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Get the real Deriv logo (I'd wrongly concluded it wasn't findable).
+- **Commits:** 2 (vendor deriv.svg; + this chore(context) log).
+- **Outcome:** done — user pointed out Deriv obviously publishes its logo. My earlier check only covered CC0 icon *sets* (Simple Icons/VectorLogoZone/svgl), not Deriv's own brand assets. Grepped deriv.com's homepage for its logo SVG (on their website-files CDN), fetched the official 'd' mark (32x32, #FF444F), validated it (closing tag), and vendored it to public/exchanges/deriv.svg. ExchangeLogo auto-adopts it — Deriv now shows its real mark, no code change. All three exchange logos are official assets. Verified in-browser; build green.
+- **Notes:** lesson — for brand logos, the company's own brand-assets/press-kit page is the right source, not just CC0 icon libraries. Kraken (removed last session) would be the same if ever re-added.
+- **Report:** none
+
