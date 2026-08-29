@@ -43,6 +43,12 @@ export interface CoinIdentity {
 
 export function parsePair(symbol: string): { base: string; quote: string } {
   const s = symbol.toUpperCase();
+  // Dash-delimited symbols (e.g. Coinbase "BTC-USD") split unambiguously.
+  if (s.includes("-")) {
+    const [base, quote = ""] = s.split("-");
+    return { base, quote };
+  }
+  // Concatenated symbols (e.g. Binance "BTCUSDT") — strip a known quote suffix.
   for (const q of QUOTES) {
     if (s.length > q.length && s.endsWith(q)) {
       return { base: s.slice(0, -q.length), quote: q };

@@ -10,6 +10,7 @@
 
 import type { ExchangeAdapter } from "./adapter";
 import { BinanceAdapter } from "./binance/binance-adapter";
+import { CoinbaseAdapter } from "./coinbase/coinbase-adapter";
 
 // Lazy singleton map: code -> adapter
 const adapters = new Map<string, ExchangeAdapter>();
@@ -28,11 +29,20 @@ function buildAdapters(): void {
   });
   adapters.set(binance.code, binance);
 
-  // Future adapters:
-  // adapters.set("coinbase", new CoinbaseAdapter(...));
-  // adapters.set("kraken", new KrakenAdapter(...));
-  // adapters.set("oanda", new OandaAdapter(...));   // forex
-  // adapters.set("alpaca", new AlpacaAdapter(...)); // stocks
+  // Coinbase — public market data only (browse-only; no credentials needed).
+  // Disable with COINBASE_ENABLED=false.
+  if (process.env.COINBASE_ENABLED !== "false") {
+    const coinbase = new CoinbaseAdapter();
+    adapters.set(coinbase.code, coinbase);
+  }
+
+  // Adding a new provider (another crypto exchange, or a forex/derivatives
+  // broker like Deriv — ExchangeAdapter.kind supports "forex"/"stock"/
+  // "commodity"): implement ExchangeAdapter in its own folder and register it
+  // here. Nothing else in the app needs to change.
+  //   adapters.set("kraken", new KrakenAdapter(...));
+  //   adapters.set("deriv", new DerivAdapter(...));   // forex / synthetics
+  //   adapters.set("alpaca", new AlpacaAdapter(...));  // stocks
 
   initialized = true;
 }
