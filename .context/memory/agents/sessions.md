@@ -421,3 +421,12 @@ past entries — append corrections instead.
 - **Notes:** user context — Deriv is its own platform (like Binance), deliberately on hold until Binance is solid; stays in the coming-soon list. To add exact Kraken/Deriv logos later: drop kraken.svg / deriv.svg into public/exchanges/ and ExchangeLogo picks them up automatically (no code change).
 - **Report:** none
 
+---
+## 2026-08-29 — Session 46
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Trim the coming-soon exchange list to the real roadmap.
+- **Commits:** 2 (drop Kraken; + this chore(context) log).
+- **Outcome:** done — searched for real Kraken/Deriv logos across Simple Icons (CC0), VectorLogoZone, and svgl; none carry the Kraken exchange or Deriv (svgl only has KrakenJS, a JS lib). Rather than scrape unclear-license trademarked SVGs, kept brand-colored monograms for the unsourced ones. Then, per user, removed Kraken (my speculative pick) from COMING_SOON — the list is now Coinbase + Deriv, matching the real roadmap (Binance live, Coinbase built/opt-in, Deriv on hold). Verified in-browser. tsc/lint/build green.
+- **Notes:** ExchangeLogo auto-adopts a real /exchanges/{code}.svg if one is dropped in later (official brand/press-kit SVG is the licensing-clean source). Binance + Coinbase already have real CC0 marks vendored.
+- **Report:** none
+
