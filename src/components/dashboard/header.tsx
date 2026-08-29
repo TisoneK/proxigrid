@@ -3,6 +3,7 @@
 import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { SettingsMenu } from "@/components/dashboard/settings-menu";
 import { ExchangeSwitcher } from "@/components/dashboard/exchange-switcher";
+import { Wordmark } from "@/components/dashboard/wordmark";
 import { Search } from "lucide-react";
 
 /**
@@ -16,9 +17,8 @@ export function Header() {
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Wordmark */}
           <div className="min-w-0">
-            <h1 className="text-lg font-bold tracking-tight leading-none">
-              <span className="text-brand-gradient">Proxi</span>
-              <span className="text-foreground">grid</span>
+            <h1 className="leading-none">
+              <Wordmark className="h-[18px] text-foreground" />
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5 truncate">
               Crypto markets &amp; automation
