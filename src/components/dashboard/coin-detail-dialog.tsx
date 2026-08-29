@@ -39,12 +39,31 @@ export function CoinDetailDialog({
   const [alertIntent, setAlertIntent] = React.useState<AlertIntent | null>(null);
 
   const symbol = ticker?.symbol ?? null;
-  const { data: candles, isLoading } = useCandles(symbol, interval, 120);
+  const exchange = ticker?.exchangeCode ?? "binance";
+  // Trading, signals, and automations are Binance-scoped in v1; other exchanges
+  // are market-data only.
+  const isTradable = exchange === "binance";
+  const { data: candles, isLoading } = useCandles(symbol, interval, 120, exchange);
   const { data: allSignals } = useSignals(50);
   const generate = useGenerateSignals();
 
   const id = ticker ? coinIdentity(ticker.symbol) : null;
   const change = ticker?.priceChangePercent24h ?? 0;
+  // Some exchanges (Coinbase's batch feed) don't report 24h high/low — derive
+  // them from the loaded candles so the stats aren't blank.
+  const stats24h = React.useMemo(() => {
+    const cs = candles ?? [];
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+    const recent = cs.filter((c) => c.closeTime >= cutoff);
+    const use = recent.length ? recent : cs;
+    const high = ticker?.high24h && ticker.high24h > 0
+      ? ticker.high24h
+      : use.length ? Math.max(...use.map((c) => c.high)) : 0;
+    const low = ticker?.low24h && ticker.low24h > 0
+      ? ticker.low24h
+      : use.length ? Math.min(...use.map((c) => c.low)) : 0;
+    return { high, low };
+  }, [candles, ticker]);
   const up = change >= 0;
   const signals = (allSignals ?? []).filter((s) => s.symbol === symbol).slice(0, 6);
 
@@ -88,15 +107,17 @@ export function CoinDetailDialog({
                     </span>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setAlertIntent({ symbol: ticker.symbol, price: ticker.price })}
-                  aria-label="Set price alert"
-                  title="Set price alert"
-                  className="grid place-items-center size-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                >
-                  <Bell className="size-4" />
-                </button>
+                {isTradable && (
+                  <button
+                    type="button"
+                    onClick={() => setAlertIntent({ symbol: ticker.symbol, price: ticker.price })}
+                    aria-label="Set price alert"
+                    title="Set price alert"
+                    className="grid place-items-center size-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  >
+                    <Bell className="size-4" />
+                  </button>
+                )}
                 <WatchStar symbol={ticker.symbol} size={20} />
               </div>
             </DialogHeader>
@@ -104,21 +125,28 @@ export function CoinDetailDialog({
 
           {ticker && id && (
             <div className="overflow-y-auto px-5 py-4 scrollbar-terminal space-y-5">
-              {/* Buy / Sell */}
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  className="bg-emerald-600 hover:bg-emerald-600/90 text-white"
-                  onClick={() => setIntent({ symbol: ticker.symbol, side: "buy", price: ticker.price, reason: "Manual buy" })}
-                >
-                  Buy
-                </Button>
-                <Button
-                  className="bg-rose-600 hover:bg-rose-600/90 text-white"
-                  onClick={() => setIntent({ symbol: ticker.symbol, side: "sell", price: ticker.price, reason: "Manual sell" })}
-                >
-                  Sell
-                </Button>
-              </div>
+              {/* Buy / Sell — Binance only in v1 */}
+              {isTradable ? (
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    className="bg-emerald-600 hover:bg-emerald-600/90 text-white"
+                    onClick={() => setIntent({ symbol: ticker.symbol, side: "buy", price: ticker.price, reason: "Manual buy" })}
+                  >
+                    Buy
+                  </Button>
+                  <Button
+                    className="bg-rose-600 hover:bg-rose-600/90 text-white"
+                    onClick={() => setIntent({ symbol: ticker.symbol, side: "sell", price: ticker.price, reason: "Manual sell" })}
+                  >
+                    Sell
+                  </Button>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground text-center">
+                  <span className="capitalize">{exchange}</span> is market-data only —
+                  <span className="normal-case"> trading &amp; alerts are available on Binance.</span>
+                </div>
+              )}
 
               {/* Timeframe + chart */}
               <div>
@@ -173,12 +201,13 @@ export function CoinDetailDialog({
 
               {/* 24h stats */}
               <div className="grid grid-cols-3 gap-3">
-                <Stat label="24h high" value={formatPrice(ticker.high24h ?? 0)} />
-                <Stat label="24h low" value={formatPrice(ticker.low24h ?? 0)} />
+                <Stat label="24h high" value={formatPrice(stats24h.high)} />
+                <Stat label="24h low" value={formatPrice(stats24h.low)} />
                 <Stat label="24h volume" value={`$${formatCompact(ticker.quoteVolume24h)}`} />
               </div>
 
-              {/* Signals for this coin */}
+              {/* Signals for this coin — Binance-scoped in v1 */}
+              {isTradable && (
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <div className="text-sm font-semibold">Signals</div>
@@ -212,6 +241,7 @@ export function CoinDetailDialog({
                   </div>
                 )}
               </div>
+              )}
             </div>
           )}
         </DialogContent>

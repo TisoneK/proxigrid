@@ -12,13 +12,15 @@ import { CommandPalette } from "@/components/dashboard/command-palette";
 import { Header } from "@/components/dashboard/header";
 import { usePortfolio } from "@/hooks/use-portfolio";
 import { useTickers } from "@/hooks/use-ticker";
+import { useExchange } from "@/hooks/use-exchange";
 import { useSignals } from "@/hooks/use-signals";
 import { useAutomationRules } from "@/hooks/use-automation-rules";
 import { Wallet, LineChart, Radar, Zap } from "lucide-react";
 
 export default function Home() {
   const { data: portfolio } = usePortfolio();
-  const { data: tickers } = useTickers("binance");
+  const [exchange] = useExchange();
+  const { data: tickers } = useTickers(exchange);
   const { data: signals } = useSignals(50);
   const { data: rules } = useAutomationRules();
 

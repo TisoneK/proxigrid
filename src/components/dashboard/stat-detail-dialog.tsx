@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { usePortfolio } from "@/hooks/use-portfolio";
 import { useTickers } from "@/hooks/use-ticker";
+import { useExchange } from "@/hooks/use-exchange";
 import { useSignals } from "@/hooks/use-signals";
 import { useAutomationRules } from "@/hooks/use-automation-rules";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
@@ -113,7 +114,8 @@ function PortfolioDetail() {
 }
 
 function MoversDetail() {
-  const { data: tickers } = useTickers("binance");
+  const [exchange] = useExchange();
+  const { data: tickers } = useTickers(exchange);
   const sorted = [...(tickers ?? [])].sort(
     (a, b) => (b.priceChangePercent24h ?? 0) - (a.priceChangePercent24h ?? 0)
   );

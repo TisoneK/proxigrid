@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/command";
 import { CoinDetailDialog } from "@/components/dashboard/coin-detail-dialog";
 import { useTickers, type Ticker } from "@/hooks/use-ticker";
+import { useExchange } from "@/hooks/use-exchange";
 import { useGenerateSignals } from "@/hooks/use-signals";
 import { coinIdentity } from "@/lib/coins";
 import { formatPrice } from "@/lib/utils/format";
@@ -22,7 +23,8 @@ import { Sparkles, SunMoon } from "lucide-react";
 export function CommandPalette() {
   const [open, setOpen] = React.useState(false);
   const [detail, setDetail] = React.useState<Ticker | null>(null);
-  const { data: tickers } = useTickers("binance");
+  const [exchange] = useExchange();
+  const { data: tickers } = useTickers(exchange);
   const { setTheme, resolvedTheme } = useTheme();
   const generate = useGenerateSignals();
 

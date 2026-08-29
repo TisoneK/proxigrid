@@ -61,3 +61,48 @@ export function useLocalSetting(
 
   return [value, set];
 }
+
+/** String-valued sibling of useLocalSetting (same cross-component sync). */
+export function useLocalStringSetting(
+  key: string,
+  fallback: string
+): [string, (v: string) => void] {
+  const subscribe = React.useCallback(
+    (cb: () => void) => {
+      listeners.add(cb);
+      const onStorage = (e: StorageEvent) => {
+        if (e.key === key) cb();
+      };
+      window.addEventListener("storage", onStorage);
+      return () => {
+        listeners.delete(cb);
+        window.removeEventListener("storage", onStorage);
+      };
+    },
+    [key]
+  );
+
+  const getSnapshot = React.useCallback(() => {
+    try {
+      return localStorage.getItem(key) ?? fallback;
+    } catch {
+      return fallback;
+    }
+  }, [key, fallback]);
+
+  const value = React.useSyncExternalStore(subscribe, getSnapshot, () => fallback);
+
+  const set = React.useCallback(
+    (v: string) => {
+      try {
+        localStorage.setItem(key, v);
+      } catch {
+        /* ignore */
+      }
+      emitLocal();
+    },
+    [key]
+  );
+
+  return [value, set];
+}

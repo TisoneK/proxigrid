@@ -3,6 +3,8 @@
 import * as React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTickers, type Ticker } from "@/hooks/use-ticker";
+import { useExchange } from "@/hooks/use-exchange";
+import { ExchangeSwitcher } from "@/components/dashboard/exchange-switcher";
 import { CoinDetailDialog } from "@/components/dashboard/coin-detail-dialog";
 import { formatPrice, formatPercent, formatCompact } from "@/lib/utils/format";
 import { AlertTriangle, RefreshCw } from "lucide-react";
@@ -16,8 +18,9 @@ import { cn } from "@/lib/utils";
 import { Star } from "lucide-react";
 
 export function MarketGrid() {
+  const [exchange] = useExchange();
   const { data: tickers, isLoading, isError, error, refetch, isFetching } =
-    useTickers("binance");
+    useTickers(exchange);
   const hasData = (tickers?.length ?? 0) > 0;
   const isBusy = isLoading || isFetching;
   const showEmpty = !hasData && !isBusy;
@@ -35,10 +38,11 @@ export function MarketGrid() {
         <div>
           <h2 className="text-sm font-semibold text-foreground">Markets</h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {watchOnly ? "Your watchlist · Binance" : "Top by 24h volume · Binance"}
+            {watchOnly ? "Your watchlist" : "Top by 24h volume"}
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <ExchangeSwitcher />
           <button
             type="button"
             onClick={() => setWatchOnly((v) => !v)}
@@ -137,7 +141,7 @@ export function MarketGrid() {
 
                   {/* Sparkline fills the flexible middle so the row isn't hollow. */}
                   <div className="flex-1 hidden sm:flex items-center justify-center min-w-0 opacity-70 group-hover:opacity-100 transition-opacity">
-                    <MarketSparkline symbol={t.symbol} width={84} height={24} />
+                    <MarketSparkline symbol={t.symbol} exchange={exchange} width={84} height={24} />
                   </div>
                   <div className="flex-1 sm:hidden" />
 
