@@ -412,3 +412,12 @@ past entries — append corrections instead.
 - **Notes:** trigger stays hidden below md (matches the original badge's `hidden md:flex`). Only Binance has a logo (/coins/bnb.svg); other exchanges would need one when they go live, but the trigger only ever shows the active (live) exchange so it's a non-issue for now.
 - **Report:** none
 
+---
+## 2026-08-29 — Session 45
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Use real exchange logos in the switcher.
+- **Commits:** 2 (exchange logos; + this chore(context) log).
+- **Outcome:** done — vendored Binance + Coinbase brand SVGs to public/exchanges/ (Simple Icons, CC0 — mirrors the coin-logos-in-public/coins pattern). Added ExchangeLogo (renders /exchanges/{code}.svg, falls back to a brand-colored monogram roundel). Wired it into the switcher trigger and all menu rows. Simple Icons has no Kraken/Deriv icon (404), so those show brand-colored K/D monograms (kraken #7132F5, deriv #FF444F) until official SVGs are dropped in. Verified in-browser: header badge shows the Binance diamond; menu shows Coinbase (real), Kraken/Deriv (monograms). tsc/lint/build/60 tests green.
+- **Notes:** user context — Deriv is its own platform (like Binance), deliberately on hold until Binance is solid; stays in the coming-soon list. To add exact Kraken/Deriv logos later: drop kraken.svg / deriv.svg into public/exchanges/ and ExchangeLogo picks them up automatically (no code change).
+- **Report:** none
+
