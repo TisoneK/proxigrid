@@ -466,3 +466,12 @@ past entries — append corrections instead.
 - **Notes:** first tried TRUE outlined paths (fetched Geist-Bold.ttf OFL, opentype.js). My manual glyph-by-glyph concat dropped "roxi"; switching to font.getPath fixed Proxi but "grid" still dropped the d + i-dot under nonzero fill winding (Proxi rendered fine — asymmetry unexplained). Abandoned outlining for the robust SVG <text> (font-dependent, but Geist is loaded app-wide, so identical result). The browser pane intermittently "not compositing frames" made getBBox/screenshots unreliable mid-debug — standalone /public svg in a fresh foreground tab was the reliable visual check. If a font-INDEPENDENT logo asset is ever needed, revisit outlining (try per-glyph separate <path> elements, or a proper text-to-path tool).
 - **Report:** none
 
+---
+## 2026-08-29 — Session 51
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (macOS 15.7.7) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Adapt the app for Vercel (user was trying to deploy there).
+- **Commits:** 2 (vercel adaptation; + this chore(context) log).
+- **Outcome:** done — diagnosed the mismatch (app was built long-running: SQLite file DB + setInterval workers + standalone/bun serve — none work on Vercel serverless), user chose "adapt for Vercel". Changes: Prisma sqlite->postgresql (schema was already portable); `postinstall: prisma generate`; `vercel.json` with a Vercel-only buildCommand (`prisma db push --skip-generate && next build`) + a cron hitting `/api/cron/tick` every 10 min; `next.config` emits standalone only when not on Vercel (VERCEL=1); extracted `scanOnce()` in signal-scanner (shared by the interval worker + cron) and added `GET /api/cron/tick` (scan + automation sweep, guarded by CRON_SECRET); `.env.example` (un-ignored via `!.env.example`) + `docs/DEPLOY-VERCEL.md`. tsc/lint/build/60 tests green — `next build` compiles without a DB connection (routes are dynamic), so it passes locally even though local DATABASE_URL still points at the old sqlite file.
+- **Notes:** the deploy steps are the USER's (Vercel account): import repo, add Vercel Postgres (auto-sets DATABASE_URL), set CRON_SECRET, deploy. Vercel Hobby restricts cron frequency (schedule set to */10; Pro allows minutely). Local dev now REQUIRES Postgres (point DATABASE_URL at local/Neon PG, then `npm run db:push`). Trading still dry-run unless ENABLE_LIVE_TRADING + creds; Binance signed endpoints may be geo-blocked from Vercel's region.
+- **Report:** none
+
