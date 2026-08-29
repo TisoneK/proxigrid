@@ -1,6 +1,5 @@
 "use client";
 
-import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { SettingsMenu } from "@/components/dashboard/settings-menu";
 import { Search } from "lucide-react";
@@ -32,12 +31,12 @@ export function Header() {
             <button
               type="button"
               onClick={() => document.dispatchEvent(new CustomEvent("proxigrid:command"))}
-              className="hidden sm:inline-flex items-center gap-2 h-9 rounded-full border border-border bg-card px-3 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
-              aria-label="Search"
+              className="hidden sm:flex items-center gap-2 h-9 w-56 lg:w-72 rounded-full border border-border bg-card pl-3.5 pr-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary hover:border-border/80"
+              aria-label="Search markets"
             >
-              <Search className="h-3.5 w-3.5" />
-              <span>Search</span>
-              <kbd className="ml-1 rounded border border-border bg-secondary px-1 py-0.5 text-[10px]">⌘K</kbd>
+              <Search className="h-3.5 w-3.5 shrink-0" />
+              <span>Search markets…</span>
+              <kbd className="ml-auto rounded border border-border bg-secondary px-1.5 py-0.5 text-[10px]">⌘K</kbd>
             </button>
             <button
               type="button"
@@ -56,7 +55,6 @@ export function Header() {
 
             <NotificationBell />
             <SettingsMenu />
-            <ThemeToggle />
           </div>
         </div>
       </div>
