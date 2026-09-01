@@ -13,10 +13,11 @@ Proxigrid is a modular platform for observing markets, generating intelligence s
 ### Tech stack
 - **Next.js 16** (App Router) + **TypeScript 5**
 - **Tailwind CSS 4** + **shadcn/ui** (New York style)
-- **Prisma ORM** with SQLite (swap to Postgres for production)
+- **Prisma ORM** with PostgreSQL (SQLite is no longer supported — see `docs/DEPLOY-VERCEL.md`)
 - **TanStack Query** for client state
+- **Vitest** for unit tests (`npm test`)
 - **Socket.io** for realtime price streaming (separate mini-service)
-- **Recharts** for candlestick charts (ready to plug in)
+- **Recharts** for candlestick charts
 
 ### Architecture
 
@@ -89,11 +90,14 @@ prisma/
 
 ### 1. Environment variables
 
-Create a `.env` file (already partially present):
+Copy `.env.example` to `.env` and fill it in:
 
 ```bash
-# Database (SQLite default — change to Postgres URL in prod)
-DATABASE_URL=file:/home/z/my-project/db/custom.db
+# Database (required) — Postgres connection string
+DATABASE_URL="postgresql://user:password@host:5432/proxigrid?sslmode=require"
+
+# Vercel Cron secret (required on Vercel; guards /api/cron/tick)
+CRON_SECRET="change-me-to-a-long-random-string"
 
 # Binance API (optional — only needed for portfolio + trading)
 # Default is testnet (paper) mode.
@@ -105,20 +109,28 @@ BINANCE_PAPER=true
 
 # Live trading (place_order actions). Defaults to disabled.
 ENABLE_LIVE_TRADING=false
+
+# Self-hosted only: run the workers in-process instead of via cron
+# ENABLE_SIGNAL_SCANNER=true
+# ENABLE_AUTOMATION_WORKER=true
 ```
+
+See `.env.example` for the full list and `docs/DEPLOY-VERCEL.md` for the
+Vercel deployment walkthrough.
 
 Get Binance Spot Testnet credentials at: https://testnet.binance.vision/
 
 ### 2. Push database schema
 
 ```bash
-bun run db:push
+npm install
+npm run db:push
 ```
 
 ### 3. Run the dev server
 
 ```bash
-bun run dev
+npm run dev
 ```
 
 The dashboard runs at the project root (single route per platform constraint).
@@ -173,6 +185,27 @@ The frontend connects via the gateway at `/socket.io/?XTransformPort=3001`.
 | `POST` | `/api/automation/rules/{id}/toggle` | Toggle enabled (body: `{enabled: true}`) |
 | `POST` | `/api/automation/rules/{id}` | Trigger immediate evaluation |
 | `GET` | `/api/automation/executions?ruleId=...&limit=50` | Execution history |
+| `POST` | `/api/automation/sweep` | Evaluate all enabled rules once |
+
+### Orders
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/orders` | Place one order (`{symbol, side, type, quantity, price?}`) — dry-run unless `ENABLE_LIVE_TRADING=true` |
+
+### Watchlist
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/watchlist` | List starred symbols |
+| `POST` | `/api/watchlist` | Star a symbol (`{symbol}`) |
+| `DELETE` | `/api/watchlist/{symbol}` | Unstar a symbol |
+
+### Cron
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/cron/tick` | One signal-scan pass + automation sweep (Vercel Cron; `Authorization: Bearer <CRON_SECRET>` required) |
 
 ### Rule shape
 
@@ -223,14 +256,11 @@ For non-crypto markets (forex, stocks), implement the same interface with `kind:
 
 ## Roadmap (next iterations)
 
-- [ ] Recharts candlestick + indicator overlay
 - [ ] WebSocket live ticker integration in `MarketGrid`
-- [ ] Rule sweep cron (currently only manual trigger)
-- [ ] Coinbase adapter
-- [ ] Backtesting runner (replay historical candles through rule engine)
+- [ ] Multi-exchange v2: canonical symbols + Coinbase signal scanning
+- [ ] Testnet order-path validation (needs a Binance-reachable host)
 - [ ] Multi-asset portfolio rebalancing actions
 - [ ] Auth + multi-user (NextAuth scaffolded but not wired)
-- [ ] Postgres migration for production
 
 ---
 
