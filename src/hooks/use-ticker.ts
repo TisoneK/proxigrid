@@ -30,19 +30,3 @@ export function useTickers(exchangeCode: string | null | undefined) {
     refetchInterval: 15_000,
   });
 }
-
-export function useTicker(exchangeCode: string, symbol: string | null) {
-  return useQuery<Ticker>({
-    queryKey: ["ticker", exchangeCode, symbol],
-    queryFn: async () => {
-      const res = await fetch(
-        `/api/markets/${exchangeCode}/ticker?symbol=${symbol}`
-      );
-      if (!res.ok) throw new Error("Failed to fetch ticker");
-      const data = await res.json();
-      return data.tickers[0] ?? null;
-    },
-    enabled: Boolean(symbol),
-    refetchInterval: 10_000,
-  });
-}
