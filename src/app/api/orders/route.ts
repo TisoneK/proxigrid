@@ -20,11 +20,38 @@ export async function POST(req: NextRequest) {
       price,
     } = body ?? {};
 
-    if (!symbol || !side || quantity === undefined) {
+    // Validate before anything reaches the adapter — the adapter maps any
+    // non-"buy" side to SELL, so unvalidated input could silently invert a
+    // trade once live trading is on.
+    if (
+      !symbol ||
+      typeof symbol !== "string" ||
+      (side !== "buy" && side !== "sell") ||
+      (type !== "market" && type !== "limit")
+    ) {
       return NextResponse.json(
-        { error: "symbol, side and quantity are required" },
+        { error: "symbol (string), side (buy|sell) and type (market|limit) are required" },
         { status: 400 }
       );
+    }
+
+    const qty = Number(quantity);
+    if (!Number.isFinite(qty) || qty <= 0) {
+      return NextResponse.json(
+        { error: "quantity must be a positive number" },
+        { status: 400 }
+      );
+    }
+
+    let limitPrice: number | undefined;
+    if (type === "limit") {
+      limitPrice = Number(price);
+      if (!Number.isFinite(limitPrice) || limitPrice <= 0) {
+        return NextResponse.json(
+          { error: "limit orders require a positive price" },
+          { status: 400 }
+        );
+      }
     }
 
     if (process.env.ENABLE_LIVE_TRADING !== "true") {
@@ -39,8 +66,9 @@ export async function POST(req: NextRequest) {
       symbol,
       side,
       type,
-      quantity: Number(quantity),
-      price: price !== undefined ? Number(price) : undefined,
+      quantity: qty,
+      // Market orders never carry a price — sending one makes Binance reject.
+      price: limitPrice,
     });
 
     return NextResponse.json({ status: "placed", order });
