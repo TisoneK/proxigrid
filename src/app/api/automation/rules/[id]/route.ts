@@ -35,6 +35,9 @@ export async function PATCH(req: NextRequest, ctx: RouteContext) {
     cooldownSec?: number;
   };
 
+  if (!(await getAutomationService().getRule(id))) {
+    return NextResponse.json({ error: "not found" }, { status: 404 });
+  }
   const rule = await getAutomationService().updateRule(id, {
     name,
     description,
@@ -48,6 +51,9 @@ export async function PATCH(req: NextRequest, ctx: RouteContext) {
 
 export async function DELETE(_req: NextRequest, ctx: RouteContext) {
   const { id } = await ctx.params;
+  if (!(await getAutomationService().getRule(id))) {
+    return NextResponse.json({ error: "not found" }, { status: 404 });
+  }
   await getAutomationService().deleteRule(id);
   return NextResponse.json({ deleted: true });
 }
@@ -55,6 +61,9 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext) {
 /** Trigger immediate evaluation+execution */
 export async function POST(req: NextRequest, ctx: RouteContext) {
   const { id } = await ctx.params;
+  if (!(await getAutomationService().getRule(id))) {
+    return NextResponse.json({ error: "not found" }, { status: 404 });
+  }
   const result = await getAutomationService().evaluateAndExecute(id);
   return NextResponse.json(result);
 }
