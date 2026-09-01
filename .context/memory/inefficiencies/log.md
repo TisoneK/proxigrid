@@ -22,3 +22,19 @@ never harvested.
 - **Upstream:** candidate  ← add this line ONLY for protocol-level friction
   worth a core fix; omit entirely for project-local friction.
 -->
+
+---
+## 2026-09-02 — ZCode / glm-5.3-flash
+- **Problem:** First session on this Windows machine required environment discovery from scratch (git identity fine, but line-ending config, shell, DB state, and toolchain all unknown; `environments.md` only had bao's macOS block).
+- **Cost:** ~10 minutes of checks (node version, autocrlf, DB probe, lockfile).
+- **Cause:** New machine, first Windows-based session in the repo's history.
+- **Workaround / fix:** Ran discovery probes directly; recorded a full environment block in `system/environments.md` so the next Windows session starts warm.
+- **Prevent next time:** Done — see environments.md "Tisone's Windows workstation".
+
+---
+## 2026-09-02 — ZCode / glm-5.3-flash
+- **Problem:** `npm audit` says "fix available via `npm audit fix`" for the prisma→deepmerge-ts chain, but the dry-run shows no in-range fix exists (the "fix" is prisma 8, still an RC).
+- **Cost:** A few minutes confirming via `npm view` that no stable release clears the advisory; risk of a future agent running the fix and getting a pre-release dependency.
+- **Cause:** npm audit's messaging conflates "a semver-incompatible release exists" with "a fix is available".
+- **Workaround / fix:** Verified with `npm view prisma version` (8.0.0-rc.12) + `npm audit fix --dry-run`; left the dependency untouched. Backlog entry already covers it.
+- **Prevent next time:** Distrust "fix available" without a dry-run; this is now noted in the backlog item itself.

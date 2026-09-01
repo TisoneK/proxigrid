@@ -475,3 +475,13 @@ past entries — append corrections instead.
 - **Notes:** the deploy steps are the USER's (Vercel account): import repo, add Vercel Postgres (auto-sets DATABASE_URL), set CRON_SECRET, deploy. Vercel Hobby restricts cron frequency (schedule set to */10; Pro allows minutely). Local dev now REQUIRES Postgres (point DATABASE_URL at local/Neon PG, then `npm run db:push`). Trading still dry-run unless ENABLE_LIVE_TRADING + creds; Binance signed endpoints may be geo-blocked from Vercel's region.
 - **Report:** none
 
+
+---
+## 2026-09-02 — Session 52
+- **Agent:** ZCode | **Model:** glm-5.3-flash | **Platform:** Tisone's Windows workstation (win32, Git Bash) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** "analyze" — general sweep: re-baseline on a new Windows machine (first non-macOS session), full code review, fix safe issues.
+- **Commits:** 8 product/report (cf19f41 cron security; 3cc3b2d orders validation; 75a7ffb param clamps + watchlist/timeframe validation; fb79c5b dead useTicker removal; 210d7af config hygiene incl. typecheck-on-build + turbopack.root + portable scripts; f9701d7 rules 404s; dfccb4c README refresh; 646166d review report) + this chore(context) commit.
+- **Outcome:** done — baseline green (lint/tsc/60 tests/build; build now type-checks). High: cron endpoint fail-closed + timing-safe. Key flags (not fixed, architectural): no-auth API surface, webhook SSRF-by-design, plaintext Exchange.apiKey/apiSecret columns (unused). Audit chain rechecked — still no stable fix (prisma 8 RC).
+- **Open items:** `tasks/backlog.md` unchanged in substance (prisma advisory recheck note added). New in flaws/log.md: context-sync CRLF false-positive on Windows (rollback NOT run — core verified intact via blob hashes), broken context-gates.ps1, Git Bash guidance.
+- **Notes:** none
+- **Report:** .context/memory/reviews/2026-09-02-review.md

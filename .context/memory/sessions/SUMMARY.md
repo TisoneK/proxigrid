@@ -30,3 +30,6 @@ records.
 - A removed summary line MUST have a corresponding permanent entry in
   agents/sessions.md — never delete the only record of a session.
 -->
+
+---
+- **2026-09-02 — Session 52** — ZCode / glm-5.3-flash — General sweep on new Windows machine; baseline green, 7 fixes pushed (cron security fail-closed, orders validation, param clamps, dead hook, config hygiene, README). Key discovery: context-sync verify false-fails under autocrlf on Windows — core verified intact via blob hashes, rollback skipped. Detail: summary only.

@@ -11,7 +11,7 @@ don't remove the line.
 -->
 
 ---
-- [ ] **Remaining prisma-chain security advisory** (added 2026-08-26 by Claude Code) — 3 high-severity advisories persist after `npm audit fix --force`: `prisma` → `@prisma/config` → `deepmerge-ts <8.0.0` (GHSA-ggr8-5vv4-36mx, stack exhaustion on recursive-object-graph merges). Build-time CLI tooling; `prisma`/`@prisma/client` are at 6.19.3. The only fix npm offers is a prisma dev pre-release, so it was left in place. Recheck when Prisma ships a stable release whose `@prisma/config` pins `deepmerge-ts@>=8`.
+- [ ] **Remaining prisma-chain security advisory** (added 2026-08-26 by Claude Code) — 3 high-severity advisories persist after `npm audit fix --force`: `prisma` → `@prisma/config` → `deepmerge-ts <8.0.0` (GHSA-ggr8-5vv4-36mx, stack exhaustion on recursive-object-graph merges). Build-time CLI tooling; `prisma`/`@prisma/client` are at 6.19.3. The only fix npm offers is a prisma dev pre-release, so it was left in place. Recheck when Prisma ships a stable release whose `@prisma/config` pins `deepmerge-ts@>=8`. **Rechecked 2026-09-02 (Session 52):** `@prisma/config@6.19.3` pins `deepmerge-ts@7.1.5`; latest prisma is still `8.0.0-rc.12` — no stable fix yet. Beware: `npm audit` claims "fix available"; it means the RC.
 - [x] **Pre-existing lint errors: setState-in-effect** (added 2026-08-26 by Claude Code) — `npm run lint` reported 5 errors (`react-hooks/set-state-in-effect`) in `count-up.tsx`, `header.tsx`, `carousel.tsx`, and `use-mobile.ts`. Fixed in commit cdd4576 via `useSyncExternalStore` (media query / clock / Embla) and derived render state (count-up); lint clean, build green. (done 2026-08-26, Session 3)
 
 ---

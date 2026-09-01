@@ -14,6 +14,7 @@ accordingly).
 | Agent | Model | First seen | Last seen | Sessions |
 |---|---|---|---|---|
 | Claude Code | claude-opus-4-8 | 2026-08-26 | 2026-08-29 | 51 |
+| ZCode | glm-5.3-flash | 2026-09-02 | 2026-09-02 | 1 |
 
 ## Observations
 
@@ -26,3 +27,5 @@ Update in place when a newer session contradicts an old observation.
 <!-- TEMPLATE — one bullet per observation:
 - **<agent> / <model>:** <what was observed — concrete and checkable, e.g. "Read tool truncates files >500 lines; needs offset/limit", "SSRF fix shipped with regression test, verified green"> (YYYY-MM-DD)
 -->
+
+- **ZCode / glm-5.3-flash:** Full general sweep on a new Windows machine: baseline verified (lint/tsc/60 tests/build), 7 safe fixes shipped across security, API validation, and config; correctly identified the context-sync CRLF false positive via git blob hashes instead of running rollback. (2026-09-02)
