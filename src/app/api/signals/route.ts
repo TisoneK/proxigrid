@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getIntelligenceService } from "@/lib/services/intelligence-service";
+import { intParam } from "@/lib/params";
+
+const TIMEFRAMES = new Set(["1m", "5m", "15m", "1h", "4h", "1d"]);
 
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
-  const limit = parseInt(url.searchParams.get("limit") ?? "50", 10);
-  const offset = parseInt(url.searchParams.get("offset") ?? "0", 10);
+  const limit = intParam(url.searchParams.get("limit"), 50, 1, 200);
+  const offset = intParam(url.searchParams.get("offset"), 0, 0, 100_000);
   const symbol = url.searchParams.get("symbol");
 
   const service = getIntelligenceService();
@@ -33,10 +36,16 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    if (!timeframe || !TIMEFRAMES.has(timeframe)) {
+      return NextResponse.json(
+        { error: `timeframe must be one of: ${[...TIMEFRAMES].join(", ")}` },
+        { status: 400 }
+      );
+    }
     const signals = await getIntelligenceService().generateAndPersist(
       exchange,
       symbol,
-      timeframe ?? "1h",
+      timeframe,
       generators
     );
     return NextResponse.json({ signals });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMarketDataService } from "@/lib/services/market-data-service";
+import { intParam } from "@/lib/params";
 
 interface RouteContext {
   params: Promise<{ exchange: string }>;
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest, ctx: RouteContext) {
   const { exchange } = await ctx.params;
   const url = req.nextUrl;
   const symbol = url.searchParams.get("symbol");
-  const depth = parseInt(url.searchParams.get("depth") ?? "20", 10);
+  const depth = intParam(url.searchParams.get("depth"), 20, 1, 100);
 
   if (!symbol) {
     return NextResponse.json(

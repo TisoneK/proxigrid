@@ -14,7 +14,12 @@ export async function POST(req: NextRequest) {
     if (!symbol || typeof symbol !== "string") {
       return NextResponse.json({ error: "symbol required" }, { status: 400 });
     }
-    const s = symbol.toUpperCase();
+    const s = symbol.trim().toUpperCase();
+    // Exchange-native symbols are short alphanumerics (BTCUSDT, BTC-USD, …);
+    // reject anything else so the scanner never tries to scan junk rows.
+    if (s.length < 2 || s.length > 32 || !/^[A-Z0-9:\-_.]+$/.test(s)) {
+      return NextResponse.json({ error: "invalid symbol" }, { status: 400 });
+    }
     await db.watchItem.upsert({ where: { symbol: s }, create: { symbol: s }, update: {} });
     return NextResponse.json({ symbol: s, watched: true });
   } catch (e: any) {

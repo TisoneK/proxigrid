@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMarketDataService } from "@/lib/services/market-data-service";
+import { intParam } from "@/lib/params";
 
 interface RouteContext {
   params: Promise<{ exchange: string }>;
@@ -16,7 +17,8 @@ export async function GET(req: NextRequest, ctx: RouteContext) {
     | "1h"
     | "4h"
     | "1d";
-  const limit = parseInt(url.searchParams.get("limit") ?? "200", 10);
+  // Binance caps klines at 1000 per request; clamp before it reaches upstream.
+  const limit = intParam(url.searchParams.get("limit"), 200, 1, 1000);
 
   if (!symbol) {
     return NextResponse.json(
