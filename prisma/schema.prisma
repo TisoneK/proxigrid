@@ -68,7 +68,7 @@ model Signal {
   id          String   @id @default(cuid())
   exchangeCode String  // "binance"
   symbol      String  // "BTCUSDT"
-  timeframe   String  // "1m" | "5m" | "1h" | "4h" | "1d"
+  timeframe   String  // "1m" | "5m" | "15m" | "1h" | "4h" | "1d"
   indicator   String  // "RSI" | "MACD" | "EMA_CROSS" | "BOLLINGER"
   direction   String  // "long" | "short" | "neutral"
   strength    Float   // 0..1 confidence
@@ -77,8 +77,16 @@ model Signal {
   metadata    String   @default("{}") // indicator values
   createdAt   DateTime @default(now())
 
+  // Outcome tracking (direction-adjusted returns, fraction). Filled in by
+  // checkSignalOutcomes() from the scanner/cron tick once the horizon has
+  // passed: return1h uses the 1h candle closing at/after createdAt+1h.
+  // Positive = the market moved in the signal's direction. Hit = value > 0.
+  return1h    Float?
+  return24h   Float?
+
   @@index([exchangeCode, symbol, createdAt])
   @@index([indicator, direction])
+  @@index([direction, createdAt])
 }
 
 /// An automation rule — condition triggers an action

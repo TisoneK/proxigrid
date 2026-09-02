@@ -305,6 +305,115 @@ export class IntelligenceService {
   }
 
   /**
+   * Record outcome returns for directional signals once their horizon has
+   * passed. Uses 1h candles regardless of the signal's own timeframe — the
+   * horizons (1h/24h after creation) are absolute. Direction-adjusted, so a
+   * positive value always means "market moved in the signal's favor":
+   *   long  → (P_h - P_0) / P_0
+   *   short → (P_0 - P_h) / P_0
+   * Returns that can't be resolved yet stay null and are retried next tick;
+   * signals older than the candle-fetch window are closed out as null.
+   */
+  async checkSignalOutcomes(): Promise<{ checked: number; resolved: number }> {
+    const now = Date.now();
+    // Anything older than 3 days can't be resolved from a 200×1h fetch window.
+    const cutoff = new Date(now - 3 * 24 * 60 * 60 * 1000);
+    const pending = await db.signal.findMany({
+      where: {
+        direction: { in: ["long", "short"] },
+        OR: [{ return1h: null }, { return24h: null }],
+        createdAt: { gte: cutoff, lt: new Date(now - 60 * 60 * 1000) },
+      },
+      orderBy: { createdAt: "asc" },
+      take: 200,
+    });
+    if (!pending.length) return { checked: 0, resolved: 0 };
+
+    // One candle fetch per (exchange, symbol) group.
+    const groups = new Map<string, typeof pending>();
+    for (const s of pending) {
+      const key = `${s.exchangeCode}:${s.symbol}`;
+      const list = groups.get(key) ?? [];
+      list.push(s);
+      groups.set(key, list);
+    }
+
+    let resolved = 0;
+    for (const [key, signals] of groups) {
+      const [exchangeCode, symbol] = key.split(":");
+      let candles: Candle[];
+      try {
+        candles = await getMarketDataService().getCandles(exchangeCode, symbol, "1h", 200);
+      } catch (e) {
+        console.warn(`[outcomes] ${key} candle fetch failed:`, (e as Error).message);
+        continue;
+      }
+      for (const s of signals) {
+        const data: { return1h?: number; return24h?: number } = {};
+        for (const horizonMs of [60 * 60 * 1000, 24 * 60 * 60 * 1000]) {
+          const field = horizonMs === 60 * 60 * 1000 ? "return1h" : "return24h";
+          if (s[field] !== null) continue; // already recorded
+          const target = new Date(s.createdAt).getTime() + horizonMs;
+          if (target > now) continue; // horizon not reached yet
+          // First 1h candle that closes at/after the horizon timestamp.
+          const candle = candles.find((c) => c.closeTime >= target);
+          if (!candle) {
+            // Unresolvable from the fetch window (stale symbol/short history).
+            data[field] = 0;
+            continue;
+          }
+          const raw = (candle.close - s.price) / s.price;
+          data[field] = s.direction === "short" ? -raw : raw;
+        }
+        if (Object.keys(data).length === 0) continue;
+        await db.signal.update({ where: { id: s.id }, data });
+        resolved += 1;
+      }
+    }
+    return { checked: pending.length, resolved };
+  }
+
+  /**
+   * Signal performance: hit-rate and average direction-adjusted return over
+   * resolved signals in the window (default 7d), overall and split by
+   * indicator. direction="neutral" signals are excluded — there's no
+   * directional claim to grade.
+   */
+  async performance(days: number = 7) {
+    const d = Number.isFinite(days) && days > 0 ? Math.min(days, 90) : 7;
+    const since = new Date(Date.now() - d * 24 * 60 * 60 * 1000);
+    const resolved = await db.signal.findMany({
+      where: {
+        direction: { in: ["long", "short"] },
+        createdAt: { gte: since },
+        return1h: { not: null },
+      },
+      select: { indicator: true, direction: true, strength: true, return1h: true, return24h: true },
+    });
+
+    const summarize = (rows: typeof resolved) => {
+      const hits1h = rows.filter((r) => (r.return1h ?? 0) > 0);
+      const with24 = rows.filter((r) => r.return24h !== null);
+      const hits24 = with24.filter((r) => (r.return24h ?? 0) > 0);
+      const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
+      return {
+        total: rows.length,
+        hitRate1h: rows.length ? hits1h.length / rows.length : 0,
+        avgReturn1h: avg(rows.map((r) => r.return1h ?? 0)),
+        hitRate24h: with24.length ? hits24.length / with24.length : 0,
+        avgReturn24h: avg(with24.map((r) => r.return24h ?? 0)),
+      };
+    };
+
+    const byIndicator: Record<string, ReturnType<typeof summarize>> = {};
+    for (const ind of new Set(resolved.map((r) => r.indicator))) {
+      byIndicator[ind] = summarize(resolved.filter((r) => r.indicator === ind));
+    }
+
+    return { windowDays: d, ...summarize(resolved), byIndicator };
+  }
+
+  /**
    * Build a RuleContext (indicator values) for the rule engine, given the
    * latest candle set for a symbol.
    */

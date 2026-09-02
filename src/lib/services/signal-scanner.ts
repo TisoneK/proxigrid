@@ -23,8 +23,8 @@ function baseSymbols(): string[] {
     .filter(Boolean);
 }
 
-/** One scan pass: generate signals for the env watchlist + starred symbols, then prune. */
-export async function scanOnce(): Promise<{ scanned: number; pruned: number }> {
+/** One scan pass: generate signals for the env watchlist + starred symbols, resolve pending outcomes, then prune. */
+export async function scanOnce(): Promise<{ scanned: number; pruned: number; outcomes: { checked: number; resolved: number } }> {
   const timeframe = (process.env.SIGNAL_SCAN_TIMEFRAME ?? "1h") as CandleInterval;
   const intel = getIntelligenceService();
 
@@ -43,14 +43,23 @@ export async function scanOnce(): Promise<{ scanned: number; pruned: number }> {
     }
   }
 
+  // Fill in 1h/24h outcome returns for directional signals whose horizon has
+  // passed — this is what makes the signal feed's hit-rate real over time.
+  let outcomes = { checked: 0, resolved: 0 };
+  try {
+    outcomes = await intel.checkSignalOutcomes();
+  } catch (e) {
+    console.error(`[scanner] outcome check failed:`, (e as Error).message);
+  }
+
   let pruned = 0;
   try {
     pruned = await intel.pruneOldSignals();
   } catch (e) {
     console.error(`[scanner] prune failed:`, (e as Error).message);
   }
-  console.log(`[scanner] scanned ${symbols.length} symbol(s) @ ${timeframe}, pruned ${pruned}`);
-  return { scanned: symbols.length, pruned };
+  console.log(`[scanner] scanned ${symbols.length} symbol(s) @ ${timeframe}, outcomes ${outcomes.resolved}/${outcomes.checked}, pruned ${pruned}`);
+  return { scanned: symbols.length, pruned, outcomes };
 }
 
 let started = false;
