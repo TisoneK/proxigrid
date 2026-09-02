@@ -38,3 +38,11 @@ never harvested.
 - **Cause:** npm audit's messaging conflates "a semver-incompatible release exists" with "a fix is available".
 - **Workaround / fix:** Verified with `npm view prisma version` (8.0.0-rc.12) + `npm audit fix --dry-run`; left the dependency untouched. Backlog entry already covers it.
 - **Prevent next time:** Distrust "fix available" without a dry-run; this is now noted in the backlog item itself.
+
+---
+## 2026-09-02 — ZCode / glm-5.3-flash
+- **Problem:** Stopping a background `npm run dev` (TaskStop / Ctrl-C) kills the npm wrapper but orphans the node child on Windows — the stale server kept port 3000 and served old code, causing confusing 404s/hangs during verification.
+- **Cost:** ~10 minutes of misdiagnosis across two start/stop cycles.
+- **Cause:** Windows process-tree semantics: killing npm/cmd does not propagate to the node grandchild.
+- **Workaround / fix:** After stopping a dev server, verify with `netstat -ano | findstr :3000` and `taskkill //F //PID <pid>` any surviving node.exe before restarting.
+- **Prevent next time:** Recorded here and in environments.md quirks; prefer `taskkill //F //T //PID` (tree kill) when cleaning up.

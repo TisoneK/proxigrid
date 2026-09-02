@@ -495,3 +495,13 @@ past entries — append corrections instead.
 - **Open items:** none new; existing backlog stands (testnet order validation remains the gate to real trading).
 - **Notes:** Environment fixes en route (see environments.md): stale sqlite DATABASE_URL replaced with local Postgres 18 (proxigrid db created); port 3000 dual-listener quirk (use 127.0.0.1).
 - **Report:** none (feature session; report not required — deliverable is the feature set)
+
+---
+## 2026-09-02 — Session 54
+- **Agent:** ZCode | **Model:** glm-5.3-flash | **Platform:** Tisone's Windows workstation (win32, Git Bash) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** "Build everything we might have missed; frontend and backend fully in sync" — surface outcome data everywhere, close desyncs.
+- **Commits:** 4 (431e70e timeline + MACD note humanization; 8e1be6b outcome badges on all signal rows + accuracy table/chart in signals detail; 5dcd1f8 honest Active-signals KPI + unrealized-position marker; cf35322 review report) + this chore(context) commit.
+- **Outcome:** done — tsc/lint/63 tests/build green; performance API verified live with seeded graded signals (4-day timeline, per-indicator splits correct). Client types fully synced with API shapes; badges render from one shared component across feed/detail/coin-detail.
+- **Open items:** none new.
+- **Notes:** Windows dev-server orphan pattern (TaskStop kills npm wrapper, node child survives) cost verification time; documented kill steps in inefficiencies + report. Full in-browser check of populated signal lists deferred until the scanner accrues real graded history.
+- **Report:** .context/memory/reviews/2026-09-02-review-2.md

@@ -36,3 +36,6 @@ records.
 
 ---
 - **2026-09-02 — Session 53** — ZCode / glm-5.3-flash — Honesty features for the money question: backtester now nets out fees+slippage (net vs gross shown; wins on net), signals grade outcomes (return1h/24h direction-adjusted, resolved each scan tick) with a 7d hit-rate strip in the feed + /api/signals/performance. Env: local .env had stale sqlite DATABASE_URL — moved to local Postgres 18 (proxigrid db). Detail: summary only.
+
+---
+- **2026-09-02 — Session 54** — ZCode / glm-5.3-flash — Frontend/backend sync: outcome badges on every signal row, per-indicator accuracy table + daily hit-rate chart (50% coin-flip line) in signals detail, performance API timeline buckets, honest Active-signals KPI (directional/24h), unrealized-position marker in backtester, humanized MACD notes. Windows gotcha: TaskStop orphans the node dev-server child — kill by PID.
