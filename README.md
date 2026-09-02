@@ -172,6 +172,7 @@ The frontend connects via the gateway at `/socket.io/?XTransformPort=3001`.
 | `GET` | `/api/signals?limit=50&offset=0` | Recent signals |
 | `GET` | `/api/signals?symbol=BTCUSDT` | Filter by symbol |
 | `POST` | `/api/signals` | Generate signals for `{exchange, symbol, timeframe}` |
+| `GET` | `/api/signals/performance?days=7` | Measured accuracy: hit rate + avg direction-adjusted return (1h/24h), overall and per indicator |
 
 ### Automation
 
