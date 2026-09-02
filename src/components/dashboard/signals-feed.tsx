@@ -3,9 +3,9 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useSignals, useGenerateSignals } from "@/hooks/use-signals";
+import { useSignals, useGenerateSignals, useSignalPerformance } from "@/hooks/use-signals";
 import { formatPrice, timeAgo } from "@/lib/utils/format";
-import { Radar, RefreshCw, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react";
+import { Radar, RefreshCw, ArrowUpRight, ArrowDownRight, Activity, Target } from "lucide-react";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
 import { coinIdentity } from "@/lib/coins";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 export function SignalsFeed() {
   const { data: signals, isLoading } = useSignals(50);
+  const { data: perf } = useSignalPerformance(7);
   const generate = useGenerateSignals();
 
   const handleGenerate = () => {
@@ -49,6 +50,33 @@ export function SignalsFeed() {
           Scan BTC
         </Button>
       </div>
+
+      {/* Outcome hit-rate strip — real measured performance, not a promise */}
+      {perf && perf.total > 0 && (
+        <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-secondary/30">
+          <Target className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+          <span className="text-[11px] text-muted-foreground">
+            {perf.windowDays}d accuracy ·{" "}
+            <span
+              className={cn(
+                "font-semibold tabular-nums",
+                perf.hitRate1h > 0.5
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : perf.hitRate1h < 0.5
+                  ? "text-rose-600 dark:text-rose-400"
+                  : "text-foreground"
+              )}
+            >
+              {(perf.hitRate1h * 100).toFixed(0)}% right @1h
+            </span>
+            {perf.hitRate24h > 0 && (
+              <> · {(perf.hitRate24h * 100).toFixed(0)}% @24h</>
+            )}{" "}
+            · avg {(perf.avgReturn1h * 100 >= 0 ? "+" : "")}
+            {(perf.avgReturn1h * 100).toFixed(2)}% · {perf.total} graded
+          </span>
+        </div>
+      )}
 
       {/* Body */}
       <div className="p-2 flex-1">

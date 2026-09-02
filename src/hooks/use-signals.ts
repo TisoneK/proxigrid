@@ -50,3 +50,35 @@ export function useGenerateSignals() {
     },
   });
 }
+
+export interface SignalPerformance {
+  windowDays: number;
+  total: number;
+  hitRate1h: number;
+  avgReturn1h: number;
+  hitRate24h: number;
+  avgReturn24h: number;
+  byIndicator: Record<
+    string,
+    {
+      total: number;
+      hitRate1h: number;
+      avgReturn1h: number;
+      hitRate24h: number;
+      avgReturn24h: number;
+    }
+  >;
+}
+
+/** Outcome stats for directional signals whose 1h/24h horizons have resolved. */
+export function useSignalPerformance(days = 7) {
+  return useQuery<SignalPerformance>({
+    queryKey: ["signal-performance", days],
+    queryFn: async () => {
+      const res = await fetch(`/api/signals/performance?days=${days}`);
+      if (!res.ok) throw new Error("Failed to fetch signal performance");
+      return res.json();
+    },
+    refetchInterval: 120_000,
+  });
+}
