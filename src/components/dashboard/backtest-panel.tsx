@@ -65,6 +65,7 @@ export function BacktestPanel() {
   );
 
   const ret = result?.totalReturnPct ?? 0;
+  const gross = result?.grossReturnPct ?? 0;
   const symbols = (tickers ?? []).map((t) => t.symbol).slice(0, 40);
 
   return (
@@ -142,11 +143,15 @@ export function BacktestPanel() {
       )}
 
       {/* Metrics */}
-      <div className="grid grid-cols-3 divide-x divide-border border-y border-border my-4">
-        <Metric label="Total return" value={`${ret >= 0 ? "+" : ""}${ret.toFixed(1)}%`} tone={ret > 0 ? "up" : ret < 0 ? "down" : "flat"} />
+      <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border border-y border-border my-4">
+        <Metric label="Total return (net)" value={`${ret >= 0 ? "+" : ""}${ret.toFixed(1)}%`} tone={ret > 0 ? "up" : ret < 0 ? "down" : "flat"} />
+        <Metric label="Gross (no costs)" value={`${gross >= 0 ? "+" : ""}${gross.toFixed(1)}%`} tone={gross > 0 ? "up" : gross < 0 ? "down" : "flat"} />
         <Metric label="Win rate" value={result ? `${(result.winRate * 100).toFixed(0)}%` : "—"} />
-        <Metric label="Total trades" value={String(result?.totalTrades ?? 0)} />
+        <Metric label="Trades" value={String(result?.totalTrades ?? 0)} />
       </div>
+      <p className="text-[10px] text-muted-foreground/70 -mt-2 mb-3 text-center">
+        Net of {(DEFAULT_PARAMS.feeBps! / 100).toFixed(2)}% fee + {(DEFAULT_PARAMS.slippageBps! / 100).toFixed(2)}% slippage per side — the bar a live strategy must clear.
+      </p>
 
       {/* Controls */}
       <div className="space-y-4">

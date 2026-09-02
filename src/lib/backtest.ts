@@ -4,6 +4,12 @@
  * Simulates a long-only strategy over historical candles and reports P&L.
  * Enters fully on a buy signal, exits fully on a sell signal; equity compounds
  * across completed round-trips. Reuses lib/indicators.
+ *
+ * Costs are modeled per side: feeBps (exchange fee) + slippageBps (spread
+ * walking). Buys fill at close*(1+c), sells realize close*(1-c), so a
+ * round trip pays 2c — the default 15bps/side is ~0.3% per position.
+ * totalReturnPct is NET (what the trader keeps); grossReturnPct is the
+ * zero-cost comparison. Wins are counted on net P&L.
  */
 
 import { ema, rsi } from "@/lib/indicators";
@@ -20,6 +26,11 @@ export interface BacktestParams {
   rsiPeriod: number;
   oversold: number;
   overbought: number;
+  // Trading costs, per side, in basis points. Binance spot taker fee is 10bps;
+  // slippage models walking the spread. A round trip pays both sides, so the
+  // default 15bps/side is ~0.3% per position — the bar any strategy must clear.
+  feeBps?: number;
+  slippageBps?: number;
 }
 
 export interface Trade {
@@ -31,9 +42,14 @@ export interface Trade {
 
 export interface BacktestResult {
   trades: Trade[];
+  /** Return with fees + slippage applied — what the trader actually keeps. */
   totalReturnPct: number;
-  winRate: number; // 0..1
+  /** Return with zero trading costs, for comparison. */
+  grossReturnPct: number;
+  winRate: number; // 0..1 — wins are counted on NET round-trip P&L
   totalTrades: number; // completed round-trips
+  /** True when a position was still open at the end (its P&L is marked to market). */
+  hasOpenPosition: boolean;
   fast: (number | null)[];
   slow: (number | null)[];
 }
@@ -45,6 +61,8 @@ export const DEFAULT_PARAMS: BacktestParams = {
   rsiPeriod: 14,
   oversold: 30,
   overbought: 70,
+  feeBps: 10,
+  slippageBps: 5,
 };
 
 /** Per-bar signals: +1 = enter long, -1 = exit long, 0 = hold. */
@@ -84,10 +102,15 @@ function signalSeries(
 
 export function runBacktest(candles: Candle[], p: BacktestParams): BacktestResult {
   const { signals, fast, slow } = signalSeries(candles, p);
+  // Per-side cost: buys fill worse (price * up), sells realize less (price * down).
+  const c = (Math.max(0, p.feeBps ?? 0) + Math.max(0, p.slippageBps ?? 0)) / 10_000;
+  const buyFill = 1 + c;
+  const sellFill = 1 - c;
   const trades: Trade[] = [];
   let inPosition = false;
-  let entryPrice = 0;
-  let equity = 1;
+  let entryPrice = 0; // raw signal price; the cost basis is entryPrice * buyFill
+  let gross = 1;
+  let net = 1;
   let wins = 0;
   let completed = 0;
 
@@ -100,24 +123,31 @@ export function runBacktest(candles: Candle[], p: BacktestParams): BacktestResul
       trades.push({ index: i, time, price, side: "buy" });
     } else if (inPosition && signals[i] === -1) {
       inPosition = false;
-      const ret = price / entryPrice;
-      equity *= ret;
+      const grossRet = price / entryPrice;
+      const netRet = (price * sellFill) / (entryPrice * buyFill);
+      gross *= grossRet;
+      net *= netRet;
       completed += 1;
-      if (ret > 1) wins += 1;
+      if (netRet > 1) wins += 1;
       trades.push({ index: i, time, price, side: "sell" });
     }
   }
 
-  // Mark-to-market an open position at the last close (unrealized).
+  // Mark-to-market an open position at the last close as a liquidation value
+  // (exit costs applied — that's what the position is worth if sold now).
   if (inPosition && candles.length > 0) {
-    equity *= candles[candles.length - 1].close / entryPrice;
+    const last = candles[candles.length - 1].close;
+    gross *= last / entryPrice;
+    net *= (last * sellFill) / (entryPrice * buyFill);
   }
 
   return {
     trades,
-    totalReturnPct: (equity - 1) * 100,
+    totalReturnPct: (net - 1) * 100,
+    grossReturnPct: (gross - 1) * 100,
     winRate: completed > 0 ? wins / completed : 0,
     totalTrades: completed,
+    hasOpenPosition: inPosition,
     fast,
     slow,
   };
