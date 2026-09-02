@@ -485,3 +485,13 @@ past entries — append corrections instead.
 - **Open items:** `tasks/backlog.md` unchanged in substance (prisma advisory recheck note added). New in flaws/log.md: context-sync CRLF false-positive on Windows (rollback NOT run — core verified intact via blob hashes), broken context-gates.ps1, Git Bash guidance.
 - **Notes:** none
 - **Report:** .context/memory/reviews/2026-09-02-review.md
+
+---
+## 2026-09-02 — Session 53
+- **Agent:** ZCode | **Model:** glm-5.3-flash | **Platform:** Tisone's Windows workstation (win32, Git Bash) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** User asked "can this make me money?" → approved both honesty features: fees+slippage in the backtester, and signal outcome tracking (measured accuracy).
+- **Commits:** 4 (e180b72 backtest costs net/gross; 8e2db67 outcome grading backend; a986e6e performance API + feed strip; cbdf353 README row) + this chore(context) commit.
+- **Outcome:** done — backtester now reports net-of-costs return (10bps fee + 5bps slippage per side, ~0.3%/round trip) vs gross, wins count on net; 6 backtest tests incl. one demonstrating a profitable-gross/net-negative strategy. Signals grade themselves: return1h/return24h (direction-adjusted) resolve via checkSignalOutcomes() in every scan tick; /api/signals/performance + a hit-rate strip in the feed (hidden until data exists). Verified end-to-end live: generated real BTC/ETH/SOL signals, resolver graded aged seeds correctly, perf endpoint 200.
+- **Open items:** none new; existing backlog stands (testnet order validation remains the gate to real trading).
+- **Notes:** Environment fixes en route (see environments.md): stale sqlite DATABASE_URL replaced with local Postgres 18 (proxigrid db created); port 3000 dual-listener quirk (use 127.0.0.1).
+- **Report:** none (feature session; report not required — deliverable is the feature set)

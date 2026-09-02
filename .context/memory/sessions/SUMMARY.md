@@ -33,3 +33,6 @@ records.
 
 ---
 - **2026-09-02 — Session 52** — ZCode / glm-5.3-flash — General sweep on new Windows machine; baseline green, 7 fixes pushed (cron security fail-closed, orders validation, param clamps, dead hook, config hygiene, README). Key discovery: context-sync verify false-fails under autocrlf on Windows — core verified intact via blob hashes, rollback skipped. Detail: summary only.
+
+---
+- **2026-09-02 — Session 53** — ZCode / glm-5.3-flash — Honesty features for the money question: backtester now nets out fees+slippage (net vs gross shown; wins on net), signals grade outcomes (return1h/24h direction-adjusted, resolved each scan tick) with a 7d hit-rate strip in the feed + /api/signals/performance. Env: local .env had stale sqlite DATABASE_URL — moved to local Postgres 18 (proxigrid db). Detail: summary only.
