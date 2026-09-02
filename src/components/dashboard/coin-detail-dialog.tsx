@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
 import { WatchStar } from "@/components/dashboard/watch-star";
+import { SignalOutcomeBadges } from "@/components/dashboard/signal-outcome-badges";
 import { PriceChart, type ChartMode } from "@/components/dashboard/price-chart";
 import { LineChart as LineChartIcon, CandlestickChart as CandlestickIcon } from "lucide-react";
 import { OrderConfirmDialog, type OrderIntent } from "@/components/dashboard/order-confirm-dialog";
@@ -234,6 +235,7 @@ export function CoinDetailDialog({
                             {s.direction}
                           </span>
                           <span className="text-muted-foreground truncate flex-1">{s.note}</span>
+                          <SignalOutcomeBadges direction={s.direction} return1h={s.return1h} return24h={s.return24h} className="shrink-0" />
                           <span className="text-muted-foreground/60 tabular-nums shrink-0">{timeAgo(s.createdAt)}</span>
                         </div>
                       );

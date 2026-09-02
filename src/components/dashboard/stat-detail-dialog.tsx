@@ -10,9 +10,11 @@ import {
 import { usePortfolio } from "@/hooks/use-portfolio";
 import { useTickers } from "@/hooks/use-ticker";
 import { useExchange } from "@/hooks/use-exchange";
-import { useSignals } from "@/hooks/use-signals";
+import { useSignals, useSignalPerformance } from "@/hooks/use-signals";
 import { useAutomationRules } from "@/hooks/use-automation-rules";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
+import { SignalOutcomeBadges } from "@/components/dashboard/signal-outcome-badges";
+import { SignalAccuracyChart } from "@/components/dashboard/signal-accuracy-chart";
 import { RuleRow, CreateRuleDialog } from "@/components/dashboard/automation-rules-table";
 import { PortfolioAllocation } from "@/components/dashboard/portfolio-allocation";
 import { coinIdentity } from "@/lib/coins";
@@ -164,33 +166,102 @@ function MoverList({ title, rows }: { title: string; rows: { symbol: string; pri
 
 function SignalsDetail() {
   const { data: signals } = useSignals(50);
+  const { data: perf } = useSignalPerformance(7);
   if (!signals || signals.length === 0) return <Empty>No signals yet. Run a scan from the Signals panel.</Empty>;
   return (
-    <div className="space-y-1.5">
-      {signals.map((s) => {
-        const up = s.direction === "long";
-        const down = s.direction === "short";
-        return (
-          <div key={s.id} className="flex items-start gap-2.5 py-1.5 border-b border-border last:border-0">
-            <CoinLogo base={coinIdentity(s.symbol).base} size={22} className="mt-0.5" />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-semibold">{s.symbol}</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-secondary text-muted-foreground">{s.indicator}</span>
-                <span className={cn("text-[10px] font-semibold uppercase", up ? "text-emerald-600 dark:text-emerald-400" : down ? "text-rose-600 dark:text-rose-400" : "text-muted-foreground")}>{s.direction}</span>
-                <span className="text-[10px] text-muted-foreground/60">{s.timeframe} · {timeAgo(s.createdAt)}</span>
-              </div>
-              {s.note && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{s.note}</p>}
-            </div>
-            <div className="text-right shrink-0">
-              <div className="text-xs font-semibold tabular-nums">{formatPrice(s.price)}</div>
-              <div className="text-[10px] text-muted-foreground tabular-nums">{(s.strength * 100).toFixed(0)}% conf</div>
-            </div>
+    <div className="space-y-4">
+      {perf && perf.total > 0 && (
+        <section className="space-y-2">
+          <div className="text-xs font-medium text-muted-foreground">
+            Measured accuracy · last {perf.windowDays}d · {perf.total} graded
           </div>
-        );
-      })}
+          {/* Per-indicator breakdown — the decision-relevant split. */}
+          <div className="rounded-lg border border-border overflow-hidden">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-secondary/50 text-muted-foreground">
+                  <th className="text-left font-medium px-2.5 py-1.5">Indicator</th>
+                  <th className="text-right font-medium px-2.5 py-1.5">Graded</th>
+                  <th className="text-right font-medium px-2.5 py-1.5">1h hit</th>
+                  <th className="text-right font-medium px-2.5 py-1.5">1h avg</th>
+                  <th className="text-right font-medium px-2.5 py-1.5">24h hit</th>
+                  <th className="text-right font-medium px-2.5 py-1.5">24h avg</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(perf.byIndicator)
+                  .sort((a, b) => b[1].total - a[1].total)
+                  .map(([ind, s]) => (
+                    <tr key={ind} className="border-t border-border">
+                      <td className="px-2.5 py-1.5 font-semibold">{ind}</td>
+                      <td className="px-2.5 py-1.5 text-right tabular-nums">{s.total}</td>
+                      <td className={cn("px-2.5 py-1.5 text-right tabular-nums font-semibold", hitColor(s.hitRate1h))}>
+                        {(s.hitRate1h * 100).toFixed(0)}%
+                      </td>
+                      <td className={cn("px-2.5 py-1.5 text-right tabular-nums", retColor(s.avgReturn1h))}>
+                        {fmtRet(s.avgReturn1h)}
+                      </td>
+                      <td className={cn("px-2.5 py-1.5 text-right tabular-nums font-semibold", hitColor(s.hitRate24h))}>
+                        {s.hitRate24h > 0 ? `${(s.hitRate24h * 100).toFixed(0)}%` : "—"}
+                      </td>
+                      <td className={cn("px-2.5 py-1.5 text-right tabular-nums", retColor(s.avgReturn24h))}>
+                        {s.avgReturn24h !== 0 ? fmtRet(s.avgReturn24h) : "—"}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+          <SignalAccuracyChart timeline={perf.timeline} />
+        </section>
+      )}
+      <section className="space-y-1.5">
+        {signals.map((s) => {
+          const up = s.direction === "long";
+          const down = s.direction === "short";
+          return (
+            <div key={s.id} className="flex items-start gap-2.5 py-1.5 border-b border-border last:border-0">
+              <CoinLogo base={coinIdentity(s.symbol).base} size={22} className="mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-semibold">{s.symbol}</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-secondary text-muted-foreground">{s.indicator}</span>
+                  <span className={cn("text-[10px] font-semibold uppercase", up ? "text-emerald-600 dark:text-emerald-400" : down ? "text-rose-600 dark:text-rose-400" : "text-muted-foreground")}>{s.direction}</span>
+                  <span className="text-[10px] text-muted-foreground/60">{s.timeframe} · {timeAgo(s.createdAt)}</span>
+                  <SignalOutcomeBadges direction={s.direction} return1h={s.return1h} return24h={s.return24h} />
+                </div>
+                {s.note && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{s.note}</p>}
+              </div>
+              <div className="text-right shrink-0">
+                <div className="text-xs font-semibold tabular-nums">{formatPrice(s.price)}</div>
+                <div className="text-[10px] text-muted-foreground tabular-nums">{(s.strength * 100).toFixed(0)}% conf</div>
+              </div>
+            </div>
+          );
+        })}
+      </section>
     </div>
   );
+}
+
+function hitColor(rate: number): string {
+  return rate > 0.5
+    ? "text-emerald-600 dark:text-emerald-400"
+    : rate < 0.5
+    ? "text-rose-600 dark:text-rose-400"
+    : "text-muted-foreground";
+}
+
+function retColor(v: number): string {
+  return v > 0
+    ? "text-emerald-600 dark:text-emerald-400"
+    : v < 0
+    ? "text-rose-600 dark:text-rose-400"
+    : "text-muted-foreground";
+}
+
+function fmtRet(v: number): string {
+  return `${v * 100 >= 0 ? "+" : ""}${(v * 100).toFixed(2)}%`;
 }
 
 function AutomationsDetail() {

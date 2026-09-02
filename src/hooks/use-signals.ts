@@ -14,6 +14,9 @@ export interface Signal {
   note: string | null;
   metadata: string;
   createdAt: string;
+  /** Direction-adjusted returns, filled in once the horizon passes (null = pending). */
+  return1h: number | null;
+  return24h: number | null;
 }
 
 export function useSignals(limit = 50) {
@@ -51,6 +54,15 @@ export function useGenerateSignals() {
   });
 }
 
+export interface SignalPerformanceDay {
+  date: string; // UTC YYYY-MM-DD
+  total: number;
+  hitRate1h: number;
+  avgReturn1h: number;
+  hitRate24h: number;
+  avgReturn24h: number;
+}
+
 export interface SignalPerformance {
   windowDays: number;
   total: number;
@@ -68,6 +80,7 @@ export interface SignalPerformance {
       avgReturn24h: number;
     }
   >;
+  timeline: SignalPerformanceDay[];
 }
 
 /** Outcome stats for directional signals whose 1h/24h horizons have resolved. */

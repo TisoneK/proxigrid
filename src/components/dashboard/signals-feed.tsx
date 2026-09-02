@@ -7,6 +7,7 @@ import { useSignals, useGenerateSignals, useSignalPerformance } from "@/hooks/us
 import { formatPrice, timeAgo } from "@/lib/utils/format";
 import { Radar, RefreshCw, ArrowUpRight, ArrowDownRight, Activity, Target } from "lucide-react";
 import { CoinLogo } from "@/components/dashboard/coin-logo";
+import { SignalOutcomeBadges } from "@/components/dashboard/signal-outcome-badges";
 import { coinIdentity } from "@/lib/coins";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -153,6 +154,7 @@ export function SignalsFeed() {
                       <span className="text-[10px] font-mono tabular-nums text-muted-foreground/60">
                         {s.timeframe} · {timeAgo(s.createdAt)}
                       </span>
+                      <SignalOutcomeBadges direction={s.direction} return1h={s.return1h} return24h={s.return24h} />
                     </div>
                     {s.note && (
                       <p className="text-[11px] text-muted-foreground mt-1 truncate font-mono">
