@@ -149,8 +149,13 @@ export function BacktestPanel() {
         <Metric label="Win rate" value={result ? `${(result.winRate * 100).toFixed(0)}%` : "—"} />
         <Metric label="Trades" value={String(result?.totalTrades ?? 0)} />
       </div>
-      <p className="text-[10px] text-muted-foreground/70 -mt-2 mb-3 text-center">
-        Net of {(DEFAULT_PARAMS.feeBps! / 100).toFixed(2)}% fee + {(DEFAULT_PARAMS.slippageBps! / 100).toFixed(2)}% slippage per side — the bar a live strategy must clear.
+      <p className="text-[10px] text-muted-foreground/70 -mt-2 mb-3 text-center flex items-center justify-center gap-2">
+        <span>
+          Net of {(DEFAULT_PARAMS.feeBps! / 100).toFixed(2)}% fee + {(DEFAULT_PARAMS.slippageBps! / 100).toFixed(2)}% slippage per side — the bar a live strategy must clear.
+        </span>
+        {result?.hasOpenPosition && (
+          <span className="font-semibold text-amber-600 dark:text-amber-400">position open — unrealized</span>
+        )}
       </p>
 
       {/* Controls */}

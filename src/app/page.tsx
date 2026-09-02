@@ -27,7 +27,12 @@ export default function Home() {
   const [detail, setDetail] = useState<StatMetric | null>(null);
 
   const totalValue = portfolio?.totalValue ?? 0;
-  const signalCount = signals?.length ?? 0;
+  // "Active" = directional signals from the last 24h — neutrals and stale rows
+  // aren't actionable, so counting every fetched row overstated this tile.
+  const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const signalCount =
+    signals?.filter((s) => s.direction !== "neutral" && new Date(s.createdAt).getTime() >= dayAgo)
+      .length ?? 0;
   const activeRuleCount = rules?.filter((r) => r.enabled).length ?? 0;
   const totalRuleCount = rules?.length ?? 0;
 
@@ -76,7 +81,7 @@ export default function Home() {
             value={signalCount}
             valueLabel={String(signalCount)}
             decimals={0}
-            sublabel="RSI · MACD · EMA · Bollinger"
+            sublabel="Directional · last 24h"
             icon={<Radar />}
             onClick={() => setDetail("signals")}
           />
