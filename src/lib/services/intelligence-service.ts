@@ -103,6 +103,16 @@ const macdSignal: SignalGenerator = (candles, ctx) => {
     strength = Math.min(1, Math.abs(lastHist) / (Math.abs(lastMacd) + 1e-9));
   }
 
+  // Direction-aware, human-readable note (the raw hist/macd/signal dump read
+  // like a debug log). The signed histogram is the one number worth keeping.
+  const hist = lastHist >= 0 ? `+${lastHist.toFixed(4)}` : lastHist.toFixed(4);
+  const note =
+    lastHist > 0 && lastMacd > lastSignal
+      ? `MACD above signal — bullish momentum (hist ${hist})`
+      : lastHist < 0 && lastMacd < lastSignal
+      ? `MACD below signal — bearish momentum (hist ${hist})`
+      : `MACD near signal — momentum fading (hist ${hist})`;
+
   return {
     exchangeCode: ctx.exchangeCode,
     symbol: ctx.symbol,
@@ -111,7 +121,7 @@ const macdSignal: SignalGenerator = (candles, ctx) => {
     direction,
     strength,
     price: candles[candles.length - 1].close,
-    note: `MACD hist=${lastHist.toFixed(4)} macd=${lastMacd.toFixed(4)} signal=${lastSignal.toFixed(4)}`,
+    note,
     metadata: { macd: lastMacd, signal: lastSignal, histogram: lastHist },
   };
 };
@@ -375,9 +385,10 @@ export class IntelligenceService {
 
   /**
    * Signal performance: hit-rate and average direction-adjusted return over
-   * resolved signals in the window (default 7d), overall and split by
-   * indicator. direction="neutral" signals are excluded — there's no
-   * directional claim to grade.
+   * resolved signals in the window (default 7d), overall, split by indicator,
+   * and bucketed per UTC day so the UI can chart accuracy over time.
+   * direction="neutral" signals are excluded — there's no directional claim
+   * to grade.
    */
   async performance(days: number = 7) {
     const d = Number.isFinite(days) && days > 0 ? Math.min(days, 90) : 7;
@@ -388,7 +399,7 @@ export class IntelligenceService {
         createdAt: { gte: since },
         return1h: { not: null },
       },
-      select: { indicator: true, direction: true, strength: true, return1h: true, return24h: true },
+      select: { indicator: true, direction: true, strength: true, createdAt: true, return1h: true, return24h: true },
     });
 
     const summarize = (rows: typeof resolved) => {
@@ -410,7 +421,20 @@ export class IntelligenceService {
       byIndicator[ind] = summarize(resolved.filter((r) => r.indicator === ind));
     }
 
-    return { windowDays: d, ...summarize(resolved), byIndicator };
+    // Per-UTC-day buckets (signals graded by their createdAt day) so the UI
+    // can chart whether accuracy holds, drifts, or was a lucky week.
+    const dayMap = new Map<string, typeof resolved>();
+    for (const r of resolved) {
+      const day = new Date(r.createdAt).toISOString().slice(0, 10);
+      const list = dayMap.get(day) ?? [];
+      list.push(r);
+      dayMap.set(day, list);
+    }
+    const timeline = [...dayMap.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, rows]) => ({ date, ...summarize(rows) }));
+
+    return { windowDays: d, ...summarize(resolved), byIndicator, timeline };
   }
 
   /**
