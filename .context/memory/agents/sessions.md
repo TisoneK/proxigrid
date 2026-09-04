@@ -558,3 +558,13 @@ past entries — append corrections instead.
 - **Outcome:** done — regime/detector.ts: transparent per-bar classifier (TRENDING/RANGING/HIGH_VOL/LOW_VOL/BREAKOUT/CONSOLIDATION/UNCERTAIN) from realized vol + Kaufman efficiency ratio + range expansion, decision-tree with documented thresholds; detectRegimes()+regimeCounts(). 15 tests. AUTHORED by a background sub-agent, integrated by parent. Full suite after integration: 160 tests, build green, tsc clean.
 - **Notes:** Steps 3/5/7 authored in parallel by three general-purpose sub-agents while the parent did steps 2 and 4; parent owned all git (commits/pushes/logs) to keep one writer. Remaining build-order items: step 6 (grid hypothesis generator + pipeline wiring everything together), step 8 (paper trader + monitor on the cron tick), step 9 (AI researcher — later).
 - **Report:** none
+
+---
+## 2026-09-03 — Session 61
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (Darwin 24.6.0) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Research engine step 6 — hypothesis generator + pipeline (the capstone).
+- **Commits:** 2 (feat(research) generator+pipeline; + this chore(context) log).
+- **Outcome:** done — hypothesis/{hypothesis.ts,generator.ts} + engine/pipeline.ts. runPipeline() runs one StrategyHypothesis through split→Scientist(research)→Critic(research)→OOS-scored-once, short-circuiting with stage+reports on failure, returning an ExperimentRecord (toExperimentRow maps to the Experiment model). Generic Hypothesis interface + hypothesisSignals() feature→signal bridge added as Phase-B/C foundation (tested; not yet wired through scientist/critic). Verified the full loop end-to-end on a sine-with-drift series (a passing config is OOS-scored once; a 2nd run of the same spec throws ValidationAlreadyConsumedError). Full suite 169, tsc/build green.
+- **Open items:** engine build order 2–7 now COMPLETE. Remaining: step 8 (paper trader + monitor on the cron tick — needs a running feed/DB), step 9 (AI researcher — Phase C, later), and unifying Scientist/Critic over the generic Hypothesis so feature-discovered strategies flow through the same gates. No DB-backed persistence wired yet (pure records only).
+- **Notes:** crafting synthetic data that clears the full gauntlet was intentionally hard (the gates are strict by design); swept sine params to find configs that pass, rather than weaken the checks.
+- **Report:** none

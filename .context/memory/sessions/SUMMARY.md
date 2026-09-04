@@ -48,3 +48,6 @@ records.
 
 ---
 - **2026-09-03 — Sessions 57–60** — Claude Code / claude-opus-4-8 — Research engine steps 3/4/5/7 in one autonomous burst: Scientist+Critic (robustness + falsification), feature registry, Strategy/Experiment Prisma models + lifecycle state machine, regime detector. Steps 3/5/7 authored by parallel sub-agents, parent owned git. Full suite 160 tests green. Next: step 6 (hypothesis generator + pipeline).
+
+---
+- **2026-09-03 — Session 61** — Claude Code / claude-opus-4-8 — Research engine step 6 (capstone): hypothesis grid generator + runPipeline (split→scientist→critic→one-shot OOS→ExperimentRecord), generic Hypothesis/feature-signal bridge for Phase B/C. Build order steps 2–7 now complete; 169 tests green. Remaining: step 8 (paper/monitor, needs feed+DB), step 9 (AI researcher).
