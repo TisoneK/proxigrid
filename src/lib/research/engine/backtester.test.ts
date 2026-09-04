@@ -86,3 +86,43 @@ describe("runResearchBacktest — edge cases", () => {
     expect(r.metrics.observations).toBe(3);
   });
 });
+
+describe("bollinger_reversion signals", () => {
+  it("buys on a lower-band pierce and exits through the mean", () => {
+    // Flat run-up to seed the bands, a deep dip pierces the lower band,
+    // then a recovery back through the mean exits.
+    const flat = Array(30).fill(100);
+    const dip = [95, 88, 96]; // pierce below, then recover
+    const recover = Array.from({ length: 10 }, (_, i) => 98 + i * 0.4);
+    const c = candles([...flat, ...dip, ...recover]);
+    const r = runResearchBacktest(c, { ...DEFAULT_PARAMS, strategy: "bollinger_reversion", bbPeriod: 20, bbStdDev: 2 }, { costs: NO_COSTS, timeframe: "1h" });
+    expect(r.trades.some((t) => t.side === "long")).toBe(true);
+  });
+
+  it("generates no signals on a flat series", () => {
+    const c = candles(Array(60).fill(100));
+    const r = runResearchBacktest(c, { ...DEFAULT_PARAMS, strategy: "bollinger_reversion" }, { costs: NO_COSTS, timeframe: "1h" });
+    expect(r.trades.length).toBe(0);
+  });
+});
+
+describe("donchian_breakout signals", () => {
+  it("buys when close breaks the prior N-bar high", () => {
+    // Rising staircase where each step exceeds the prior window's high.
+    const closes: number[] = [];
+    for (let i = 0; i < 40; i++) closes.push(100 + i);
+    const c = candles(closes);
+    const r = runResearchBacktest(c, { ...DEFAULT_PARAMS, strategy: "donchian_breakout", donchianPeriod: 10 }, { costs: NO_COSTS, timeframe: "1h" });
+    expect(r.trades.filter((t) => t.side === "long").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("stays flat in a narrow range (no false breakouts)", () => {
+    // Oscillate between 99 and 101: no close exceeds the prior window's high
+    // because highs repeat.
+    const closes: number[] = [];
+    for (let i = 0; i < 60; i++) closes.push(100 + (i % 2 === 0 ? 1 : -1));
+    const c = candles(closes);
+    const r = runResearchBacktest(c, { ...DEFAULT_PARAMS, strategy: "donchian_breakout", donchianPeriod: 10 }, { costs: NO_COSTS, timeframe: "1h" });
+    expect(r.trades.length).toBe(0);
+  });
+});

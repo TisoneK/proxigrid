@@ -22,6 +22,15 @@ export interface RsiGridRanges {
   overbought: number[];
 }
 
+export interface BollingerGridRanges {
+  bbPeriod: number[];
+  bbStdDev: number[];
+}
+
+export interface DonchianGridRanges {
+  donchianPeriod: number[];
+}
+
 /** Enumerate valid ma_crossover parameterisations (fast strictly < slow). */
 export function generateMaGrid(ranges: MaGridRanges): StrategyHypothesis[] {
   const out: StrategyHypothesis[] = [];
@@ -62,6 +71,47 @@ export function generateRsiGrid(ranges: RsiGridRanges): StrategyHypothesis[] {
         });
       }
     }
+  }
+  return out;
+}
+
+/** Enumerate bollinger_reversion parameterisations. */
+export function generateBollingerGrid(ranges: BollingerGridRanges): StrategyHypothesis[] {
+  const out: StrategyHypothesis[] = [];
+  let i = 0;
+  for (const bbPeriod of ranges.bbPeriod) {
+    for (const bbStdDev of ranges.bbStdDev) {
+      const params: StrategyParams = {
+        ...DEFAULT_PARAMS,
+        strategy: "bollinger_reversion",
+        bbPeriod,
+        bbStdDev,
+      };
+      out.push({
+        code: `GRID-bollinger_reversion-${i++}`,
+        description: `Bollinger reversion period=${bbPeriod} σ=${bbStdDev}`,
+        params,
+      });
+    }
+  }
+  return out;
+}
+
+/** Enumerate donchian_breakout parameterisations. */
+export function generateDonchianGrid(ranges: DonchianGridRanges): StrategyHypothesis[] {
+  const out: StrategyHypothesis[] = [];
+  let i = 0;
+  for (const donchianPeriod of ranges.donchianPeriod) {
+    const params: StrategyParams = {
+      ...DEFAULT_PARAMS,
+      strategy: "donchian_breakout",
+      donchianPeriod,
+    };
+    out.push({
+      code: `GRID-donchian_breakout-${i++}`,
+      description: `Donchian breakout period=${donchianPeriod}`,
+      params,
+    });
   }
   return out;
 }

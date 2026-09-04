@@ -14,11 +14,11 @@
  * Pure — no DB, no network. Feed it candles.
  */
 
-import { ema, rsi } from "@/lib/indicators";
+import { ema, rsi, sma, bollingerBands } from "@/lib/indicators";
 import type { Candle } from "@/lib/exchanges/types";
 import { barsPerYear, computeMetrics, type MetricSet } from "./metrics";
 
-export type Strategy = "ma_crossover" | "rsi_reversion";
+export type Strategy = "ma_crossover" | "rsi_reversion" | "bollinger_reversion" | "donchian_breakout";
 
 export interface StrategyParams {
   strategy: Strategy;
@@ -27,6 +27,11 @@ export interface StrategyParams {
   rsiPeriod: number;
   oversold: number;
   overbought: number;
+  // bollinger_reversion
+  bbPeriod: number;
+  bbStdDev: number;
+  // donchian_breakout
+  donchianPeriod: number;
 }
 
 export const DEFAULT_PARAMS: StrategyParams = {
@@ -36,6 +41,9 @@ export const DEFAULT_PARAMS: StrategyParams = {
   rsiPeriod: 14,
   oversold: 30,
   overbought: 70,
+  bbPeriod: 20,
+  bbStdDev: 2,
+  donchianPeriod: 20,
 };
 
 /** Cost model in basis points (1 bp = 0.01%). Charged per side, on turnover. */
@@ -109,6 +117,9 @@ export function strategySignals(candles: Candle[], p: StrategyParams): number[] 
   const n = candles.length;
   const signals = new Array(n).fill(0);
 
+  if (p.strategy === "bollinger_reversion") return bollingerSignals(candles, p);
+  if (p.strategy === "donchian_breakout") return donchianSignals(candles, p);
+
   if (p.strategy === "ma_crossover") {
     const fast = ema(candles, Math.max(1, p.fastMA));
     const slow = ema(candles, Math.max(1, p.slowMA));
@@ -132,6 +143,44 @@ export function strategySignals(candles: Candle[], p: StrategyParams): number[] 
     if (prev === null || cur === null) continue;
     if (prev >= p.oversold && cur < p.oversold) signals[i] = 1; // dropped into oversold
     else if (prev <= p.overbought && cur > p.overbought) signals[i] = -1; // rose into overbought
+  }
+  return signals;
+}
+
+function bollingerSignals(candles: Candle[], p: StrategyParams): number[] {
+  const n = candles.length;
+  const signals = new Array(n).fill(0);
+  const { lower, middle, upper } = bollingerBands(candles, Math.max(2, p.bbPeriod), p.bbStdDev);
+  for (let i = 1; i < n; i++) {
+    const prevClose = candles[i - 1].close;
+    const close = candles[i].close;
+    const lowerPrev = lower[i - 1];
+    const lowerCur = lower[i];
+    const midCur = middle[i];
+    if (lowerPrev === null || lowerCur === null || midCur === null) continue;
+    if (prevClose >= lowerPrev && close < lowerCur) signals[i] = 1; // pierced the lower band
+    else if (prevClose <= midCur && close > midCur) signals[i] = -1; // recovered through the mean
+  }
+  return signals;
+}
+
+function donchianSignals(candles: Candle[], p: StrategyParams): number[] {
+  const n = candles.length;
+  const signals = new Array(n).fill(0);
+  const period = Math.max(2, p.donchianPeriod);
+  for (let i = period; i < n; i++) {
+    // Prior window (exclusive of the current bar) — a classic breakout is a
+    // close above the highest high of the PRECEDING `period` bars.
+    let highest = -Infinity;
+    let lowest = Infinity;
+    for (let j = i - period; j < i; j++) {
+      if (candles[j].high > highest) highest = candles[j].high;
+      if (candles[j].low < lowest) lowest = candles[j].low;
+    }
+    const prevClose = candles[i - 1].close;
+    const close = candles[i].close;
+    if (prevClose <= highest && close > highest) signals[i] = 1; // broke out upward
+    else if (prevClose >= lowest && close < lowest) signals[i] = -1; // broke down
   }
   return signals;
 }

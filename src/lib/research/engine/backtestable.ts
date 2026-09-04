@@ -33,6 +33,8 @@ export interface Backtestable {
 const STRATEGY_PERTURBABLE: Record<StrategyParams["strategy"], (keyof StrategyParams)[]> = {
   ma_crossover: ["fastMA", "slowMA"],
   rsi_reversion: ["rsiPeriod", "oversold", "overbought"],
+  bollinger_reversion: ["bbPeriod", "bbStdDev"],
+  donchian_breakout: ["donchianPeriod"],
 };
 
 /** Nudge one strategy param by a fraction, keeping it valid. */
@@ -40,7 +42,8 @@ export function perturbStrategyParam(params: StrategyParams, key: keyof Strategy
   const base = params[key];
   if (typeof base !== "number") return params;
   let next = base + base * pct;
-  const isPeriod = key === "fastMA" || key === "slowMA" || key === "rsiPeriod";
+  const isPeriod =
+    key === "fastMA" || key === "slowMA" || key === "rsiPeriod" || key === "bbPeriod" || key === "donchianPeriod";
   if (isPeriod) next = Math.max(1, Math.round(next));
   else next = Math.max(0, Math.min(100, next));
   return { ...params, [key]: next };
