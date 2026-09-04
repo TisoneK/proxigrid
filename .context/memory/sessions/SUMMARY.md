@@ -57,3 +57,6 @@ records.
 
 ---
 - **2026-09-03 — Session 63** — Claude Code / claude-opus-4-8 — Unified scientist/critic/pipeline over a generic Backtestable (fromStrategy/fromHypothesis adapters); feature-driven hypotheses now run the same gates as named strategies. Behaviour-preserving refactor, 178 tests green. Unlocks Phase B feature discovery + is the prereq for step 9 (AI researcher).
+
+---
+- **2026-09-03 — Session 64** — Claude Code / claude-opus-4-8 — Feature-hypothesis generator (threshold crossings over registry features) + lab/runLab (batch research loop: candidates → pipeline → OOS-ranked survivors, named strategies + feature hypotheses side by side). The §16 research loop minus AI + DB. 184 tests green. Remaining work needs infra/creds (DB persistence + cron wiring; step 9 AI researcher).

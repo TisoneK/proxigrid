@@ -587,3 +587,12 @@ past entries — append corrections instead.
 - **Outcome:** done — engine/backtestable.ts (Backtestable: spec + signals() + perturbableParams()/withPerturbation(); adapters fromStrategy + fromHypothesis). Extracted generic cores evaluateBacktestable / criticizeBacktestable / runPipelineFor; the param-based evaluate/criticize/runPipeline are now thin wrappers — additive, behaviour-preserving (all prior 112 research tests unchanged & green). New test proves a feature RSI-reversion Hypothesis flows through scientist→critic→one-shot OOS. This makes Phase B (feature discovery) real and is the prerequisite for step 9. Full suite 178, tsc/build green.
 - **Open items:** Still remaining & needs inputs/infra: step 8 DB persistence + cron-monitor wiring (needs live Postgres), step 9 AI researcher (needs LLM keys + prompt/safety design). A feature-hypothesis GENERATOR (grid over feature/threshold combos, analogous to generator.ts) is a natural next mechanical step now that the gates are generic.
 - **Report:** none
+
+---
+## 2026-09-03 — Session 64
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (Darwin 24.6.0) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Feature-hypothesis generator + research lab loop.
+- **Commits:** 2 (feat(research) feature-generator + lab; + this chore(context) log).
+- **Outcome:** done — hypothesis/feature-generator.ts (generateFeatureHypotheses: threshold-crossing hypotheses over registry features, reversion+momentum, build() factory for perturbation) and lab/lab.ts (runLab: batch of Candidates — named strategies + feature hypotheses unified via Backtestable — through the pipeline, dedupe consumed-validation specs, return records + OOS-ranked survivors; strategyCandidate/featureCandidate adapters). This is the §16 research loop minus the AI + DB. Verified MA grid and RSI feature hypotheses researched side by side. 9 tests; full suite 184, tsc/build green.
+- **Notes:** test gotcha — RSI on a smooth symmetric sine only ranges ~32–68 (stays near 50), so 30/70 thresholds never cross; used 40/60. This mechanical/verifiable line of work is now essentially exhausted — what's left (DB persistence + cron wiring; step 9 AI researcher) needs a live Postgres and/or LLM credentials + design, i.e. user inputs, not more local code.
+- **Report:** none
