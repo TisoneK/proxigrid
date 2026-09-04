@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMarketDataService } from "@/lib/services/market-data-service";
 import { getResearchStore } from "@/lib/research/store/research-store";
-import { runLab, strategyCandidate, featureCandidate, type Candidate } from "@/lib/research/lab/lab";
+import { runLab, strategyCandidate, featureCandidate, multiAssetCandidates, type Candidate } from "@/lib/research/lab/lab";
+import { TREND_FILTER, type RegimeFilter } from "@/lib/research/engine/backtester";
 import {
   generateMaGrid,
   generateRsiGrid,
@@ -44,6 +45,7 @@ export async function POST(req: NextRequest) {
     const {
       exchange = "binance",
       symbol = "BTCUSDT",
+      symbols,
       timeframe = "1h",
       candles: candleCount = 1000,
       maGrid,
@@ -56,7 +58,10 @@ export async function POST(req: NextRequest) {
       refreshHistory = false,
     } = (body ?? {}) as {
       exchange?: string;
+      /** Single-asset shorthand. */
       symbol?: string;
+      /** Multi-asset run: every candidate runs per asset (§8 single-asset check). */
+      symbols?: string[];
       timeframe?: string;
       candles?: number;
       maGrid?: MaGridRanges;
@@ -69,56 +74,84 @@ export async function POST(req: NextRequest) {
       refreshHistory?: boolean;
     };
 
+    const assets = (symbols?.length ? symbols : [symbol])
+      .map((s) => String(s).trim().toUpperCase())
+      .filter(Boolean)
+      .slice(0, 5);
+    if (!assets.length) {
+      return NextResponse.json({ error: "symbol or symbols required" }, { status: 400 });
+    }
     const limit = intParam(String(Math.min(Math.max(candleCount ?? 1000, 100), 1000)), 1000, 100, 1000);
 
-    // Prefer stored history (deterministic across runs, §2 data/); fall back to
-    // a live fetch when the store can't supply enough bars, and backfill it so
-    // the next run is stored. refreshHistory=true forces a live fetch.
-    let candles: Candle[] = [];
-    if (!refreshHistory) {
-      try {
-        candles = await loadCandles(exchange, symbol, timeframe, limit);
-      } catch {
-        /* store unavailable — live fetch below */
+    // Per-asset candles, history-first (deterministic across runs, §2 data/):
+    // fall back to a live fetch when the store can't supply enough bars, and
+    // backfill so the next run is stored. refreshHistory=true forces live.
+    const candlesByAsset = new Map<string, Candle[]>();
+    const assetErrors: Record<string, string> = {};
+    let livedAssets = 0;
+    for (const asset of assets) {
+      let candles: Candle[] = [];
+      if (!refreshHistory) {
+        try {
+          candles = await loadCandles(exchange, asset, timeframe, limit);
+        } catch {
+          /* store unavailable — live fetch below */
+        }
       }
-    }
-    let source: "history" | "live" = candles.length >= limit ? "history" : "live";
-    if (source === "live") {
-      candles = await getMarketDataService().getCandles(exchange, symbol, "1h", limit);
-      try {
-        await saveCandles(exchange, symbol, timeframe, candles);
-      } catch {
-        /* store unavailable — research still runs on live data */
+      if (candles.length < limit) {
+        try {
+          livedAssets += 1;
+          candles = await getMarketDataService().getCandles(exchange, asset, "1h", limit);
+          try {
+            await saveCandles(exchange, asset, timeframe, candles);
+          } catch {
+            /* store unavailable — research still runs on live data */
+          }
+        } catch (e) {
+          // One unreachable asset must not abort the whole run — skip it and
+          // report why; the rest of the assets still produce records.
+          assetErrors[asset] = (e as Error).message;
+          continue;
+        }
       }
+      if (candles.length >= 120) candlesByAsset.set(asset, candles);
+      else assetErrors[asset] = `only ${candles.length} candles (< 120)`;
     }
-    if (candles.length < 120) {
+    const usable = [...candlesByAsset.keys()];
+    if (!usable.length) {
       return NextResponse.json(
-        { error: `Need at least 120 candles for a research split (got ${candles.length})` },
+        { error: `No asset supplied >=120 candles`, assetErrors },
         { status: 400 }
       );
     }
 
     // Default grids keep a bare POST useful: sweeps across all four named
-    // strategy families + a feature-threshold sweep over the registry.
+    // strategy families (Donchian swept over entry-regime filters, §6) plus a
+    // feature-threshold sweep over the registry.
     const ma = maGrid ?? { fastMA: [5, 7, 10], slowMA: [20, 30, 50] };
     const rsi = rsiGrid ?? { rsiPeriod: [14], oversold: [25, 30], overbought: [70, 75] };
     const bb = bollingerGrid ?? { bbPeriod: [20], bbStdDev: [2, 2.5] };
-    const donchian = donchianGrid ?? { donchianPeriod: [20, 55] };
+    const donchian = donchianGrid ?? {
+      donchianPeriod: [20, 55],
+      regimeFilters: ["any", TREND_FILTER] as RegimeFilter[],
+    };
     const feats = featureGrids ?? [
       { feature: "rsi_14", lowers: [25, 30], uppers: [65, 70] },
       { feature: "bollinger_pctb", lowers: [0.05], uppers: [0.95], mode: "momentum" as const },
     ].filter((s) => defaultRegistry.has(s.feature));
 
-    const candidates: Candidate[] = [
+    const base: Candidate[] = [
       ...generateMaGrid(ma).map(strategyCandidate),
       ...generateRsiGrid(rsi).map(strategyCandidate),
       ...generateBollingerGrid(bb).map(strategyCandidate),
       ...generateDonchianGrid(donchian).map(strategyCandidate),
       ...generateFeatureHypotheses(feats).map((g) => featureCandidate(g, defaultRegistry)),
     ];
+    // Expand across assets — each (candidate, asset) pair is its own lineage.
+    const candidates = multiAssetCandidates(base, usable);
 
     const store = getResearchStore();
-    const { records, survivors } = await runLab(candidates, candles, {
+    const { records, survivors } = await runLab(candidates, candlesByAsset, {
       ledger: store.validationLedger,
       split: {
         validationFraction: validationFraction ?? 0.3,
@@ -126,9 +159,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Regime context for this dataset (spec §6): lets the UI ask "was the
-    // window mostly trending?" before trusting the aggregate numbers.
-    const regimeCounts = countRegimes(candles);
+    // Regime context per asset (spec §6): lets the UI ask "was the window
+    // mostly trending?" before trusting the aggregate numbers.
+    const regimeByAsset: Record<string, Record<Regime, number>> = {};
+    for (const asset of usable) {
+      regimeByAsset[asset] = countRegimes(candlesByAsset.get(asset)!);
+    }
 
     // Persist: one Strategy per distinct spec (§9 — the specHash IS the
     // lineage identity; a changed spec earns a new PXG-### code), one
@@ -146,7 +182,8 @@ export async function POST(req: NextRequest) {
             title: strategyTitle(rec),
             hypothesis: `Lab candidate ${rec.code} (spec ${rec.specHash.slice(0, 12)})`,
             spec: { labCode: rec.code, specHash: rec.specHash },
-            assets: [symbol],
+            // The candidate code carries the asset suffix (`CODE·ASSET`).
+            assets: [rec.code.includes("·") ? rec.code.split("·")[1] : rec.code],
             timeframe,
           });
           strategyId = created.id;
@@ -159,8 +196,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ok: true,
-      candleSource: source,
-      candles: candles.length,
+      assets: usable,
+      candlesLiveFetched: livedAssets,
+      candles: limit,
       candidates: candidates.length,
       records: records.map((r) => ({
         code: r.code,
@@ -174,7 +212,8 @@ export async function POST(req: NextRequest) {
       survivors: survivors.map((r) => r.code),
       strategyIds: Object.fromEntries(byHash),
       persistedRows: persisted.length,
-      regimeDistribution: regimeCounts,
+      regimeDistribution: regimeByAsset,
+      assetErrors: Object.keys(assetErrors).length ? assetErrors : undefined,
     });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

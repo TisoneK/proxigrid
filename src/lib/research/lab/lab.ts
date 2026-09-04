@@ -12,7 +12,7 @@
  */
 
 import { runPipelineFor, type ExperimentRecord, type PipelineOptions } from "../engine/pipeline";
-import { fromStrategy, fromHypothesis, type Backtestable } from "../engine/backtestable";
+import { fromStrategy, fromHypothesis, withAssetTag, type Backtestable } from "../engine/backtestable";
 import type { StrategyHypothesis } from "../hypothesis/hypothesis";
 import type { GeneratedHypothesis } from "../hypothesis/feature-generator";
 import type { FeatureRegistry } from "../features/registry";
@@ -21,6 +21,10 @@ import type { Candle } from "@/lib/exchanges/types";
 export interface Candidate {
   code: string;
   backtestable: Backtestable;
+  /** Asset this candidate runs on — REQUIRED from runLab's perspective; set
+   *  by multiAssetCandidates. Kept optional here for back-compat with callers
+   *  that construct bare candidates for single-asset runs. */
+  asset?: string;
 }
 
 export interface LabResult {
@@ -40,17 +44,47 @@ export function featureCandidate(g: GeneratedHypothesis, registry: FeatureRegist
 }
 
 /**
- * Run every candidate through the pipeline over the same candles. Candidates
- * whose spec has already consumed its validation window are skipped (deduped),
- * never thrown. Returns all records + the ranked survivors.
+ * Expand candidates across assets: each (candidate, asset) pair becomes its
+ * own lineage — the asset is tagged into the spec so the OOS ledger hashes
+ * them separately, and codes carry the asset suffix for display.
+ */
+export function multiAssetCandidates(candidates: Candidate[], assets: string[]): Candidate[] {
+  const out: Candidate[] = [];
+  for (const c of candidates) {
+    for (const asset of assets) {
+      out.push({
+        code: `${c.code}·${asset}`,
+        backtestable: withAssetTag(c.backtestable, asset),
+        asset,
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * Run every candidate through the pipeline over its OWN candle set — a single
+ * array when candidates carry no per-asset data (legacy single-asset), or the
+ * candidate's asset's candles when the caller supplies multi-asset candles.
+ * Candidates whose spec has already consumed its validation window are skipped
+ * (deduped), never thrown. Returns all records + the ranked survivors.
  */
 export async function runLab(
   candidates: Candidate[],
-  candles: Candle[],
+  candlesByAsset: Candle[] | Map<string, Candle[]>,
   opts: PipelineOptions
 ): Promise<LabResult> {
   const records: ExperimentRecord[] = [];
   for (const c of candidates) {
+    const asset = c.asset;
+    let candles: Candle[];
+    if (candlesByAsset instanceof Map) {
+      if (!asset) throw new Error("multi-asset run requires every candidate to carry an asset");
+      candles = candlesByAsset.get(asset) ?? [];
+    } else {
+      candles = candlesByAsset;
+    }
+    if (!candles.length) continue;
     try {
       records.push(await runPipelineFor(c.code, c.backtestable, candles, opts));
     } catch (err) {
