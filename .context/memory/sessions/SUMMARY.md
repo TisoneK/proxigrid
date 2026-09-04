@@ -63,3 +63,6 @@ records.
 
 ---
 - **2026-09-04 — Session 65** — ZCode / glm-5.3-flash — Surfaced the research engine: durable OOS ledger + PXG strategy store, /api/research/run + strategies routes with guarded lifecycle, Research Lab dashboard card. Live-verified dedup + guards; 0 OOS survivors on live data (honest gates). Detail: summary only.
+
+---
+- **2026-09-04 — Session 66** — ZCode / glm-5.3-flash — Research loop completed: HistoricalCandle store + idempotent backfill route (race-guarded), monitor pass on every scan tick (guarded lifecycle transitions), regime distribution in lab runs. Protocol slip from 65 fixed: open items now in backlog. Detail: summary only.

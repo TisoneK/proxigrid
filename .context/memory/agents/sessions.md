@@ -606,3 +606,13 @@ past entries — append corrections instead.
 - **Open items:** monitor pass on cron tick (pure monitorStrategy exists, unwired); per-regime metric breakout in run response; HistoricalCandle history store (model exists, table empty); richer Phase A grid.
 - **Notes:** Prisma JSON filter `{ path: ["specHash"], equals }` works on Postgres for spec/window dedup — handy pattern. Windows orphan-dev-server kill: `taskkill //F //T //PID` tree-kill works.
 - **Report:** .context/memory/reviews/2026-09-04-review.md
+
+---
+## 2026-09-04 — Session 66
+- **Agent:** ZCode | **Model:** glm-5.3-flash | **Platform:** Tisone's Windows workstation (win32, Git Bash) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Complete the research loop per session 65's open items (user: "why did you stop? you have protocol") — history store, monitor pass, regime context. Also fixed the session-65 protocol slip (open items not backlogged).
+- **Commits:** 4 (4d4e140 history store + backfill route; 06e92fc monitor pass on scan ticks + regime distribution; f3cc59c review report; this chore(context) commit).
+- **Outcome:** done — HistoricalCandle store idempotent (1000 rows across 5 overlapping backfills), P2002 race guard; monitor service wired into scanOnce (LIVE→MONITORING→DEGRADING guarded transitions, PAPER observe-only, non-named-specs skipped); lab runs report regime distribution (live run: 70% LOW_VOL — explains the zero survivors). tsc/lint/184 tests/build green; pre-commit+exit gates passed.
+- **Open items:** backlog — richer Phase A grid; load lab candles from history store; UI surface for regime distribution + monitor experiments.
+- **Notes:** session-65 slip: open items went only into the review report; now also in tasks/backlog.md (Step 15 requirement) — do not repeat.
+- **Report:** .context/memory/reviews/2026-09-04-review-2.md
