@@ -52,6 +52,8 @@ export function useResearchStrategies() {
 
 export interface LabRunResult {
   ok: boolean;
+  candleSource: "history" | "live";
+  candles: number;
   candidates: number;
   records: {
     code: string;
@@ -65,6 +67,7 @@ export interface LabRunResult {
   survivors: string[];
   strategyIds: Record<string, string>;
   persistedRows: number;
+  regimeDistribution: Record<string, number>;
 }
 
 export function useRunLab() {

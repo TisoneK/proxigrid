@@ -2,10 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { getMarketDataService } from "@/lib/services/market-data-service";
 import { getResearchStore } from "@/lib/research/store/research-store";
 import { runLab, strategyCandidate, featureCandidate, type Candidate } from "@/lib/research/lab/lab";
-import { generateMaGrid, generateRsiGrid, type MaGridRanges, type RsiGridRanges } from "@/lib/research/hypothesis/generator";
+import {
+  generateMaGrid,
+  generateRsiGrid,
+  generateBollingerGrid,
+  generateDonchianGrid,
+  type MaGridRanges,
+  type RsiGridRanges,
+  type BollingerGridRanges,
+  type DonchianGridRanges,
+} from "@/lib/research/hypothesis/generator";
 import { generateFeatureHypotheses, type FeatureGridSpec } from "@/lib/research/hypothesis/feature-generator";
 import { defaultRegistry } from "@/lib/research/features/registry";
 import "@/lib/research/features/builtins"; // registers builtins into defaultRegistry (self-guarded)
+import { saveCandles, loadCandles } from "@/lib/research/data/history-store";
 import { intParam } from "@/lib/params";
 import { detectRegimes, REGIMES, type Regime } from "@/lib/research/regime/detector";
 import type { Candle } from "@/lib/exchanges/types";
@@ -38,9 +48,12 @@ export async function POST(req: NextRequest) {
       candles: candleCount = 1000,
       maGrid,
       rsiGrid,
+      bollingerGrid,
+      donchianGrid,
       featureGrids,
       validationFraction,
       embargoBars,
+      refreshHistory = false,
     } = (body ?? {}) as {
       exchange?: string;
       symbol?: string;
@@ -48,24 +61,49 @@ export async function POST(req: NextRequest) {
       candles?: number;
       maGrid?: MaGridRanges;
       rsiGrid?: RsiGridRanges;
+      bollingerGrid?: BollingerGridRanges;
+      donchianGrid?: DonchianGridRanges;
       featureGrids?: FeatureGridSpec[];
       validationFraction?: number;
       embargoBars?: number;
+      refreshHistory?: boolean;
     };
 
-    const limit = intParam(String(Math.min(Math.max(candleCount ?? 500, 100), 1000)), 500, 100, 1000);
-    const data = await getMarketDataService().getCandles(exchange, symbol, "1h", limit);
-    if (data.length < 120) {
+    const limit = intParam(String(Math.min(Math.max(candleCount ?? 1000, 100), 1000)), 1000, 100, 1000);
+
+    // Prefer stored history (deterministic across runs, §2 data/); fall back to
+    // a live fetch when the store can't supply enough bars, and backfill it so
+    // the next run is stored. refreshHistory=true forces a live fetch.
+    let candles: Candle[] = [];
+    if (!refreshHistory) {
+      try {
+        candles = await loadCandles(exchange, symbol, timeframe, limit);
+      } catch {
+        /* store unavailable — live fetch below */
+      }
+    }
+    let source: "history" | "live" = candles.length >= limit ? "history" : "live";
+    if (source === "live") {
+      candles = await getMarketDataService().getCandles(exchange, symbol, "1h", limit);
+      try {
+        await saveCandles(exchange, symbol, timeframe, candles);
+      } catch {
+        /* store unavailable — research still runs on live data */
+      }
+    }
+    if (candles.length < 120) {
       return NextResponse.json(
-        { error: `Need at least 120 candles for a research split (got ${data.length})` },
+        { error: `Need at least 120 candles for a research split (got ${candles.length})` },
         { status: 400 }
       );
     }
-    const candles: Candle[] = data;
 
-    // Default grids keep a bare POST useful: a small MA sweep + RSI(14) band sweep.
+    // Default grids keep a bare POST useful: sweeps across all four named
+    // strategy families + a feature-threshold sweep over the registry.
     const ma = maGrid ?? { fastMA: [5, 7, 10], slowMA: [20, 30, 50] };
     const rsi = rsiGrid ?? { rsiPeriod: [14], oversold: [25, 30], overbought: [70, 75] };
+    const bb = bollingerGrid ?? { bbPeriod: [20], bbStdDev: [2, 2.5] };
+    const donchian = donchianGrid ?? { donchianPeriod: [20, 55] };
     const feats = featureGrids ?? [
       { feature: "rsi_14", lowers: [25, 30], uppers: [65, 70] },
       { feature: "bollinger_pctb", lowers: [0.05], uppers: [0.95], mode: "momentum" as const },
@@ -74,6 +112,8 @@ export async function POST(req: NextRequest) {
     const candidates: Candidate[] = [
       ...generateMaGrid(ma).map(strategyCandidate),
       ...generateRsiGrid(rsi).map(strategyCandidate),
+      ...generateBollingerGrid(bb).map(strategyCandidate),
+      ...generateDonchianGrid(donchian).map(strategyCandidate),
       ...generateFeatureHypotheses(feats).map((g) => featureCandidate(g, defaultRegistry)),
     ];
 
@@ -119,6 +159,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ok: true,
+      candleSource: source,
+      candles: candles.length,
       candidates: candidates.length,
       records: records.map((r) => ({
         code: r.code,

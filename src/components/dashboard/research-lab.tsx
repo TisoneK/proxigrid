@@ -23,8 +23,9 @@ export function ResearchLab() {
   const handleRun = () => {
     runLab.mutate(undefined, {
       onSuccess: (r) => {
+        const regime = summarizeRegime(r.regimeDistribution);
         toast.success(
-          `Lab run: ${r.candidates} candidates, ${r.survivors.length} survived OOS (${r.persistedRows} experiments recorded)`
+          `Lab run: ${r.candidates} candidates, ${r.survivors.length} survived OOS (${r.candles} ${r.candleSource === "history" ? "stored" : "live"} candles${regime ? `, ${regime}` : ""})`
         );
       },
       onError: (e) => toast.error(`Lab run failed: ${(e as Error).message}`),
@@ -143,11 +144,35 @@ function StrategyRow({
           </div>
 
           {latest && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-              <Metric label="Trades" value={String(latest.metrics.trades ?? "—")} />
-              <Metric label="Win rate" value={latest.metrics.winRate != null ? `${(latest.metrics.winRate * 100).toFixed(0)}%` : "—"} />
-              <Metric label="Sharpe" value={latest.metrics.sharpe != null ? latest.metrics.sharpe.toFixed(2) : "—"} />
-              <Metric label="Max DD" value={latest.metrics.maxDrawdownPct != null ? `${latest.metrics.maxDrawdownPct.toFixed(1)}%` : "—"} />
+            <div className="space-y-2">
+              <div className="flex items-center gap-1.5">
+                {strategy.experiments.slice(0, 6).reverse().map((e) => (
+                  <span
+                    key={e.id}
+                    title={`${e.kind} · ${new Date(e.createdAt).toLocaleString()} · ${e.passed ? "passed" : "failed"}`}
+                    className={cn(
+                      "text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0 h-4 inline-flex items-center rounded-full",
+                      e.kind === "oos"
+                        ? e.passed
+                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                          : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                        : e.kind === "monitor"
+                        ? e.passed
+                          ? "bg-teal-500/10 text-teal-600 dark:text-teal-400"
+                          : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                        : "bg-secondary text-muted-foreground"
+                    )}
+                  >
+                    {e.kind}
+                  </span>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                <Metric label="Trades" value={String(latest.metrics.trades ?? "—")} />
+                <Metric label="Win rate" value={latest.metrics.winRate != null ? `${(latest.metrics.winRate * 100).toFixed(0)}%` : "—"} />
+                <Metric label="Sharpe" value={latest.metrics.sharpe != null ? latest.metrics.sharpe.toFixed(2) : "—"} />
+                <Metric label="Max DD" value={latest.metrics.maxDrawdownPct != null ? `${latest.metrics.maxDrawdownPct.toFixed(1)}%` : "—"} />
+              </div>
             </div>
           )}
 
@@ -225,6 +250,15 @@ function Metric({ label, value }: { label: string; value: string }) {
       <div className="text-xs font-semibold tabular-nums text-foreground">{value}</div>
     </div>
   );
+}
+
+/** Dominant regime over the run window, e.g. "66% LOW_VOL" (null if unknown). */
+function summarizeRegime(dist?: Record<string, number>): string | null {
+  if (!dist) return null;
+  const total = Object.values(dist).reduce((a, b) => a + b, 0);
+  if (total <= 0) return null;
+  const [top, count] = Object.entries(dist).sort((a, b) => b[1] - a[1])[0];
+  return `${Math.round((count / total) * 100)}% ${top}`;
 }
 
 function EmptyLab({ onRun, running }: { onRun: () => void; running: boolean }) {
