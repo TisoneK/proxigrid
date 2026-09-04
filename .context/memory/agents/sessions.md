@@ -596,3 +596,13 @@ past entries — append corrections instead.
 - **Outcome:** done — hypothesis/feature-generator.ts (generateFeatureHypotheses: threshold-crossing hypotheses over registry features, reversion+momentum, build() factory for perturbation) and lab/lab.ts (runLab: batch of Candidates — named strategies + feature hypotheses unified via Backtestable — through the pipeline, dedupe consumed-validation specs, return records + OOS-ranked survivors; strategyCandidate/featureCandidate adapters). This is the §16 research loop minus the AI + DB. Verified MA grid and RSI feature hypotheses researched side by side. 9 tests; full suite 184, tsc/build green.
 - **Notes:** test gotcha — RSI on a smooth symmetric sine only ranges ~32–68 (stays near 50), so 30/70 thresholds never cross; used 40/60. This mechanical/verifiable line of work is now essentially exhausted — what's left (DB persistence + cron wiring; step 9 AI researcher) needs a live Postgres and/or LLM credentials + design, i.e. user inputs, not more local code.
 - **Report:** none
+
+---
+## 2026-09-04 — Session 65
+- **Agent:** ZCode | **Model:** glm-5.3-flash | **Platform:** Tisone's Windows workstation (win32, Git Bash) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Surface the research engine (sessions 55-64 were backend-pure, persistence deferred): Prisma store + durable OOS ledger, API routes, dashboard Research Lab card.
+- **Commits:** 4 (04a069f research persistence + API; 521a5b6 Research Lab UI; 279e167 review report; this chore(context) commit).
+- **Outcome:** done — durable one-shot OOS guard (Experiment kind=oos keyed by specHash in window JSON), PXG-### strategies deduped by specHash, guarded lifecycle transitions (→PAPER needs passing OOS; illegal → 409), POST /api/research/run + GET strategies[/id] + POST transition, dashboard card with run button / status badges / experiment metrics / critic chips. Live-verified: 2 lab runs on BTCUSDT (18 candidates; run 2 reused all lineages — dedup fixed after first pass wrongly keyed by code); 0 OOS survivors (10 scientist + 8 critic failures — honest gates on live data). tsc/lint/184 tests/build green; dev DB cleaned of test rows afterward.
+- **Open items:** monitor pass on cron tick (pure monitorStrategy exists, unwired); per-regime metric breakout in run response; HistoricalCandle history store (model exists, table empty); richer Phase A grid.
+- **Notes:** Prisma JSON filter `{ path: ["specHash"], equals }` works on Postgres for spec/window dedup — handy pattern. Windows orphan-dev-server kill: `taskkill //F //T //PID` tree-kill works.
+- **Report:** .context/memory/reviews/2026-09-04-review.md

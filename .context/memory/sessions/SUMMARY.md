@@ -60,3 +60,6 @@ records.
 
 ---
 - **2026-09-03 — Session 64** — Claude Code / claude-opus-4-8 — Feature-hypothesis generator (threshold crossings over registry features) + lab/runLab (batch research loop: candidates → pipeline → OOS-ranked survivors, named strategies + feature hypotheses side by side). The §16 research loop minus AI + DB. 184 tests green. Remaining work needs infra/creds (DB persistence + cron wiring; step 9 AI researcher).
+
+---
+- **2026-09-04 — Session 65** — ZCode / glm-5.3-flash — Surfaced the research engine: durable OOS ledger + PXG strategy store, /api/research/run + strategies routes with guarded lifecycle, Research Lab dashboard card. Live-verified dedup + guards; 0 OOS survivors on live data (honest gates). Detail: summary only.
