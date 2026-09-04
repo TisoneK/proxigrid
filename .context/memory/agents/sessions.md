@@ -568,3 +568,13 @@ past entries — append corrections instead.
 - **Open items:** engine build order 2–7 now COMPLETE. Remaining: step 8 (paper trader + monitor on the cron tick — needs a running feed/DB), step 9 (AI researcher — Phase C, later), and unifying Scientist/Critic over the generic Hypothesis so feature-discovered strategies flow through the same gates. No DB-backed persistence wired yet (pure records only).
 - **Notes:** crafting synthetic data that clears the full gauntlet was intentionally hard (the gates are strict by design); swept sine params to find configs that pass, rather than weaken the checks.
 - **Report:** none
+
+---
+## 2026-09-03 — Session 62
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (Darwin 24.6.0) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Research engine step 8 — paper trader + degradation monitor (pure cores).
+- **Commits:** 2 (feat(research) paper+monitor; + this chore(context) log).
+- **Outcome:** done — paper/paper-trader.ts (PaperTrader: online wrapper over the backtester, forward-sim position/equity/metrics; verified online==batch) and monitor/monitor.ts (monitorStrategy: §15-honest degradation — INSUFFICIENT_EVIDENCE until enough obs/trades, then DEGRADING only on non-positive expectancy or Sharpe collapse vs baseline, with escalating action). Verified both DEGRADING (declining data) and HEALTHY (rising) branches fire. 6 tests; full suite 175, tsc/build green.
+- **Open items:** DEFERRED (needs live Postgres + feed to verify, not shipped unverified): DB persistence of Strategy/Experiment rows, and wiring a research-monitor pass into GET /api/cron/tick. Step 9 (AI researcher / Phase C) NOT started — needs an LLM choice + credentials + prompt/safety design (a real decision, not mechanical). Also open: unify Scientist/Critic over the generic Hypothesis so feature-discovered strategies use the same gates.
+- **Notes:** END of the autonomous mechanical run. Engine build-order steps 1–8 pure cores are complete and tested (175 tests). What remains genuinely needs inputs/infra (DB, LLM keys, design) rather than more code I can verify locally — flagged for the user rather than guessed.
+- **Report:** none

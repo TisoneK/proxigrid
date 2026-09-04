@@ -51,3 +51,6 @@ records.
 
 ---
 - **2026-09-03 — Session 61** — Claude Code / claude-opus-4-8 — Research engine step 6 (capstone): hypothesis grid generator + runPipeline (split→scientist→critic→one-shot OOS→ExperimentRecord), generic Hypothesis/feature-signal bridge for Phase B/C. Build order steps 2–7 now complete; 169 tests green. Remaining: step 8 (paper/monitor, needs feed+DB), step 9 (AI researcher).
+
+---
+- **2026-09-03 — Session 62** — Claude Code / claude-opus-4-8 — Research engine step 8 cores: PaperTrader (forward sim, online==batch) + monitorStrategy (§15-honest degradation: no verdict without evidence). 175 tests green. Engine build-order steps 1–8 pure cores DONE. Remaining needs infra/decisions: DB persistence + cron-monitor wiring (needs Postgres), step 9 AI researcher (needs LLM keys/design), unify scientist/critic over generic Hypothesis.
