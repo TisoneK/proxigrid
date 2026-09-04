@@ -7,6 +7,7 @@ import { generateFeatureHypotheses, type FeatureGridSpec } from "@/lib/research/
 import { defaultRegistry } from "@/lib/research/features/registry";
 import "@/lib/research/features/builtins"; // registers builtins into defaultRegistry (self-guarded)
 import { intParam } from "@/lib/params";
+import { detectRegimes, REGIMES, type Regime } from "@/lib/research/regime/detector";
 import type { Candle } from "@/lib/exchanges/types";
 import type { ExperimentRecord } from "@/lib/research/engine/pipeline";
 
@@ -85,6 +86,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Regime context for this dataset (spec §6): lets the UI ask "was the
+    // window mostly trending?" before trusting the aggregate numbers.
+    const regimeCounts = countRegimes(candles);
+
     // Persist: one Strategy per distinct spec (§9 — the specHash IS the
     // lineage identity; a changed spec earns a new PXG-### code), one
     // Experiment per record.
@@ -127,10 +132,19 @@ export async function POST(req: NextRequest) {
       survivors: survivors.map((r) => r.code),
       strategyIds: Object.fromEntries(byHash),
       persistedRows: persisted.length,
+      regimeDistribution: regimeCounts,
     });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
+}
+
+/** Per-regime bar counts over a candle array (detector defaults). */
+function countRegimes(candles: Candle[]): Record<Regime, number> {
+  const labels = detectRegimes(candles);
+  const counts = Object.fromEntries(REGIMES.map((r) => [r, 0])) as Record<Regime, number>;
+  for (const label of labels) counts[label] += 1;
+  return counts;
 }
 
 async function dbFindStrategyBySpecHash(specHash: string): Promise<{ id: string } | null> {

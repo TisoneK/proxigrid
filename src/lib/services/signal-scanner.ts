@@ -14,6 +14,7 @@
 
 import { getIntelligenceService } from "./intelligence-service";
 import { db } from "../db";
+import { runMonitorPass } from "../research/monitor/monitor-service";
 import type { CandleInterval } from "../exchanges/types";
 
 function baseSymbols(): string[] {
@@ -58,7 +59,21 @@ export async function scanOnce(): Promise<{ scanned: number; pruned: number; out
   } catch (e) {
     console.error(`[scanner] prune failed:`, (e as Error).message);
   }
-  console.log(`[scanner] scanned ${symbols.length} symbol(s) @ ${timeframe}, outcomes ${outcomes.resolved}/${outcomes.checked}, pruned ${pruned}`);
+
+  // Research monitor (spec §11): re-evaluate PAPER/LIVE strategies on recent
+  // candles; only statistically meaningful deterioration moves status.
+  let monitored = 0;
+  try {
+    const outcomes = await runMonitorPass();
+    monitored = outcomes.length;
+    for (const o of outcomes) {
+      if (o.transitioned) console.log(`[research-monitor] ${o.code}: ${o.transitioned} (${o.reason ?? ""})`);
+    }
+  } catch (e) {
+    console.error(`[research-monitor] pass failed:`, (e as Error).message);
+  }
+
+  console.log(`[scanner] scanned ${symbols.length} symbol(s) @ ${timeframe}, outcomes ${outcomes.resolved}/${outcomes.checked}, pruned ${pruned}, monitored ${monitored}`);
   return { scanned: symbols.length, pruned, outcomes };
 }
 
