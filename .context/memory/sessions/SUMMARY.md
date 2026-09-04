@@ -69,3 +69,6 @@ records.
 
 ---
 - **2026-09-04 — Session 67** — ZCode / glm-5.3-flash — Lab runs read stored history first (live fallback + auto-backfill); +2 strategy families (Bollinger reversion, Donchian breakout) → 22 candidates; UI shows candle source, dominant regime, experiment-kind chips. 188 tests. Detail: summary only.
+
+---
+- **2026-09-04 — Session 68** — ZCode / glm-5.3-flash — Regime-gated entries (exits always fire) + multi-asset lab runs (per-asset OOS lineages, failure isolation). Live: 48 candidates BTC+ETH, dedup holds. 191 tests. Detail: summary only.

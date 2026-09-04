@@ -626,3 +626,13 @@ past entries — append corrections instead.
 - **Open items:** regime-conditional short side for Donchian (design decision); multi-asset lab runs; rest of backlog unchanged.
 - **Notes:** none
 - **Report:** .context/memory/reviews/2026-09-04-review-3.md
+
+---
+## 2026-09-04 — Session 68
+- **Agent:** ZCode | **Model:** glm-5.3-flash | **Platform:** Tisone's Windows workstation (win32, Git Bash) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog design items: regime-gated entries (regimeFilter param, Donchian any-vs-TRENDING sweep) and multi-asset lab runs (per-asset OOS lineages, per-asset candles, failure isolation).
+- **Commits:** 4 (48d2ef0 regime gating + asset tags; f0e4372 multi-asset lab runs; b51ab83 review report; this chore(context) commit).
+- **Outcome:** done — exits never filtered (no stranded positions); withAssetTag puts the asset in the OOS spec hash so BTC/ETH validations are separate events; run route takes symbols[] (≤5) with per-asset history-first fetch + live backfill + assetErrors isolation. Live-verified BTC+ETH: 48 candidates, 24/asset, re-run dedup holds. 191 tests green (3 new), build green.
+- **Open items:** paper-trading runner (PAPER strategies lack forward simulation — bridge to →LIVE); testnet order-path validation (still the trading gate); backlog otherwise unchanged.
+- **Notes:** First multi-asset attempt 500'd on an ETH fetch abort — motivated the per-asset isolation; keep that pattern for any per-item network fan-out.
+- **Report:** .context/memory/reviews/2026-09-04-review-4.md
