@@ -616,3 +616,13 @@ past entries — append corrections instead.
 - **Open items:** backlog — richer Phase A grid; load lab candles from history store; UI surface for regime distribution + monitor experiments.
 - **Notes:** session-65 slip: open items went only into the review report; now also in tasks/backlog.md (Step 15 requirement) — do not repeat.
 - **Report:** .context/memory/reviews/2026-09-04-review-2.md
+
+---
+## 2026-09-04 — Session 67
+- **Agent:** ZCode | **Model:** glm-5.3-flash | **Platform:** Tisone's Windows workstation (win32, Git Bash) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Backlog session: history-first lab runs, regime/kind surfacing in the Research Lab card, richer Phase A grid (+2 strategy families).
+- **Commits:** 4 (866cb84 bollinger_reversion + donchian_breakout families with 4 tests; de40752 history-first runs + run-context UI; 53eee68 review report; this chore(context) commit).
+- **Outcome:** done — lab runs prefer stored history (verified source:history live), fall back to live + backfill; grid now 22 candidates across 4 named families + features; run toast shows candle source + dominant regime; strategy rows show oos/monitor/backtest verdict chips. 188 tests green (was 184), build green, specHash invariant verified (35 rows / 35 hashes / 0 dupes). Test strategies cleaned; candles kept.
+- **Open items:** regime-conditional short side for Donchian (design decision); multi-asset lab runs; rest of backlog unchanged.
+- **Notes:** none
+- **Report:** .context/memory/reviews/2026-09-04-review-3.md

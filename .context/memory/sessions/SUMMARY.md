@@ -66,3 +66,6 @@ records.
 
 ---
 - **2026-09-04 — Session 66** — ZCode / glm-5.3-flash — Research loop completed: HistoricalCandle store + idempotent backfill route (race-guarded), monitor pass on every scan tick (guarded lifecycle transitions), regime distribution in lab runs. Protocol slip from 65 fixed: open items now in backlog. Detail: summary only.
+
+---
+- **2026-09-04 — Session 67** — ZCode / glm-5.3-flash — Lab runs read stored history first (live fallback + auto-backfill); +2 strategy families (Bollinger reversion, Donchian breakout) → 22 candidates; UI shows candle source, dominant regime, experiment-kind chips. 188 tests. Detail: summary only.
