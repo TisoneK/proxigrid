@@ -5,17 +5,13 @@
  * "Try to kill the strategy before real money does." A strategy that survives
  * aggressive criticism becomes interesting; one that doesn't is discarded cheaply.
  *
- * Each check returns {name, passed, detail}. The report passes only if every
- * critical check passes. Pure — drives the backtester, reads its trades/metrics.
+ * Generic over Backtestable — named strategies and feature hypotheses face the
+ * same battery. Each check returns {name, passed, detail}; the report passes only
+ * if every check passes. Pure — drives the backtester, reads its trades/metrics.
  */
 
-import {
-  runResearchBacktest,
-  strategySignals,
-  simulate,
-  type StrategyParams,
-  type BacktestConfig,
-} from "./backtester";
+import { simulate, type StrategyParams, type BacktestConfig } from "./backtester";
+import { fromStrategy, type Backtestable } from "./backtestable";
 import type { Candle } from "@/lib/exchanges/types";
 
 export interface CriticCheck {
@@ -47,14 +43,15 @@ function delaySignals(signals: number[]): number[] {
   return out;
 }
 
-export function criticize(
+/** Generic falsification battery over a Backtestable. */
+export function criticizeBacktestable(
   candles: Candle[],
-  params: StrategyParams,
+  b: Backtestable,
   config: Partial<BacktestConfig> = {},
   opts: CriticOptions = {}
 ): CriticReport {
   const o = { ...DEFAULTS, ...opts };
-  const base = runResearchBacktest(candles, params, config);
+  const base = simulate(candles, b.signals(candles), config);
   const netReturn = base.metrics.totalReturnPct;
   const checks: CriticCheck[] = [];
 
@@ -66,10 +63,9 @@ export function criticize(
   });
 
   // 2. Single-event dependence — remove the single best trade; does edge survive?
-  const trades = [...base.trades].sort((a, b) => b.netReturn - a.netReturn);
+  const trades = [...base.trades].sort((a, c) => c.netReturn - a.netReturn);
   if (trades.length >= 2) {
     const withoutBest = trades.slice(1);
-    // Compound the remaining trade returns as a rough edge proxy.
     const remaining = withoutBest.reduce((eq, t) => eq * (1 + t.netReturn), 1) - 1;
     checks.push({
       name: "not_single_event",
@@ -84,10 +80,13 @@ export function criticize(
     });
   }
 
-  // 3. Holds across time — split research window in halves; edge in BOTH?
+  // 3. Holds across time — split window in halves; edge in BOTH? (signals
+  //    recomputed on each sub-window, so indicators warm up correctly.)
   const mid = Math.floor(candles.length / 2);
-  const firstHalf = runResearchBacktest(candles.slice(0, mid), params, config).metrics.totalReturnPct;
-  const secondHalf = runResearchBacktest(candles.slice(mid), params, config).metrics.totalReturnPct;
+  const firstCandles = candles.slice(0, mid);
+  const secondCandles = candles.slice(mid);
+  const firstHalf = simulate(firstCandles, b.signals(firstCandles), config).metrics.totalReturnPct;
+  const secondHalf = simulate(secondCandles, b.signals(secondCandles), config).metrics.totalReturnPct;
   checks.push({
     name: "holds_across_time",
     passed: firstHalf > 0 && secondHalf > 0,
@@ -95,7 +94,7 @@ export function criticize(
   });
 
   // 4. Execution realism — does the edge survive a realistic 1-bar fill delay?
-  const delayed = simulate(candles, delaySignals(strategySignals(candles, params)), config).metrics.totalReturnPct;
+  const delayed = simulate(candles, delaySignals(b.signals(candles)), config).metrics.totalReturnPct;
   const survival = netReturn > 0 ? delayed / netReturn : 0;
   checks.push({
     name: "survives_execution_latency",
@@ -107,7 +106,7 @@ export function criticize(
   if (o.otherAssets && o.otherAssets.length > 0) {
     const results = o.otherAssets.map((a) => ({
       symbol: a.symbol,
-      ret: runResearchBacktest(a.candles, params, config).metrics.totalReturnPct,
+      ret: simulate(a.candles, b.signals(a.candles), config).metrics.totalReturnPct,
     }));
     const positive = results.filter((r) => r.ret > 0).length;
     checks.push({
@@ -118,4 +117,14 @@ export function criticize(
   }
 
   return { passed: checks.every((c) => c.passed), checks };
+}
+
+/** Criticize a named strategy (thin wrapper over criticizeBacktestable). */
+export function criticize(
+  candles: Candle[],
+  params: StrategyParams,
+  config: Partial<BacktestConfig> = {},
+  opts: CriticOptions = {}
+): CriticReport {
+  return criticizeBacktestable(candles, fromStrategy(params), config, opts);
 }

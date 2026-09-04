@@ -7,21 +7,17 @@
  * parameter perturbations. A strategy that only works at EMA=37/RSI=63.4 and
  * collapses when nudged is almost certainly curve-fit noise, not a real edge.
  *
- * Pure: it drives the cost-aware backtester and reads metrics. No DB, no network.
+ * Generic over Backtestable, so named strategies and feature-driven hypotheses
+ * pass through the same gate. Pure: it drives the cost-aware backtester.
  */
 
-import { runResearchBacktest, type StrategyParams, type BacktestConfig } from "./backtester";
+import { simulate, type StrategyParams, type BacktestConfig } from "./backtester";
+import { fromStrategy, type Backtestable } from "./backtestable";
 import type { MetricSet } from "./metrics";
 import type { Candle } from "@/lib/exchanges/types";
 
-/** Numeric knobs perturbed per strategy for the robustness test. */
-const PERTURBABLE: Record<StrategyParams["strategy"], (keyof StrategyParams)[]> = {
-  ma_crossover: ["fastMA", "slowMA"],
-  rsi_reversion: ["rsiPeriod", "oversold", "overbought"],
-};
-
 export interface RobustnessResult {
-  param: keyof StrategyParams;
+  param: string;
   survives: boolean; // edge stays positive across every perturbation
   baselineReturnPct: number;
   perturbedReturnsPct: number[];
@@ -46,44 +42,27 @@ export interface ScientistReport {
   reasons: string[]; // why it failed (empty when passed)
 }
 
-/** Nudge one integer/threshold param by a fraction, keeping it valid. */
-function perturbParam(params: StrategyParams, key: keyof StrategyParams, pct: number): StrategyParams {
-  const base = params[key];
-  if (typeof base !== "number") return params;
-  const delta = base * pct;
-  // MA periods and RSI period are integers ≥ 1; thresholds stay within 0..100.
-  let next = base + delta;
-  const isPeriod = key === "fastMA" || key === "slowMA" || key === "rsiPeriod";
-  if (isPeriod) next = Math.max(1, Math.round(next));
-  else next = Math.max(0, Math.min(100, next));
-  return { ...params, [key]: next };
-}
-
-/**
- * Evaluate a strategy on the research window: metrics + parameter robustness,
- * then a pass/fail gate (enough activity, positive net expectancy, robust edge).
- */
-export function evaluate(
+/** Generic evaluation: metrics + parameter robustness + a pass/fail gate. */
+export function evaluateBacktestable(
   candles: Candle[],
-  params: StrategyParams,
+  b: Backtestable,
   config: Partial<BacktestConfig> = {},
   thresholds: Partial<ScientistThresholds> = {}
 ): ScientistReport {
   const th = { ...DEFAULT_THRESHOLDS, ...thresholds };
-  const base = runResearchBacktest(candles, params, config);
+  const base = simulate(candles, b.signals(candles), config);
   const baselineReturnPct = base.metrics.totalReturnPct;
 
   const robustness: RobustnessResult[] = [];
-  for (const key of PERTURBABLE[params.strategy]) {
+  for (const key of b.perturbableParams()) {
     const perturbedReturnsPct: number[] = [];
     for (const pct of [-th.perturbationPct, th.perturbationPct]) {
-      const variant = perturbParam(params, key, pct);
-      perturbedReturnsPct.push(runResearchBacktest(candles, variant, config).metrics.totalReturnPct);
+      const variant = b.withPerturbation(key, pct);
+      perturbedReturnsPct.push(simulate(candles, variant.signals(candles), config).metrics.totalReturnPct);
     }
     // "Survives" only makes sense for a baseline that's actually positive: the
     // edge should not vanish under a small nudge.
-    const survives =
-      baselineReturnPct > 0 ? perturbedReturnsPct.every((r) => r > 0) : false;
+    const survives = baselineReturnPct > 0 ? perturbedReturnsPct.every((r) => r > 0) : false;
     robustness.push({ param: key, survives, baselineReturnPct, perturbedReturnsPct });
   }
 
@@ -100,4 +79,14 @@ export function evaluate(
     );
 
   return { metrics: base.metrics, robustness, passed: reasons.length === 0, reasons };
+}
+
+/** Evaluate a named strategy (thin wrapper over evaluateBacktestable). */
+export function evaluate(
+  candles: Candle[],
+  params: StrategyParams,
+  config: Partial<BacktestConfig> = {},
+  thresholds: Partial<ScientistThresholds> = {}
+): ScientistReport {
+  return evaluateBacktestable(candles, fromStrategy(params), config, thresholds);
 }
