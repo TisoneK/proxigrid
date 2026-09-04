@@ -42,3 +42,6 @@ records.
 
 ---
 - **2026-09-03 — Session 55** — Claude Code / claude-opus-4-8 — Spec'd the research engine (docs/RESEARCH-ENGINE.md) from the two vision docs and shipped step 1: cost-aware research-grade backtester + honest MetricSet under src/lib/research/engine/ (14 tests). Real-BTC check: ma_crossover +16.6% gross → +5.1% net. Protocol miss: worked with no `.context/` discipline until reminded to push (flaw logged).
+
+---
+- **2026-09-03 — Session 56** — Claude Code / claude-opus-4-8 — Research engine step 2: dataset split + spec-hash-locked out-of-sample guard (src/lib/research/data/dataset.ts, 8 tests) — the §9 structural defence against overfitting the validation window. Parallel sub-agents authoring steps 3/5/7; parent owns git.

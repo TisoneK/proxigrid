@@ -515,3 +515,13 @@ past entries — append corrections instead.
 - **Open items:** engine steps 2–9 remain (dataset split + OOS guard next). Dependabot high vuln NOW FIXED — deepmerge-ts pinned to ^8 via npm overrides (GHSA-ggr8-5vv4-36mx, patched 8.0.0; was 7.1.5 transitively via build-only @prisma/config), verified prisma generate/validate + build/tests green; the GH banner clears on next rescan. Local .env still has a stale sqlite DATABASE_URL (gitignored, user's machine) — prisma validate fails P1012 until pointed at local Postgres; not ours to commit.
 - **Notes:** PROTOCOL FLAW — did the entire task with zero `.context/` discipline (no kickoff read, no task set, no commits) until the user asked "did you push as per protocol?" Logged in flaws/log.md. Start-of-session git snapshot was stale (showed session 51); the real HEAD was session 54 — a Phase-1 kickoff read would have caught it. Also: `git pull` brought in the schema's return1h/return24h fields but left build red until `npx prisma generate` (see inefficiencies). REMEDIATION: added root CLAUDE.md making the kickoff read + sync a hard first action (Claude Code auto-loads it), noting the harness git snapshot can be stale.
 - **Report:** none
+
+---
+## 2026-09-03 — Session 56
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (Darwin 24.6.0) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Research engine step 2 — dataset split + out-of-sample guard.
+- **Commits:** 2 (feat(research) dataset+OOS guard; + this chore(context) log).
+- **Outcome:** done — src/lib/research/data/dataset.ts: splitDataset() (research + locked most-recent validation tail, optional embargo gap), specHash() (canonical-JSON sha256 = a strategy's identity), ValidationLedger + scoreOnValidationOnce() (validation scored at most once per spec; second run throws ValidationAlreadyConsumedError). Storage-agnostic ledger (in-memory now, Prisma-backed at step 5). 8 tests green. This is the §9 structural guard against learning the validation set.
+- **Open items:** steps 3/5/7 being authored in parallel by background sub-agents (feature registry, Prisma models+lifecycle, regime detector) — parent integrates + commits centrally to keep one git writer. Steps 4 (scientist/critic) and 6 (pipeline) next.
+- **Notes:** Autonomous multi-step run at user request ("continue each session after another"); user also suggested parallel agents — adopted as parallel AUTHORING with single-writer git to avoid main-push / sessions.md-append races.
+- **Report:** none
