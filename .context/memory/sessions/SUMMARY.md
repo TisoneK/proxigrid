@@ -45,3 +45,6 @@ records.
 
 ---
 - **2026-09-03 — Session 56** — Claude Code / claude-opus-4-8 — Research engine step 2: dataset split + spec-hash-locked out-of-sample guard (src/lib/research/data/dataset.ts, 8 tests) — the §9 structural defence against overfitting the validation window. Parallel sub-agents authoring steps 3/5/7; parent owns git.
+
+---
+- **2026-09-03 — Sessions 57–60** — Claude Code / claude-opus-4-8 — Research engine steps 3/4/5/7 in one autonomous burst: Scientist+Critic (robustness + falsification), feature registry, Strategy/Experiment Prisma models + lifecycle state machine, regime detector. Steps 3/5/7 authored by parallel sub-agents, parent owned git. Full suite 160 tests green. Next: step 6 (hypothesis generator + pipeline).

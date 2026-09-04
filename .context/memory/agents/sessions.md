@@ -525,3 +525,36 @@ past entries — append corrections instead.
 - **Open items:** steps 3/5/7 being authored in parallel by background sub-agents (feature registry, Prisma models+lifecycle, regime detector) — parent integrates + commits centrally to keep one git writer. Steps 4 (scientist/critic) and 6 (pipeline) next.
 - **Notes:** Autonomous multi-step run at user request ("continue each session after another"); user also suggested parallel agents — adopted as parallel AUTHORING with single-writer git to avoid main-push / sessions.md-append races.
 - **Report:** none
+
+---
+## 2026-09-03 — Session 57
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (Darwin 24.6.0) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Research engine step 4 — Scientist + Critic.
+- **Commits:** 1 product (feat(research) scientist+critic); logged with 58–60 in one chore(context).
+- **Outcome:** done — engine/scientist.ts (research-window metrics + ±10% param-robustness gate; fails on too-few-trades / non-positive expectancy / fragile params) and engine/critic.ts (adversarial falsification: survives_costs, not_single_event, holds_across_time, survives_execution_latency @1-bar delay, optional cross-asset). Both pure over the backtester. 12 tests. Part of the autonomous multi-step run.
+- **Report:** none
+
+---
+## 2026-09-03 — Session 58
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (Darwin 24.6.0) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Research engine step 3 — feature registry.
+- **Commits:** 1 product (feat(research) feature registry).
+- **Outcome:** done — features/{feature.ts,registry.ts,builtins.ts}: Feature interface, FeatureRegistry (+defaultRegistry), 6 indicator-backed features + 2 derived (price_accel_over_vol, volume_accel), all null-safe. 23 tests. AUTHORED by a background sub-agent (general-purpose), integrated + committed by parent (single git writer).
+- **Report:** none
+
+---
+## 2026-09-03 — Session 59
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (Darwin 24.6.0) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Research engine step 5 — Prisma models + lifecycle state machine.
+- **Commits:** 1 product (feat(research) lifecycle models + state machine).
+- **Outcome:** done — schema.prisma +HistoricalCandle/Strategy/Experiment (purely additive; I reverted the sub-agent's whole-file `prisma format` reflow and re-appended the models in the file's original style so the diff is additive-only). lifecycle/state-machine.ts: pure StrategyStatus machine + promote guards, 30 tests. AUTHORED by a background sub-agent, integrated by parent. Schema validates with a dummy DATABASE_URL; `prisma generate` clean.
+- **Report:** none
+
+---
+## 2026-09-03 — Session 60
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (Darwin 24.6.0) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Research engine step 7 — regime detector.
+- **Commits:** 1 product (feat(research) regime detector); + this chore(context) logging 57–60.
+- **Outcome:** done — regime/detector.ts: transparent per-bar classifier (TRENDING/RANGING/HIGH_VOL/LOW_VOL/BREAKOUT/CONSOLIDATION/UNCERTAIN) from realized vol + Kaufman efficiency ratio + range expansion, decision-tree with documented thresholds; detectRegimes()+regimeCounts(). 15 tests. AUTHORED by a background sub-agent, integrated by parent. Full suite after integration: 160 tests, build green, tsc clean.
+- **Notes:** Steps 3/5/7 authored in parallel by three general-purpose sub-agents while the parent did steps 2 and 4; parent owned all git (commits/pushes/logs) to keep one writer. Remaining build-order items: step 6 (grid hypothesis generator + pipeline wiring everything together), step 8 (paper trader + monitor on the cron tick), step 9 (AI researcher — later).
+- **Report:** none
