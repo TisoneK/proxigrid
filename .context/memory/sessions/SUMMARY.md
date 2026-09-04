@@ -39,3 +39,6 @@ records.
 
 ---
 - **2026-09-02 — Session 54** — ZCode / glm-5.3-flash — Frontend/backend sync: outcome badges on every signal row, per-indicator accuracy table + daily hit-rate chart (50% coin-flip line) in signals detail, performance API timeline buckets, honest Active-signals KPI (directional/24h), unrealized-position marker in backtester, humanized MACD notes. Windows gotcha: TaskStop orphans the node dev-server child — kill by PID.
+
+---
+- **2026-09-03 — Session 55** — Claude Code / claude-opus-4-8 — Spec'd the research engine (docs/RESEARCH-ENGINE.md) from the two vision docs and shipped step 1: cost-aware research-grade backtester + honest MetricSet under src/lib/research/engine/ (14 tests). Real-BTC check: ma_crossover +16.6% gross → +5.1% net. Protocol miss: worked with no `.context/` discipline until reminded to push (flaw logged).

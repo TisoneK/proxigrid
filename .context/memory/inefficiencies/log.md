@@ -46,3 +46,11 @@ never harvested.
 - **Cause:** Windows process-tree semantics: killing npm/cmd does not propagate to the node grandchild.
 - **Workaround / fix:** After stopping a dev server, verify with `netstat -ano | findstr :3000` and `taskkill //F //PID <pid>` any surviving node.exe before restarting.
 - **Prevent next time:** Recorded here and in environments.md quirks; prefer `taskkill //F //T //PID` (tree kill) when cleaning up.
+
+---
+## 2026-09-03 — Claude Code / claude-opus-4-8
+- **Problem:** After `git pull --ff-only` brought in a `prisma/schema.prisma` change (new Signal.return1h/return24h fields), `tsc` and `next build` failed with "Property 'return1h' does not exist" — the pulled code referenced fields the *local* generated Prisma client didn't know yet.
+- **Cost:** A red integration gate that momentarily looked like the pulled work (or my own) was broken; ~2 minutes to diagnose it was a stale client, not a code fault.
+- **Cause:** `postinstall: prisma generate` regenerates the client on install, not on pull. A pull that changes the schema leaves the committed client artifact stale until regenerated.
+- **Workaround / fix:** `npx prisma generate`, then re-run gates — build/tsc/tests went green.
+- **Prevent next time:** After any `git pull` that touches `prisma/schema.prisma`, run `npx prisma generate` before trusting typecheck/build.

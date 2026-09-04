@@ -42,3 +42,12 @@ Friction caused by the `.context/` system or the protocol itself. See
 - **Root cause:** Docs treat Windows as "no POSIX shell", but Git Bash (extremely common on dev Windows boxes, and this repo's configured shell) supplies one.
 - **Suggested fix:** Add one line to the kickoff Step 1/2 notes: "On Windows with Git Bash, the `sh` editions work as-is; prefer them over the .ps1 ports."
 - **Status:** open
+
+---
+## 2026-09-03 — Claude Code / claude-opus-4-8 (Session 55)
+
+- **Flaw:** Agent completed an entire feature session (spec + code + tests) with none of the `.context/` protocol — never read kickoff.md, never set tasks/current.md, made zero commits — and only engaged the workflow when the user asked "did you push as per protocol?" Per the protocol's own EXIT note ("if the user has to remind you to commit or push, the protocol has failed"), this is a self-reported failure.
+- **Symptom:** Two deliverables (docs/RESEARCH-ENGINE.md, src/lib/research/) sat uncommitted on `main`; the local tree was 3 sessions behind remote (thought HEAD was session 51, actually 54) because no Phase-1 sync/read happened at start.
+- **Root cause:** The harness surfaces a git snapshot + AGENTS.md at session start, but the agent treated the coding request as the whole job and skipped AGENTS.md's explicit "read .context/kickoff.md before any work" instruction. No mechanism forced the kickoff read.
+- **Suggested fix:** Treat AGENTS.md's kickoff pointer as a hard precondition — on any session in a repo containing `.context/kickoff.md`, run Step 0–1 (sync + read active.md/sessions.md/current.md) before the first edit, regardless of how small the task looks. Consider a repo hook or a CLAUDE.md line that makes the kickoff read the literal first action.
+- **Status:** open
