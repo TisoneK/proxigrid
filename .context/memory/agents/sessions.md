@@ -578,3 +578,12 @@ past entries — append corrections instead.
 - **Open items:** DEFERRED (needs live Postgres + feed to verify, not shipped unverified): DB persistence of Strategy/Experiment rows, and wiring a research-monitor pass into GET /api/cron/tick. Step 9 (AI researcher / Phase C) NOT started — needs an LLM choice + credentials + prompt/safety design (a real decision, not mechanical). Also open: unify Scientist/Critic over the generic Hypothesis so feature-discovered strategies use the same gates.
 - **Notes:** END of the autonomous mechanical run. Engine build-order steps 1–8 pure cores are complete and tested (175 tests). What remains genuinely needs inputs/infra (DB, LLM keys, design) rather than more code I can verify locally — flagged for the user rather than guessed.
 - **Report:** none
+
+---
+## 2026-09-03 — Session 63
+- **Agent:** Claude Code | **Model:** claude-opus-4-8 | **Platform:** bao's macOS workstation (Darwin 24.6.0) | **Role:** engineer | **Core:** 0.8.0
+- **Task:** Unify Scientist/Critic/pipeline over a generic Backtestable so feature-driven Hypotheses use the same gates.
+- **Commits:** 2 (refactor(research) generic Backtestable; + this chore(context) log).
+- **Outcome:** done — engine/backtestable.ts (Backtestable: spec + signals() + perturbableParams()/withPerturbation(); adapters fromStrategy + fromHypothesis). Extracted generic cores evaluateBacktestable / criticizeBacktestable / runPipelineFor; the param-based evaluate/criticize/runPipeline are now thin wrappers — additive, behaviour-preserving (all prior 112 research tests unchanged & green). New test proves a feature RSI-reversion Hypothesis flows through scientist→critic→one-shot OOS. This makes Phase B (feature discovery) real and is the prerequisite for step 9. Full suite 178, tsc/build green.
+- **Open items:** Still remaining & needs inputs/infra: step 8 DB persistence + cron-monitor wiring (needs live Postgres), step 9 AI researcher (needs LLM keys + prompt/safety design). A feature-hypothesis GENERATOR (grid over feature/threshold combos, analogous to generator.ts) is a natural next mechanical step now that the gates are generic.
+- **Report:** none

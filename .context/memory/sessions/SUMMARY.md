@@ -54,3 +54,6 @@ records.
 
 ---
 - **2026-09-03 — Session 62** — Claude Code / claude-opus-4-8 — Research engine step 8 cores: PaperTrader (forward sim, online==batch) + monitorStrategy (§15-honest degradation: no verdict without evidence). 175 tests green. Engine build-order steps 1–8 pure cores DONE. Remaining needs infra/decisions: DB persistence + cron-monitor wiring (needs Postgres), step 9 AI researcher (needs LLM keys/design), unify scientist/critic over generic Hypothesis.
+
+---
+- **2026-09-03 — Session 63** — Claude Code / claude-opus-4-8 — Unified scientist/critic/pipeline over a generic Backtestable (fromStrategy/fromHypothesis adapters); feature-driven hypotheses now run the same gates as named strategies. Behaviour-preserving refactor, 178 tests green. Unlocks Phase B feature discovery + is the prereq for step 9 (AI researcher).
