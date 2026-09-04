@@ -61,6 +61,21 @@ export function fromStrategy(params: StrategyParams): Backtestable {
 }
 
 /**
+ * Tag a Backtestable with the asset it is being researched on. The tag rides
+ * in the spec (so the OOS ledger hashes per-asset — BTC and ETH validations
+ * are separate events on different data, which is the point), while signals
+ * and perturbation delegate unchanged.
+ */
+export function withAssetTag(b: Backtestable, asset: string): Backtestable {
+  return {
+    spec: { ...b.spec, asset },
+    signals: (candles) => b.signals(candles),
+    perturbableParams: () => b.perturbableParams(),
+    withPerturbation: (param, pct) => withAssetTag(b.withPerturbation(param, pct), asset),
+  };
+}
+
+/**
  * Adapter for a generic feature hypothesis. `build` reconstructs the Hypothesis
  * from its numeric params, so perturbation produces a genuinely different
  * hypothesis rather than mutating a closure.

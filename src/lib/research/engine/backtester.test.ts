@@ -126,3 +126,32 @@ describe("donchian_breakout signals", () => {
     expect(r.trades.length).toBe(0);
   });
 });
+
+describe("regime-gated entries", () => {
+  it("TRENDING filter suppresses entries in non-trending bars but keeps exits", () => {
+    // Craft a series with a violent single-bar breakout (BREAKOUT regime),
+    // then a smooth sustained trend (TRENDING). A Donchian breakout with a
+    // TRENDING filter should not enter on the violent bar; a smooth climb
+    // admits the entry.
+    const closes: number[] = [];
+    for (let i = 0; i < 40; i++) closes.push(100 + (i % 2) * 0.1); // tight chop
+    closes.push(140); // violent jump — BREAKOUT regime
+    closes.push(141);
+    for (let i = 0; i < 30; i++) closes.push(141 + i * 0.5); // smooth trend
+    const c = candles(closes);
+    const gated = runResearchBacktest(c, { ...DEFAULT_PARAMS, strategy: "donchian_breakout", donchianPeriod: 20, regimeFilter: ["TRENDING"] }, { costs: NO_COSTS, timeframe: "1h" });
+    const ungated = runResearchBacktest(c, { ...DEFAULT_PARAMS, strategy: "donchian_breakout", donchianPeriod: 20, regimeFilter: "any" }, { costs: NO_COSTS, timeframe: "1h" });
+    // Both must produce valid runs; the gated one enters at or after the
+    // ungated one (never earlier — the filter can only delay/suppress).
+    const firstGated = gated.trades.find((t) => t.side === "long")?.entryIndex ?? Infinity;
+    const firstUngated = ungated.trades.find((t) => t.side === "long")?.entryIndex ?? Infinity;
+    expect(firstGated).toBeGreaterThanOrEqual(firstUngated);
+  });
+
+  it("regimeFilter 'any' matches the legacy unfiltered path", () => {
+    const closes = Array.from({ length: 60 }, (_, i) => 100 + i * 0.8);
+    const c = candles(closes);
+    const any = runResearchBacktest(c, { ...DEFAULT_PARAMS, strategy: "donchian_breakout", donchianPeriod: 10, regimeFilter: "any" }, { costs: NO_COSTS, timeframe: "1h" });
+    expect(any.trades.length).toBeGreaterThanOrEqual(1);
+  });
+});

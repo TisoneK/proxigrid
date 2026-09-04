@@ -29,6 +29,8 @@ export interface BollingerGridRanges {
 
 export interface DonchianGridRanges {
   donchianPeriod: number[];
+  /** Entry-regime filters to sweep (spec §6). Omitted → ["any"]. */
+  regimeFilters?: StrategyParams["regimeFilter"][];
 }
 
 /** Enumerate valid ma_crossover parameterisations (fast strictly < slow). */
@@ -97,21 +99,29 @@ export function generateBollingerGrid(ranges: BollingerGridRanges): StrategyHypo
   return out;
 }
 
-/** Enumerate donchian_breakout parameterisations. */
+/** Enumerate donchian_breakout parameterisations (optionally regime-gated). */
 export function generateDonchianGrid(ranges: DonchianGridRanges): StrategyHypothesis[] {
   const out: StrategyHypothesis[] = [];
   let i = 0;
+  const filters = ranges.regimeFilters ?? (["any"] as StrategyParams["regimeFilter"][]);
   for (const donchianPeriod of ranges.donchianPeriod) {
-    const params: StrategyParams = {
-      ...DEFAULT_PARAMS,
-      strategy: "donchian_breakout",
-      donchianPeriod,
-    };
-    out.push({
-      code: `GRID-donchian_breakout-${i++}`,
-      description: `Donchian breakout period=${donchianPeriod}`,
-      params,
-    });
+    for (const regimeFilter of filters) {
+      const params: StrategyParams = {
+        ...DEFAULT_PARAMS,
+        strategy: "donchian_breakout",
+        donchianPeriod,
+        regimeFilter,
+      };
+      const label =
+        regimeFilter === "any"
+          ? ""
+          : ` [${Array.isArray(regimeFilter) ? regimeFilter.join("+") : regimeFilter} entries]`;
+      out.push({
+        code: `GRID-donchian_breakout-${i++}`,
+        description: `Donchian breakout period=${donchianPeriod}${label}`,
+        params,
+      });
+    }
   }
   return out;
 }

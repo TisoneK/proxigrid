@@ -89,3 +89,20 @@ describe("fromHypothesis — a feature-driven hypothesis runs the same gates", (
     }
   });
 });
+
+describe("withAssetTag", () => {
+  it("changes the spec hash per asset but preserves signals and perturbation", async () => {
+    const { withAssetTag, fromStrategy } = await import("./backtestable");
+    const { specHash } = await import("../data/dataset");
+    const params = { ...DEFAULT_PARAMS, strategy: "donchian_breakout" as const, donchianPeriod: 20 };
+    const btc = withAssetTag(fromStrategy(params), "BTCUSDT");
+    const eth = withAssetTag(fromStrategy(params), "BTCUSDT".replace("BTC", "ETH"));
+    expect(specHash(btc.spec)).not.toBe(specHash(eth.spec));
+    const c = Array.from({ length: 60 }, (_, i) => ({
+      openTime: i, open: 100 + i, high: 101 + i, low: 99 + i, close: 100 + i, volume: 1, closeTime: i,
+    }));
+    expect(btc.signals(c)).toEqual(eth.signals(c));
+    const perturbed = btc.withPerturbation("donchianPeriod", 0.1);
+    expect(perturbed.spec).toMatchObject({ asset: "BTCUSDT" });
+  });
+});

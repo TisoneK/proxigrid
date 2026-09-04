@@ -17,8 +17,20 @@
 import { ema, rsi, sma, bollingerBands } from "@/lib/indicators";
 import type { Candle } from "@/lib/exchanges/types";
 import { barsPerYear, computeMetrics, type MetricSet } from "./metrics";
+import { detectRegimes, type Regime } from "../regime/detector";
 
 export type Strategy = "ma_crossover" | "rsi_reversion" | "bollinger_reversion" | "donchian_breakout";
+
+/**
+ * Entry gating by market regime (spec §6): "any" is the classic unfiltered
+ * strategy; a set of labels admits entries only in those regimes. Exits are
+ * NEVER filtered — a position opened in an allowed regime must always be able
+ * to close, otherwise a regime shift strands it.
+ */
+export type RegimeFilter = "any" | readonly Regime[];
+
+export const TREND_FILTER: RegimeFilter = ["TRENDING"];
+export const VOL_FILTER: RegimeFilter = ["HIGH_VOL", "BREAKOUT"];
 
 export interface StrategyParams {
   strategy: Strategy;
@@ -32,6 +44,8 @@ export interface StrategyParams {
   bbStdDev: number;
   // donchian_breakout
   donchianPeriod: number;
+  // regime gating for entries
+  regimeFilter: RegimeFilter;
 }
 
 export const DEFAULT_PARAMS: StrategyParams = {
@@ -44,6 +58,7 @@ export const DEFAULT_PARAMS: StrategyParams = {
   bbPeriod: 20,
   bbStdDev: 2,
   donchianPeriod: 20,
+  regimeFilter: "any",
 };
 
 /** Cost model in basis points (1 bp = 0.01%). Charged per side, on turnover. */
@@ -114,6 +129,23 @@ export interface ResearchBacktestResult {
  * upward dependency on the UI backtest.
  */
 export function strategySignals(candles: Candle[], p: StrategyParams): number[] {
+  const raw = rawStrategySignals(candles, p);
+  return applyRegimeFilter(raw, candles, p.regimeFilter);
+}
+
+/**
+ * Mask +1 entries that occur in a disallowed regime. Exits (−1) pass through
+ * untouched, and a position already open when the regime disallows re-entry
+ * still exits normally — the filter only gates NEW entries.
+ */
+function applyRegimeFilter(signals: number[], candles: Candle[], filter: RegimeFilter): number[] {
+  if (filter === "any") return signals;
+  const regimes = detectRegimes(candles);
+  const allowed = new Set<string>(filter);
+  return signals.map((s, i) => (s === 1 && !allowed.has(regimes[i]) ? 0 : s));
+}
+
+function rawStrategySignals(candles: Candle[], p: StrategyParams): number[] {
   const n = candles.length;
   const signals = new Array(n).fill(0);
 
