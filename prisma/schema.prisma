@@ -144,3 +144,63 @@ model WatchItem {
   symbol    String   @unique
   createdAt DateTime @default(now())
 }
+
+// ============================================================================
+// Research Engine (docs/RESEARCH-ENGINE.md §3)
+// ============================================================================
+
+/// A stored historical candle for offline research (separate from live fetches).
+model HistoricalCandle {
+  id           String   @id @default(cuid())
+  exchangeCode String
+  symbol       String
+  timeframe    String // "5m" | "1h" | ...
+  openTime     BigInt
+  open         Float
+  high         Float
+  low          Float
+  close        Float
+  volume       Float
+  closeTime    BigInt
+
+  @@unique([exchangeCode, symbol, timeframe, openTime])
+  @@index([exchangeCode, symbol, timeframe, openTime])
+}
+
+/// A research object with a lifecycle — a "PXG-###" strategy.
+model Strategy {
+  id         String   @id @default(cuid())
+  code       String   @unique // "PXG-017"
+  title      String
+  hypothesis String // human-readable research question
+  status     String   @default("RESEARCH")
+  // RESEARCH | HYPOTHESIS | BACKTESTING | VALIDATION | PAPER | LIVE
+  //   | MONITORING | DEGRADING | RETIRED
+  regime     String? // regime this strategy specializes in, if any
+  spec       Json // serialized Hypothesis (features, params, rules)
+  assets     String[] // ["BTCUSDT","ETHUSDT"]
+  timeframe  String
+  allocation Float    @default(0) // fraction of research capital, 0..1
+
+  experiments Experiment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([status])
+}
+
+/// One run of the pipeline (or a monitoring re-eval) against a strategy.
+model Experiment {
+  id           String   @id @default(cuid())
+  strategyId   String
+  strategy     Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+  kind         String // "backtest" | "oos" | "paper" | "monitor"
+  window       Json // { from, to, split } used
+  costs        Json // { feeBps, slippageBps, spreadBps } applied
+  metrics      Json // full MetricSet
+  criticReport Json // { passed, checks: [{name, passed, detail}] }
+  passed       Boolean
+  createdAt    DateTime @default(now())
+
+  @@index([strategyId, kind, createdAt])
+}
