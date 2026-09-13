@@ -60,3 +60,11 @@ never makes an entry eligible.
 - **Cause:** `postinstall: prisma generate` regenerates the client on install, not on pull. A pull that changes the schema leaves the committed client artifact stale until regenerated.
 - **Workaround / fix:** `npx prisma generate`, then re-run gates — build/tsc/tests went green.
 - **Prevent next time:** After any `git pull` that touches `prisma/schema.prisma`, run `npx prisma generate` before trusting typecheck/build.
+
+---
+## 2026-09-13 — ZCode / qwen3.8-flash (Session 69)
+- **Problem:** The 0.8.0 `context-sync status` reported "source: none reachable — skipping, this is fine" even though the package clone sat at `../context-ledger` all along: the old finder predated the 0.18 rename and only looked for legacy sibling names / `CONTEXT_PKG`. I reported "no newer core" and moved on — the MAJOR bump existed and was invisible from the project side.
+- **Cost:** A user correction ("core is at 1.x.x") plus a manual `git ls-remote` + explicit path argument to discover what status should have surfaced.
+- **Cause:** Update-source discovery keys off directory names; a renamed package looks like "no source" to an old client, and "this is fine" reads as "nothing to do".
+- **Workaround / fix:** After this migration, `ledger-sync status` auto-finds `../context-ledger`. If an old core ever reports no reachable source, pass the package path explicitly (`context-sync status <path>/core`) or `git ls-remote` the recorded upstream before concluding "up to date".
+- **Prevent next time:** Upstream fix candidate (status message could distinguish "no source" from "nothing found"): **Upstream: candidate** — but core 0.18+ already renamed the lookup order, so this is now historical; no action needed on 1.0.x.

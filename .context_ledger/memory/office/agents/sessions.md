@@ -644,3 +644,13 @@ re-seeded into the new office explicitly, and nothing else carries over.
 - **Open items:** paper-trading runner (PAPER strategies lack forward simulation — bridge to →LIVE); testnet order-path validation (still the trading gate); backlog otherwise unchanged.
 - **Notes:** First multi-asset attempt 500'd on an ETH fetch abort — motivated the per-asset isolation; keep that pattern for any per-item network fan-out.
 - **Report:** .context/memory/reviews/2026-09-04-review-4.md
+
+---
+## 2026-09-13 — Session 69
+- **Agent:** ZCode (Vera / S069) | **Model:** qwen3.8-flash | **Platform:** Tisone's Windows workstation (win32, Git Bash) | **Role:** engineer | **Core:** 1.0.6
+- **Task:** User reported "core is at 1.x.x" — sync context. Confirmed the vendored core was 0.8.0 vs upstream 1.0.6 (a MAJOR bump, initially masked because the 0.8.0 `context-sync status` couldn't reach the renamed package). Ran the documented migration to core 1.0.6.
+- **Commits:** 5 (300e168 update core to 1.0.6; 73ece68 migrate/office regroup; cf7efd9 rename .context/→.context_ledger/; 457541e Vera check-in; this chore(ledger) commit + a follow-up sweep commit).
+- **Outcome:** done — core 0.8.0 → 1.0.6; `ledger-sync verify` green (the installed `.gitattributes` `eol=lf` permanently fixes the 2026-09-02 CRLF false-fail); memory grouped into the live office; `.context/` → `.context_ledger/`, tools → `ledger-*`; kickoff.md/AGENTS.md/CLAUDE.md/active.md regenerated from 1.0.6 templates with facts refilled; instruction READMEs + log headers swept; stale refs kept only in historical entries (append-only). pre-commit gate green (191 tests).
+- **Open items:** office is full (68/20) — `ledger-history close` needed in a clean session (added to backlog B-2026-09-13-1); the 5 pre-existing research/trading backlog items unchanged.
+- **Notes:** 0.8.0 `context-sync status` reported "source: none reachable" even with `../context-ledger` present — the old finder predates the 0.18 rename and only looked for legacy siblings, so `git ls-remote` + a manual `.../core` path arg were needed to prove 1.0.6. Post-migration, `ledger-sync status` auto-finds `../context-ledger` and reads "up to date".
+- **Report:** none — protocol-maintenance session, no review report.

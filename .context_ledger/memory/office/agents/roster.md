@@ -40,7 +40,6 @@ is your stable session tag.
 
 | Name | Codename | Model | Doing |
 |------|----------|-------|-------|
-| Vera | S069 | 18ae0130-10c3-4a72-ac96-e46e6f4b7bc0/qwen3.8-flash (ZCode) | Migrating this repo's vendored core 0.8.0 → 1.0.6 (ledger rename + office layout) |
 
 **Clock out when your session ends**: remove your row in the closing
 `chore(ledger):` commit. The board shows who is in the office *now*;

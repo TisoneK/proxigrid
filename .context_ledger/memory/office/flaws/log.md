@@ -58,3 +58,9 @@ stays here as a live trap.
 - **Root cause:** The harness surfaces a git snapshot + AGENTS.md at session start, but the agent treated the coding request as the whole job and skipped AGENTS.md's explicit "read .context/kickoff.md before any work" instruction. No mechanism forced the kickoff read.
 - **Suggested fix:** Treat AGENTS.md's kickoff pointer as a hard precondition — on any session in a repo containing `.context/kickoff.md`, run Step 0–1 (sync + read active.md/sessions.md/current.md) before the first edit, regardless of how small the task looks. Consider a repo hook or a CLAUDE.md line that makes the kickoff read the literal first action.
 - **Status:** remediated 2026-09-03 (same session) — added root `CLAUDE.md` (Claude Code auto-loads it) whose FIRST ACTION block makes the kickoff read + `git pull --ff-only` a hard precondition before any edit, and warns that the harness start-of-session git snapshot can be several sessions stale. Residual: relies on the agent honoring CLAUDE.md; a git pre-commit/pre-work hook would be stronger. Reopen if it recurs.
+
+---
+## 2026-09-13 — ZCode / qwen3.8-flash (Session 69)
+
+- **Flaw:** Correction to the 2026-09-02 CRLF entry above: RESOLVED at core 1.0.6. The migration installed `.context_ledger/.gitattributes` (`eol=lf` over the ledger tree), `ledger-sync verify` now passes on this Windows checkout with `core.autocrlf=true` untouched, and the suggested-fix (b) shipped upstream in the package's own `.gitattributes`. Marking the original entry archive-eligible per the prune convention (`ledger-mem prune --list`).
+- **Status:** fixed in package (core 0.18+ ships `.gitattributes`; installed here 2026-09-13).

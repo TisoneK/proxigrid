@@ -12,6 +12,6 @@ entry and backlog before starting.
 - **Status:** in-progress | done | blocked (<blocker>)
 -->
 
-- **Session:** 2026-09-13 — ZCode / 18ae0130-10c3-4a72-ac96-e46e6f4b7bc0/qwen3.8-flash (Vera / S069)
-- **Task:** sync context — migrate vendored core 0.8.0 → 1.0.6 (`.context/` → `.context_ledger/` rename, office regroup, entry-point regeneration, instruction sweep)
-- **Status:** in-progress
+- **Session:** —
+- **Task:** none — no session in progress
+- **Status:** idle
