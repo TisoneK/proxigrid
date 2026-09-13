@@ -55,3 +55,17 @@ block (and its "last verified" date) every time you run on it again.
   - Binance geo-block status untested on this machine (`.env` already sets `BINANCE_REST_URL` per the macOS session-6 workaround).
   - `bun` presence not verified (not needed anymore — `start` runs node + cross-env since Session 52).
 - **Session 53 update (2026-09-02):** `.env` had a stale SQLite `DATABASE_URL` (pre-Vercel-migration leftover), which broke `db:push` and silently made the Prisma client fall back to a sqlite file DB for ad-hoc scripts. Fixed: Postgres 18.4 runs locally (`postgres`/`postgres`, port 5432), created a `proxigrid` database, `.env` now points at `postgresql://...localhost:5432/proxigrid` (value in local `.env` only, never tracked). `npm run db:push` verified. Also: port 3000 has TWO listeners on this machine — another app holds `[::1]:3000` (IPv6 localhost), the Next dev server holds `0.0.0.0:3000`; probe with `127.0.0.1:3000`, not `localhost`.
+
+---
+## Lameck's Windows workstation DESKTOP-3LRR8MD (last verified 2026-09-13)
+- **Identify by:** `$USER` = `Lameck`; hostname `DESKTOP-3LRR8MD`; workspace path `C:\Users\Lameck\Tisone\proxigrid`
+- **OS:** Windows (build 10.0.26200), Git Bash as shell; `sh` editions of the core tools run fine here (ledger-sync/ledger-gates/ledger-collab all verified)
+- **Runtimes:** node v24.20.0
+- **Package manager:** npm 11.19.0 (package-lock.json authoritative)
+- **Database:** local PostgreSQL 18.6 — EDB installer run by the user (2026-09-13), Windows service `postgresql-x64-18`, port 5432. `proxigrid` database created. Superuser password lives in `secrets/local-postgres-password` and the local `.env` (never tracked). `.env` is created locally (copy `.env.example`, set `DATABASE_URL` + `CRON_SECRET`); Binance paper defaults on.
+- **Verified commands (from repo root):** `npm install` (first attempt died on a transient network error; plain retry green, Prisma client generated via postinstall); `npx tsc --noEmit` (exit 0); `npm run lint` (clean); `npm test` (191/191, 25 files); `npm run db:push` (schema in sync, 475ms); `npm run dev` → http://127.0.0.1:3000 — root page 200, `/api/exchanges`, `/api/markets/binance/ticker` (live), `/api/signals`, `/api/watchlist` all 200.
+- **Quirks:**
+  - npm 11.19 prints `npm warn install-scripts` lines listing dependency postinstall scripts (prisma, @prisma/engines, @swc/core, unrs-resolver) — benign; the scripts run and the Prisma client generates.
+  - Piping npm through `tail` masks npm's real exit code (the first install "passed" with exit 0 while the log showed a network failure) — verify the log tail, not the pipeline status.
+  - Public Binance market data is reachable from this machine (live ticker 200); signed/testnet endpoints untested.
+  - Port 3000 was free at setup (unlike the tison machine's dual-listener situation).

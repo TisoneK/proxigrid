@@ -75,3 +75,5 @@ records.
 
 ---
 - **2026-09-13 — Session 69** — ZCode / qwen3.8-flash (Vera / S069) — Migrated the vendored protocol 0.8.0 → 1.0.6: `.context/` → `.context_ledger/`, tools → `ledger-*`, memory grouped into the live office, entry points regenerated from templates, instruction refs swept. CRLF verify false-fail permanently fixed by the installed `eol=lf` .gitattributes. Handoff: office is full — close it (backlog B-2026-09-13-1). Detail: session entry + commits.
+
+- **2026-09-13 — Session 70** — ZCode (Ada/S070) / glm-5.3-flash — First session on a new machine (Lameck/DESKTOP-3LRR8MD): cloned, deps installed, local PostgreSQL 18.6 provisioned (user-installed; password in secrets/), schema pushed, baseline green (191/191 tests), dev server verified live incl. a live Binance ticker call. No product-code changes. Detail: session entry only.

@@ -68,3 +68,11 @@ never makes an entry eligible.
 - **Cause:** Update-source discovery keys off directory names; a renamed package looks like "no source" to an old client, and "this is fine" reads as "nothing to do".
 - **Workaround / fix:** After this migration, `ledger-sync status` auto-finds `../context-ledger`. If an old core ever reports no reachable source, pass the package path explicitly (`context-sync status <path>/core`) or `git ls-remote` the recorded upstream before concluding "up to date".
 - **Prevent next time:** Upstream fix candidate (status message could distinguish "no source" from "nothing found"): **Upstream: candidate** — but core 0.18+ already renamed the lookup order, so this is now historical; no action needed on 1.0.x.
+
+---
+## 2026-09-13 — ZCode / glm-5.3-flash (Session 70)
+- **Problem:** First `npm install` on the new machine died mid-run with a npm network error; worse, the background command had been launched as `npm install | tail -5`, so the reported exit code was tail's (0) and the failure surfaced only when reading the log.
+- **Cost:** ~2 minutes (one unnoticed-failed install cycle + a full retry).
+- **Cause:** Transient network failure during registry fetch; pipeline exit-code masking by `tail`.
+- **Workaround / fix:** Plain `npm install` retry succeeded; verified via log tail + node_modules/.prisma/client presence.
+- **Prevent next time:** Don't pipe install/test commands when the exit code matters (or use `set -o pipefail`); verify the log, not the pipeline status.

@@ -14,7 +14,7 @@ accordingly).
 | Agent | Model | First seen | Last seen | Sessions |
 |---|---|---|---|---|
 | Claude Code | claude-opus-4-8 | 2026-08-26 | 2026-09-03 | 55 |
-| ZCode | glm-5.3-flash | 2026-09-02 | 2026-09-02 | 1 |
+| ZCode | glm-5.3-flash | 2026-09-02 | 2026-09-13 | 3 |
 
 ## Observations
 
@@ -29,3 +29,4 @@ Update in place when a newer session contradicts an old observation.
 -->
 
 - **ZCode / glm-5.3-flash:** Full general sweep on a new Windows machine: baseline verified (lint/tsc/60 tests/build), 7 safe fixes shipped across security, API validation, and config; correctly identified the context-sync CRLF false positive via git blob hashes instead of running rollback. (2026-09-02)
+- **ZCode / glm-5.3-flash:** Environment-setup session (Session 70): cloned fresh, installed deps, provisioned DB, verified baseline (191/191 tests) and live dev server including a live Binance ticker call. Protocol-honoring on a cold start without prompting. (2026-09-13)

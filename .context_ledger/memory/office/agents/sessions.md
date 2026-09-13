@@ -654,3 +654,13 @@ re-seeded into the new office explicitly, and nothing else carries over.
 - **Open items:** office is full (68/20) — `ledger-history close` needed in a clean session (added to backlog B-2026-09-13-1); the 5 pre-existing research/trading backlog items unchanged.
 - **Notes:** 0.8.0 `context-sync status` reported "source: none reachable" even with `../context-ledger` present — the old finder predates the 0.18 rename and only looked for legacy siblings, so `git ls-remote` + a manual `.../core` path arg were needed to prove 1.0.6. Post-migration, `ledger-sync status` auto-finds `../context-ledger` and reads "up to date".
 - **Report:** none — protocol-maintenance session, no review report.
+
+---
+## 2026-09-13 — Session 70
+- **Agent:** ZCode (Ada / S070) | **Model:** glm-5.3-flash | **Platform:** Lameck's Windows workstation DESKTOP-3LRR8MD (win32, Git Bash) | **Role:** engineer | **Core:** 1.0.6
+- **Task:** Project setup on a new machine (user: "Setup this project here" + repo URL): clone, deps, env, local Postgres, db push, dev-server verify. User installed PostgreSQL 18 mid-session and supplied the superuser password in chat (stored in secrets/ + local .env only).
+- **Commits:** 3 (05f5ad4 check-in; 9e9f512 task+claim; this chore(ledger) wrap-up; plus a docs(review) commit).
+- **Outcome:** done — protocol core verified (1.0.6), deps installed (retry after a transient npm network failure), baseline green (tsc 0 errors, lint clean, 191/191 tests), `proxigrid` db created on PostgreSQL 18.6 and schema pushed, dev server verified live: root 200, /api/exchanges + /api/markets/binance/ticker (live data) + /api/signals + /api/watchlist all 200. No product-code changes. Dev server left running for the user at http://127.0.0.1:3000.
+- **Open items:** none from this session; backlog unchanged (office close B-2026-09-13-1 still pending).
+- **Notes:** New environment block added in system/environments.md (Lameck / DESKTOP-3LRR8MD) — the tison block is a different machine.
+- **Report:** .context_ledger/memory/office/reviews/2026-09-13-review.md

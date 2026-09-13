@@ -14,4 +14,4 @@ entry and backlog before starting.
 
 - **Session:** 2026-09-13 — Ada (S070) / glm-5.3-flash
 - **Task:** Project setup on this machine: clone verified, deps install, .env, local Postgres (user installing PG18), db push, dev-server verify
-- **Status:** in-progress
+- **Status:** done
