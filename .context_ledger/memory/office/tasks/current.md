@@ -14,4 +14,4 @@ entry and backlog before starting.
 
 - **Session:** 2026-09-13 — Mei (S071) / GLM-5.3-Flash (ZCode)
 - **Task:** Same session that closed office-001 (this session straddled the office boundary); wrap-up: session log, registry updates, exit gates
-- **Status:** in-progress
+- **Status:** done

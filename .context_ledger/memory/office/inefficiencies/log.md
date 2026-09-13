@@ -44,3 +44,11 @@ never makes an entry eligible.
 - **Cause:** `postinstall: prisma generate` regenerates on install, not on pull.
 - **Workaround / fix:** `npx prisma generate`, then re-run the gates.
 - **Prevent next time:** After any pull that touches `prisma/schema.prisma`, run `npx prisma generate` before trusting typecheck/build.
+
+---
+## 2026-09-13 — ZCode / GLM-5.3-Flash (Session 71)
+- **Problem:** Grepping a diff for added/removed lines with `grep '^\+|^-'` failed — this machine's Git Bash `grep` is ugrep, whose regex syntax rejected the pattern ("error at position 5"), costing one retry.
+- **Cost:** ~1 minute.
+- **Cause:** `grep` on this box resolves to ugrep, not GNU grep; ugrep rejected the `^\+|^-` alternation in that position.
+- **Workaround / fix:** Simpler character-class patterns per call (`grep '^[+-] '`), or `git diff --stat` first.
+- **Prevent next time:** On this machine don't assume GNU grep syntax; prefer simple character-class patterns.

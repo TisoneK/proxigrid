@@ -30,3 +30,6 @@ records.
 - A removed summary line MUST have a corresponding permanent entry in
   agents/sessions.md — never delete the only record of a session.
 -->
+
+---
+- **2026-09-13 — Session 71** — ZCode (Mei/S071) / GLM-5.3-Flash — Closed office-001 (70 sessions) verbatim into `history/office-001/` with its permanent record; fresh office re-seeded (8 backlog rows incl. 2 newly backlogged threads, 2 live traps). Also cleared the new js-yaml high advisory with a lockfile-only bump (`npm audit` 0). Detail: summary only.
