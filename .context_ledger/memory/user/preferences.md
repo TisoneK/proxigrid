@@ -46,7 +46,7 @@ Format: - <preference> — <how to apply it> (provenance, YYYY-MM-DD)
 
 ## Workflow
 
-- Always follow the `.context` protocol for all work on this repo — including product-code tasks handed over directly in chat, not just kickoff-launched sessions. That means: read memory at start, set `tasks/current.md`, use the right commit prefix per surface (`chore(context):` for `.context/`, normal Conventional Commits for product code, `docs(review):` for reports), log the session in `agents/sessions.md`, update the relevant memory, and push. (stated, 2026-08-26)
+- Always follow the `.context_ledger` protocol for all work on this repo — including product-code tasks handed over directly in chat, not just kickoff-launched sessions. That means: check in to the roster at start, read memory, set `office/tasks/current.md`, use the right commit prefix per surface (`chore(ledger):` for `.context_ledger/`, normal Conventional Commits for product code, `docs(review):` for reports), log the session in `office/agents/sessions.md`, update the relevant memory, and push. (stated, 2026-08-26; paths/prefixes updated for core 1.0.x on 2026-09-13)
 
 ## Communication
 

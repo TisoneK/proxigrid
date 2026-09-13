@@ -50,7 +50,7 @@ block (and its "last verified" date) every time you run on it again.
 - **Package manager:** npm (package-lock.json authoritative; `cross-env` added Session 52 for the `start` script)
 - **Verified commands (from repo root, this session):** `npm run lint` (clean), `npx tsc --noEmit` (exit 0), `npm test` (60/60), `npm run build` (green, runs TypeScript validation), `npm audit` (3 high — known prisma chain). DB: `.env` has `DATABASE_URL` (Postgres, reachable) + `BINANCE_REST_URL`; schema pushed (Signal table live).
 - **Quirks:**
-  - `git core.autocrlf=true` checks files out CRLF → `context-sync verify` false-fails against the LF MANIFEST (see flaws/log.md before running rollback!). `.ps1` core tools: `context-gates.ps1` is broken; use the `sh` editions via Git Bash.
+  - `git core.autocrlf=true` (set in Git's global `gitconfig`) checks files out CRLF. Since core 1.0.6 the project installs `.context_ledger/.gitattributes` with `eol=lf` for the ledger tree, so the vendored core matches its LF MANIFEST and `ledger-sync verify` passes — the old `context-sync verify` false-fail (flaws/log.md 2026-09-02) no longer applies. If you ever see a verify failure + `autocrlf=true` + clean tree, check git blob hashes before rolling back. PowerShell: use the `.cmd` launchers (`.ps1` needs no execution-policy change via them); the `sh` editions run fine under Git Bash.
   - A stray `package-lock.json` sits in `C:\Users\tison` — `turbopack.root` is now pinned in next.config so builds ignore it; don't delete the user's file.
   - Binance geo-block status untested on this machine (`.env` already sets `BINANCE_REST_URL` per the macOS session-6 workaround).
   - `bun` presence not verified (not needed anymore — `start` runs node + cross-env since Session 52).
