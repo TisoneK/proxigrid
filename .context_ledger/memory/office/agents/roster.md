@@ -40,6 +40,7 @@ is your stable session tag.
 
 | Name | Codename | Model | Doing |
 |------|----------|-------|-------|
+| Ada | S070 | glm-5.3-flash | Project setup: deps, local Postgres, env, db push, dev server verify |
 
 **Clock out when your session ends**: remove your row in the closing
 `chore(ledger):` commit. The board shows who is in the office *now*;
