@@ -40,7 +40,8 @@ is your stable session tag.
 
 | Name | Codename | Model | Doing |
 |------|----------|-------|-------|
-| Mei | S071 | builtin:zai-start-plan/GLM-5.3-Flash | Office close continued into this fresh office: session log + wrap-up (closed office-001, 70 sessions) |
+| Ada | S070 | glm-5.3-flash | Project setup: deps, local Postgres, env, db push, dev server verify |
+| Mei | S071 | builtin:zai-start-plan/GLM-5.3-Flash | Office close: run ledger-history close (backlog B-2026-09-13-1), re-seed open threads |
 
 **Clock out when your session ends**: remove your row in the closing
 `chore(ledger):` commit. The board shows who is in the office *now*;

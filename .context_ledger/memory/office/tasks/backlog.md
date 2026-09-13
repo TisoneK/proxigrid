@@ -33,29 +33,32 @@ Full spec: `.context_ledger/core/schemas/ledger-schema.md` →
 
 | ID | Summary |
 |----|---------|
-| B-2026-08-26-1 | **Remaining prisma-chain security advisory** (added 2026-08-26) — 3 high-severity advisories persist after `npm audit fix --force`: `prisma` → `@prisma/config` → `deepmerge-ts <8.0.0` (GHSA-ggr8-5vv4-36mx, stack exhaustion on recursive-object-graph merges). Build-time CLI tooling; `prisma`/`@prisma/client` at 6.19.3. Only npm offer is a prisma dev pre-release, so left in place. Recheck when Prisma ships a stable release whose `@prisma/config` pins `deepmerge-ts@>=8`. Rechecked 2026-09-02 (Session 52): `@prisma/config@6.19.3` pins `deepmerge-ts@7.1.5`; latest stable line — `npm audit` "fix available" means the RC. |
 
 ### Medium Priority
 
 | ID | Summary |
 |----|---------|
-| B-2026-09-13-1 | **Close the full office** (added 2026-09-13, Session 69) — `ledger-gates checkpoint` now warns the live office is full (68 / 20). Run `ledger-history close` in a quiet session: it freezes the office verbatim into `history/office-<NNN>/`, writes the permanent record, and re-seeds open threads (backlog already in 1.0.5 table format; roster/registry start empty). Do NOT do it mid-migration or mid-feature — pick a clean moment. |
-| B-2026-08-26-2 | **Binance User Data Streams + listenKey lifecycle** (added 2026-08-26, Session 8) — Not implemented. For real-time execution reports and balance updates: `POST /api/v3/userDataStream` to get a listenKey, `PUT` ping every ~30 min (expires after 60), `DELETE` on shutdown (manual §4). Would let AutomationService react to fills without polling. Needs API credentials. |
-| B-2026-08-28-1 | **Testnet order-path validation** (added 2026-08-28) — the `placeOrder` path (filters/TIF/STP) is written but never run against a live matching engine. Once hosted where Binance is reachable, run a real testnet order via a `place_order` rule + OrderConfirmDialog and fix whatever surfaces. Gates the whole "it actually trades" story. |
-| B-2026-08-29-1 | **Multi-exchange v2 — canonical symbols + Coinbase scanning** (added 2026-08-29, Session 41) — v1 shipped native per-exchange symbols (browse-only Coinbase). v2: (a) canonical base-asset symbols (base + generic USD quote, per-adapter formatting) for unified cross-exchange views / one watchlist per asset; (b) extend the signal scanner + intelligence service to scan Coinbase markets too (currently Binance-only). Also: exchange `kind` badge in the switcher, per-exchange watchlist scoping. The adapter/registry abstraction is the extension point for more providers (e.g. Deriv — kind supports forex/stock/commodity). |
-| B-2026-09-04-1 | **Research monitor pass on the cron tick** (added 2026-09-04, Session 65 review) — the pure `monitorStrategy()` module (`src/lib/research/monitor/monitor.ts`) is built and tested but unwired. Per spec §11: add a research-monitor pass to `scanOnce()` / `/api/cron/tick` that re-evaluates PAPER/LIVE strategies on recent candles, writes `Experiment(kind:"monitor")`, and applies MONITORING → DEGRADING transitions via the state machine only on statistically significant deterioration. |
-| B-2026-09-04-2 | **HistoricalCandle history store** (added 2026-09-04, Session 65 review) — the Prisma model exists but the table is empty and nothing writes to it. Spec §2/§9: persist candles on fetch (or a backfill route) so research runs aren't bounded by live-fetch windows; `data/dataset.ts` then reads from the store. Include a backfill endpoint (symbol/timeframe/from/to) with sane caps. |
+| B-2026-08-28-1 | **Testnet order-path validation** (re-seeded from office-001, added 2026-08-28) — the `placeOrder` path (filters/TIF/STP) is written but never run against a live matching engine. Once hosted where Binance signed endpoints are reachable, run a real testnet order via a `place_order` rule + OrderConfirmDialog and fix whatever surfaces. Gates the whole "it actually trades" story. |
+| B-2026-09-13-1 | **Paper-trading runner** (re-seeded from office-001; open since session 68, never backlogged until the office close) — PAPER strategies have no forward simulation: build the runner that feeds recent candles to PaperTrader for strategies in PAPER status so they accrue live evidence, giving the monitor pass something to grade and the →LIVE promotion a basis. Pure PaperTrader + monitor cores exist and are tested. |
+| B-2026-08-26-2 | **Binance User Data Streams + listenKey lifecycle** (re-seeded from office-001, added 2026-08-26) — not implemented. For real-time execution reports and balance updates: `POST /api/v3/userDataStream` to get a listenKey, `PUT` ping every ~30 min (expires after 60), `DELETE` on shutdown. Would let the automation worker react to fills without polling. Needs API credentials. |
+| B-2026-08-29-1 | **Multi-exchange v2 — canonical symbols + Coinbase scanning** (re-seeded from office-001, added 2026-08-29) — v1 shipped native per-exchange symbols (browse-only Coinbase, dormant behind COINBASE_ENABLED). v2: (a) canonical base-asset symbols for unified cross-exchange views / one watchlist per asset; (b) extend the signal scanner + intelligence service to scan Coinbase markets too. Exchange `kind` badge in the switcher, per-exchange watchlist scoping. |
+| B-2026-09-04-3 | **Per-regime metric breakout in lab runs** (re-seeded from office-001, added 2026-09-04) — partial: lab runs already report the regime *distribution* (shipped in old-office session 66), but metrics are never sliced per regime. Spec §6: compute a per-regime MetricSet in the run response so the UI can show "works in TRENDING only". |
+| B-2026-09-13-2 | **Research engine step 9 — AI researcher** (re-seeded from office-001; flagged sessions 62–64, blocked) — the last unbuilt engine step. Needs USER INPUTS, not just code: LLM choice + credentials, prompt design, and safety boundaries for an agent that proposes strategies. Prereq (generic Backtestable gates) is done. Do not start without the user's inputs. |
 
 ### Low Priority
 
 | ID | Summary |
 |----|---------|
-| B-2026-08-26-3 | **Binance FIX protocol connectivity** (added 2026-08-26, Session 8) — out of scope for now; institutional low-latency order entry over persistent TCP (manual §1). Only worth it for HFT use cases; the REST/WS adapter covers current needs. |
-| B-2026-08-26-4 | **eslint 10 blocked by Next lint stack** (added 2026-08-26) — the whole eslint 9.x line (incl. latest 9.39.5) is flagged "no longer supported", clearable only by eslint 10. But `eslint-config-next@16`'s bundled `eslint-plugin-react` caps its eslint peer at `^9.7` (no ^10) and crashes `npm run lint` under eslint 10 (verified 2026-08-26). Kept on `^9` so lint works. Recheck when `eslint-config-next` / `eslint-plugin-react` ship eslint-10 support, then bump `eslint` to `^10` and re-run `npm run lint`. |
-| B-2026-09-04-3 | **Per-regime metric breakout in lab runs** (added 2026-09-04, Session 65 review) — `regime/detector.ts` classifies every bar but `engine/pipeline.ts` never slices metrics by regime. Spec §6: compute regime distribution + per-regime MetricSet in the run response so the UI can show "works in TRENDING only". |
-| B-2026-09-04-4 | **Richer Phase A grid** (added 2026-09-04, Session 65 review) — the named-strategy grid sweeps only ma_crossover/rsi_reversion; add more named strategies to `engine/backtester.ts` (e.g. Bollinger reversion, EMA trend-follow with regime filter) so the generator explores beyond two families. |
+| B-2026-08-26-3 | **Binance FIX protocol connectivity** (re-seeded from office-001, added 2026-08-26) — parked; institutional low-latency order entry over persistent TCP. Only worth it for HFT use cases; the REST/WS adapter covers current needs. |
+| B-2026-08-26-4 | **eslint 10 blocked by Next lint stack** (re-seeded from office-001, added 2026-08-26) — the eslint 9.x line is flagged "no longer supported", but `eslint-config-next@16`'s bundled `eslint-plugin-react` caps its eslint peer at `^9.7` and crashes `npm run lint` under eslint 10 (verified 2026-08-26). Kept on `^9`. Recheck when `eslint-config-next` / `eslint-plugin-react` ship eslint-10 support, then bump and re-run lint. |
 
-<!-- Converted from the legacy checkbox format (append-only) to the 1.0.5
-     priority-grouped tables during the core 1.0.6 migration (2026-09-13):
-     open `- [ ]` items became ID'd rows; completed `- [x]` tombstones were
-     dropped — their completion records live in agents/sessions.md and git. -->
+<!-- Re-seeded from office-001's backlog at the office close (2026-09-13,
+     session S071): original IDs kept for traceability with the frozen
+     backlog in .context_ledger/history/office-001/; new items take fresh
+     IDs in this office. Rows verified done at close time were NOT
+     re-seeded — see history/office-001.md "Open threads". -->
+
+<!-- TEMPLATE — add one row to the matching priority table:
+| B-<YYYY-MM-DD>-<n> | <enough context that a fresh agent can act on
+      this without any chat history — status qualifiers in the text> |
+-->
