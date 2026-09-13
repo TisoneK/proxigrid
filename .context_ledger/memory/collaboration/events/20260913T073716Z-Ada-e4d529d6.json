@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "id": "20260913T073716Z-Ada-e4d529d6",
+  "type": "claim",
+  "session": "S070",
+  "agent": "Ada",
+  "created": "2026-09-13T07:37:16Z",
+  "issue": "project-setup",
+  "body": "Environment-setup session on new machine (DESKTOP-3LRR8MD, user Lameck): deps install, .env, local Postgres 18 (user installing), prisma db push, dev-server verify. No product-code changes planned beyond lockfile/env.",
+  "paths": ["package-lock.json", ".env"],
+  "refs": [],
+  "option": null,
+  "selected": null,
+  "owner": null,
+  "participants": []
+}
