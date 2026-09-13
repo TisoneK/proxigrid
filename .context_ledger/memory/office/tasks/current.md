@@ -1,5 +1,5 @@
 # Current Task (overwrite each session)
 
-- **Session:** —
-- **Task:** none — no session in progress
-- **Status:** idle
+- **Session:** 69 (Vera / S069)
+- **Task:** sync context — migrate vendored core 0.8.0 → 1.0.6 (ledger rename + office layout)
+- **Status:** in progress
