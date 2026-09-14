@@ -38,9 +38,9 @@ is your stable session tag.
 | <Name> | S<NNN> | <model id> | <what you're doing> |
 -->
 
-| Name | Codename | Model | Doing |
-|------|----------|-------|-------|
-| Rhea | S072 | qwen3.8-flash[1m] | context sync — pull, read the ledger, report state |
+| Name | Codename | Model | Doing | Status | Status detail |
+|------|----------|-------|-------|--------|---------------|
+| Rhea | S072 | qwen3.8-flash[1m] | context sync — pull, read the ledger, report state | Working | Phase 1 done; applying core 1.1.1 migration |
 
 **Clock out when your session ends**: remove your row in the closing
 `chore(ledger):` commit. The board shows who is in the office *now*;

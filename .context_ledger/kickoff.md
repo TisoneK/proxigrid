@@ -86,7 +86,7 @@ once, or record `unknown`.
   # If private: PAT from chat — strip it from .git/config right after.
   # A missing credential is a missing input: if the repo is private (or
   # you'll push, which you will) and no PAT arrived in chat, ask NOW.
-  git clone <PROJECT_REPO_URL_WITH_TOKEN_IF_PRIVATE> proxigrid && cd proxigrid
+  git clone https://github.com/TisoneK/proxigrid.git proxigrid && cd proxigrid
   git remote set-url origin https://github.com/TisoneK/proxigrid.git
   git config user.name "Tisone Kironget" && git config user.email "tisonkironget@gmail.com"
   ```
@@ -134,7 +134,23 @@ the `.ps1` port with `-ExecutionPolicy Bypass` (same commands, same output):
 
 ### Step 2 — Sign in at the door, then read `.context_ledger/`
 
-**Check in FIRST — before the deep read, before analysis, before product work.** Signing needs only two files: `memory/office/agents/roster.md` (the board) and the last entry of `memory/office/agents/sessions.md` (the next free session number). Read just those two, pick a real name you like (unique in the office), add your row — name, codename `S<NNN>`, model, one line on what you're on — commit, and push it now: `chore(ledger): <name> (<codename>) checks in — <task>`. The push claims your codename: whoever's check-in commit is already on origin keeps the number, and if a concurrent check-in surfaces on your rebase the earlier commit wins — renumber **your own row only** to the next free codename, never a peer's. A worker who reads protocol and product code before signing checks in late: two workers launched together then both see an empty board, both take the same codename, and meet mid-session as strangers arguing over the main tree. Everything below comes AFTER your row is pushed. (Full check-in, identity, and mode rules follow the read list.)
+**Check in FIRST — before the deep read, before analysis, before product work.** Signing needs only two files: `memory/office/agents/roster.md` (the board) and the last entry of `memory/office/agents/sessions.md` (the next free session number). Read just those two, pick a real name you like (unique in the office), add your row — name, codename `S<NNN>`, model, one line on what you're on, and your starting Status `Working` with a status detail naming the stage you've reached — commit, and push it now: `chore(ledger): <name> (<codename>) checks in — <task>`. The push claims your codename: whoever's check-in commit is already on origin keeps the number, and if a concurrent check-in surfaces on your rebase the earlier commit wins — renumber **your own row only** to the next free codename, never a peer's. Keep your row's Status cells current as the work moves (`Done` + what shipped, or `Blocked` + the blocker) — the next live worker coordinates with you off that board at a glance. A worker who reads protocol and product code before signing checks in late: two workers launched together then both see an empty board, both take the same codename, and meet mid-session as strangers arguing over the main tree. Everything below comes AFTER your row is pushed. (Full check-in, identity, and mode rules follow the read list.)
+
+**Full office? Close it at the door, before the deep read.** The
+registry entry you just read tells you the office's age: if
+`agents/sessions.md` already holds more than `office_size` sessions
+(default 20 — the codename you'd claim is past S020), run the close as
+part of check-in: `sh .context_ledger/core/bin/ledger-history close`
+(dry run prints the checklist; re-run with `--confirm`; Windows: the
+`.cmd` launcher). Fill in the permanent record `history/office-<NNN>.md`
+and re-seed the open threads that still matter into the fresh office's
+`backlog.md` / `decisions.md` / logs — re-seeded entries describe the
+work in plain words and **never cite the closed office's session numbers
+or codenames** ("as fixed in S014"), which point into the frozen copy the
+new office never reads. Then sign the NEW roster: same name, codename
+`S001` — numbering restarts in a new office, and old-office numbers never
+carry over. (Schema: "The door trigger — a full office closes at
+check-in".)
 
 Then read, in order:
 
