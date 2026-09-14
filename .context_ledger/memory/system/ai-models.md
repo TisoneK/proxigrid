@@ -15,6 +15,7 @@ accordingly).
 |---|---|---|---|---|
 | Claude Code | claude-opus-4-8 | 2026-08-26 | 2026-09-03 | 55 |
 | ZCode | glm-5.3-flash | 2026-09-02 | 2026-09-13 | 4 |
+| Claude Code | qwen3.8-flash[1m] | 2026-09-14 | 2026-09-14 | 1 |
 
 ## Observations
 

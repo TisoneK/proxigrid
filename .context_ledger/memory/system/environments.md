@@ -57,7 +57,7 @@ block (and its "last verified" date) every time you run on it again.
 - **Session 53 update (2026-09-02):** `.env` had a stale SQLite `DATABASE_URL` (pre-Vercel-migration leftover), which broke `db:push` and silently made the Prisma client fall back to a sqlite file DB for ad-hoc scripts. Fixed: Postgres 18.4 runs locally (`postgres`/`postgres`, port 5432), created a `proxigrid` database, `.env` now points at `postgresql://...localhost:5432/proxigrid` (value in local `.env` only, never tracked). `npm run db:push` verified. Also: port 3000 has TWO listeners on this machine — another app holds `[::1]:3000` (IPv6 localhost), the Next dev server holds `0.0.0.0:3000`; probe with `127.0.0.1:3000`, not `localhost`.
 
 ---
-## Lameck's Windows workstation DESKTOP-3LRR8MD (last verified 2026-09-13)
+## Lameck's Windows workstation DESKTOP-3LRR8MD (last verified 2026-09-14)
 - **Identify by:** `$USER` = `Lameck`; hostname `DESKTOP-3LRR8MD`; workspace path `C:\Users\Lameck\Tisone\proxigrid`
 - **OS:** Windows (build 10.0.26200), Git Bash as shell; `sh` editions of the core tools run fine here (ledger-sync/ledger-gates/ledger-collab all verified)
 - **Runtimes:** node v24.20.0

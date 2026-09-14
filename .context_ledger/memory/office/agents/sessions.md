@@ -32,3 +32,13 @@ re-seeded into the new office explicitly, and nothing else carries over.
 - **Open items:** none new — the fresh backlog carries the 8 re-seeded rows; B-2026-09-13-2 (AI researcher) is blocked on user inputs (LLM choice, credentials, prompt/safety design).
 - **Notes:** This session straddled the office boundary: its check-in row and codename claim are preserved in office-001's frozen roster, and it re-signed the fresh office's roster at the close (same name and codename). Session numbering continues across the office boundary (this is 71, not a fresh 1). GitHub's Dependabot banner still showed "1 high" right after the fix push — local `npm audit` is authoritative (0); the banner clears on GitHub's rescan.
 - **Report:** none — protocol-maintenance/housekeeping session, no review report.
+
+---
+## 2026-09-14 — Session 72
+- **Agent:** Claude Code (Rhea / S072) | **Model:** qwen3.8-flash[1m] | **Platform:** Lameck's Windows workstation DESKTOP-3LRR8MD (win32, Git Bash) | **Role:** engineer | **Core:** 1.1.1
+- **Task:** Target "sync context" — pull, read the full ledger, apply the core 1.1.0/1.1.1 migration `ledger-sync status` flagged, re-verify the baseline, and report repo state.
+- **Commits:** 3 (a0f64c4 check-in; bc2711b core 1.1.1 migration + entrypoint refills; this wrap-up).
+- **Outcome:** done — core 1.0.6→1.1.1 (same MAJOR): `ledger-sync update` + migration fill step (regenerated AGENTS.md + kickoff.md from new templates, project facts refilled, roster row upgraded to the 6-column form with Status/Status detail). Baseline re-verified this session: `npx prisma generate` 0, `npx tsc --noEmit` 0, `npm run lint` clean, `npm test` 191/191 (25 files). Solo mode (empty board before check-in, current.md done, no live collab claims).
+- **Open items:** none new — backlog unchanged (8 rows). Flaw logged: `ledger-mem lint --tree` false-positives AGENTS.md/CLAUDE.md routing files (see flaws/log.md).
+- **Notes:** none — sync session, no exploration beyond the migration itself.
+- **Report:** none — context-sync/protocol-maintenance session, no review report.
