@@ -40,6 +40,7 @@ is your stable session tag.
 
 | Name | Codename | Model | Doing |
 |------|----------|-------|-------|
+| Rhea | S072 | qwen3.8-flash[1m] | context sync — pull, read the ledger, report state |
 
 **Clock out when your session ends**: remove your row in the closing
 `chore(ledger):` commit. The board shows who is in the office *now*;
