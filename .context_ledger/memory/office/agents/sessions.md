@@ -34,11 +34,11 @@ re-seeded into the new office explicitly, and nothing else carries over.
 - **Report:** none — protocol-maintenance/housekeeping session, no review report.
 
 ---
-## 2026-09-14 — Session 72
-- **Agent:** Claude Code (Rhea / S072) | **Model:** qwen3.8-flash[1m] | **Platform:** Lameck's Windows workstation DESKTOP-3LRR8MD (win32, Git Bash) | **Role:** engineer | **Core:** 1.1.1
+## 2026-09-14 — Session 2
+- **Agent:** Claude Code (Rhea / S002) | **Model:** qwen3.8-flash[1m] | **Platform:** Lameck's Windows workstation DESKTOP-3LRR8MD (win32, Git Bash) | **Role:** engineer | **Core:** 1.1.1
 - **Task:** Target "sync context" — pull, read the full ledger, apply the core 1.1.0/1.1.1 migration `ledger-sync status` flagged, re-verify the baseline, and report repo state.
-- **Commits:** 3 (a0f64c4 check-in; bc2711b core 1.1.1 migration + entrypoint refills; this wrap-up).
+- **Commits:** 3 sync commits (a0f64c4 check-in; bc2711b core 1.1.1 migration + entrypoint refills; e287f49 wrap-up) + this correction commit.
 - **Outcome:** done — core 1.0.6→1.1.1 (same MAJOR): `ledger-sync update` + migration fill step (regenerated AGENTS.md + kickoff.md from new templates, project facts refilled, roster row upgraded to the 6-column form with Status/Status detail). Baseline re-verified this session: `npx prisma generate` 0, `npx tsc --noEmit` 0, `npm run lint` clean, `npm test` 191/191 (25 files). Solo mode (empty board before check-in, current.md done, no live collab claims).
 - **Open items:** none new — backlog unchanged (8 rows). Flaw logged: `ledger-mem lint --tree` false-positives AGENTS.md/CLAUDE.md routing files (see flaws/log.md).
-- **Notes:** none — sync session, no exploration beyond the migration itself.
+- **Notes:** Correction, same session, by the supervisor's ruling: I initially checked in as "Session 72 / S072", continuing the previous office's numbers from the straddling session-71 entry below. The core 1.1.0 door rule is that a fresh office's numbering restarts clean (codenames from S001, entries from Session 1) — this office is its second session, so this entry and its codename are renumbered to 2 / S002. The prior entry's "numbering continues across the office boundary" note was the pre-1.1.0 understanding, frozen in office-002's predecessor's registry; the superseding rule is in core 1.1.x. This office holds 2/20 sessions — no close is due.
 - **Report:** none — context-sync/protocol-maintenance session, no review report.

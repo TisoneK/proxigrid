@@ -33,3 +33,6 @@ records.
 
 ---
 - **2026-09-13 — Session 71** — ZCode (Mei/S071) / GLM-5.3-Flash — Closed office-001 (70 sessions) verbatim into `history/office-001/` with its permanent record; fresh office re-seeded (8 backlog rows incl. 2 newly backlogged threads, 2 live traps). Also cleared the new js-yaml high advisory with a lockfile-only bump (`npm audit` 0). Detail: summary only.
+
+---
+- **2026-09-14 — Session 2** — Claude Code (Rhea/S002) / qwen3.8-flash[1m] — Context sync; applied core 1.0.6→1.1.1 (entrypoints regenerated, roster to 6-col), baseline re-verified 191/191. Renumbered from a mis-carried S072 after supervisor correction — fresh offices number from S001. Detail: summary only.
